@@ -37,7 +37,6 @@
   
   // TODO: 编辑
   import type { FormInstance, FormRules } from 'element-plus'
-  import {baseURL_dev} from '../config/baseURL'
   import { updatejobinfo } from '../http/api';
   import { useallk8sjobStore } from '../store/k8s_job.ts'
   import { ref, onMounted,defineEmits } from 'vue';
@@ -110,7 +109,7 @@ onMounted(() => {
     }
   }
   
-  const rules = ref<FormRules<typeof usereditForm>>({
+  const rules = ref<FormRules>({
       job_name: [{ validator: validjob_name, trigger: 'blur' }],
       test_ip: [{ validator: validtest_ip, trigger: 'blur' }],
       dev_ip: [{ validator: validdev_ip, trigger: 'blur' }],

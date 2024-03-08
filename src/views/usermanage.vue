@@ -89,10 +89,10 @@
 				<el-table-column prop="create_time" label="创建时间"></el-table-column>
 				<el-table-column label="操作" width="220" align="center">
 					<template #default="scope">
-						<el-button text :icon="Edit" @click="handleEdit(scope.row)" v-permiss="15">
+						<el-button text :icon="Edit" @click="handleEdit(scope.row)">
 							编辑
 						</el-button>
-						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.row.id)" v-permiss="16">
+						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.row.id)">
 							删除
 						</el-button>
 					</template>
@@ -207,7 +207,7 @@ const validRoleId = (_: any, value: any, callback: any) => {
   }
 }
 
-const rules = ref<FormRules<typeof userForm>>({
+const rules = ref<FormRules>({
     username: [{ validator: validRoleUserName, trigger: 'blur' }],
     role_id: [{ validator: validRoleId, trigger: 'blur' }],
     department: [{ validator: validDepartment, trigger: 'blur' }],
@@ -348,9 +348,9 @@ const  showUsers = computed(()=>{
   //工单编辑
   import userEdit from '../components/userEdit.vue';
 // 修改
-const editref = ref(null)
+const editref = ref<{ open: (row: any) => void } | null>(null)
 const handleEdit = (row:any) => {
-    editref.value.open(row)
+    editref.value?.open(row)
 	console.log(editref.value)
   }
 </script>

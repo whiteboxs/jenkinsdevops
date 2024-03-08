@@ -57,7 +57,7 @@
     }
   }
   
-  const rules = ref<FormRules<typeof usereditForm>>({
+  const rules = ref<FormRules>({
     BRANCH: [{ validator: validBRANCH, trigger: 'blur' }],
       
   })

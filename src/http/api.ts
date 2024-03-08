@@ -9,6 +9,36 @@ export const fetchData = () => {
   });
 };
 
+//更新token
+let isRefreshing = false
+let promiseRT: Promise<any>
+export const refresh_token =  async () => {
+  if (isRefreshing) {
+   return promiseRT 
+  }
+  isRefreshing = true
+  promiseRT =  http.post('/token/refresh');
+  try {
+    return await promiseRT;
+  } finally {
+    isRefreshing = false;
+  }
+};
+
+
+//获取menu
+export const getallmenus = () => {
+  return http.get('/api/all/menus');
+};
+//获取角色菜单的权限
+export const getrolemenupermiss = (id:number) => {
+  return http.get(`/api/menu_permiss/${id}`);
+};
+//更新角色菜单的权限
+export const updaterolemenupermiss = (id:number,data:object) => {
+  return http.put(`/api/menu_permiss/${id}`,data);
+};
+
 //登录接口
 export const login = (data:object) => { 
     return http.post('/api/user/login', data);
@@ -46,15 +76,39 @@ export const updateuserinfo = (id:number,data:any) => {
     return http.put(`/api/user/${id}`,data,formDataConfig);
   };
 
-//删除工单接口
-export const deluser = (id:number) => {
-  return http.delete(`/api/user/${id}`);
-};
+  //删除工单接口
+  export const deluser = (id:number) => {
+    return http.delete(`/api/user/${id}`);
+  };
+
+  //创建角色
+  export const addrole = (data:object) => {
+    const formDataConfig = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    };
+    return http.post('/api/role', data, formDataConfig);
+  };
+
+  //删除角色
+  export const delrole = (id:number) => {
+    return http.delete(`/api/role/${id}`);
+  };
+
+
+
+
 
 
 //获取所有角色
 export const getallroles = () => {
   return http.get('/api/all/roles');
+};
+
+// 获取单个角色信息
+export const getrole = (id:number) => {
+  return http.get(`/api/role/${id}`);
 };
 
 // 获取all工单接口

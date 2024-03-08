@@ -2,6 +2,10 @@ import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
 import { usePermissStore } from '../store/permiss';
 import Home from '../views/home.vue';
 
+
+
+
+
 const routes: RouteRecordRaw[] = [
     {
         path: '/',
@@ -221,12 +225,14 @@ router.beforeEach((to, from, next) => {
     const permiss = usePermissStore();
     if (!role && to.path !== '/login') {
         next('/login');
-    } else if (to.meta.permiss && !permiss.key.includes(to.meta.permiss)) {
-        // 如果没有权限，则进入403
-        next('/403');
-    } else {
+    }  else {
         next();
     }
 });
 
+
+// else if (to.meta.permiss && !permiss.key.includes(to.meta.permiss)) {
+//     // 如果没有权限，则进入403
+//     next('/403');
+// }
 export default router;

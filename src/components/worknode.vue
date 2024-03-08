@@ -124,6 +124,10 @@ const nodeform = ref<nodeData>({
           type: 'info',
           message: '取消成功',
       });
+    refreshInterval = setInterval(async () => {
+      const res_service = await service_status(form.value.job_name);
+    form.value.hosts = res_service.data.data;
+  }, 1000); // 这里的 2000 表示刷新间隔，单位是毫秒
   }
 }
 
@@ -155,6 +159,10 @@ const handlerrestart  = async (row:any) => {
           type: 'info',
           message: '取消成功',
       });
+    refreshInterval = setInterval(async () => {
+      const res_service = await service_status(form.value.job_name);
+    form.value.hosts = res_service.data.data;
+  }, 1000); // 这里的 2000 表示刷新间隔，单位是毫秒
   }
 }
 
@@ -184,6 +192,11 @@ const handlerstop = async (row:any) => {
           type: 'info',
           message: '取消成功',
       });
+      // 刷新页面
+      refreshInterval = setInterval(async () => {
+       const res_service = await service_status(form.value.job_name);
+      form.value.hosts = res_service.data.data;
+  }, 1000); // 这里的 2000 表示刷新间隔，单位是毫秒
   }
 }
 

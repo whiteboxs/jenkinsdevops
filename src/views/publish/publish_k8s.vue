@@ -51,16 +51,16 @@
 				<el-table-column prop="create_time" label="创建时间"></el-table-column>
 				<el-table-column label="操作" width="450" align="center">
 					<template #default="scope">
-            <el-button text :icon="ArrowRight" type="warning" @click="handlepushlisttest(scope.row)" v-permiss="22">
+            <el-button text :icon="ArrowRight" type="warning" @click="handlepushlisttest(scope.row)" >
 							测试构建
 						</el-button>
-            <el-button text :icon="ArrowRight" type="warning" @click="handlepushlistdev(scope.row.job_name)" v-permiss="23">
+            <el-button text :icon="ArrowRight" type="warning" @click="handlepushlistdev(scope.row.job_name)" >
 							开发构建
 						</el-button>
-						<el-button text :icon="Edit" type="primary"  @click="handleEdit(scope.row)" v-permiss="15">
+						<el-button text :icon="Edit" type="primary"  @click="handleEdit(scope.row)" >
 							编辑
 						</el-button>
-						<el-button text :icon="Delete" type="danger" @click="handleDelete(scope.row.id)" v-permiss="16">
+						<el-button text :icon="Delete" type="danger" @click="handleDelete(scope.row.id)" >
 							删除
 						</el-button>
 					</template>
@@ -134,10 +134,10 @@ import pushlist_branch from '../../components/pushlist_branch.vue';
 
 
 // 修改
-const pushlist_branchref = ref(null)
+const pushlist_branchref = ref<{ query_branch: (row: any) => void } | null>(null)
 const handlepushlisttest = async (row:any) => {
   await brancheslist(row.id);
-  pushlist_branchref.value.query_branch(row)
+  pushlist_branchref.value?.query_branch(row)
 }
 
 
@@ -223,7 +223,7 @@ const validgit_address = (_: any, value: any, callback: any) => {
 
 
 
-const rules = ref<FormRules<typeof jobForm>>({
+const rules = ref<FormRules>({
     job_name: [{ validator: validjob_name, trigger: 'blur' }],
     test_ip: [{ validator: validtest_id, trigger: 'blur' }],
     dev_ip: [{ validator: validdev_id, trigger: 'blur' }],
@@ -265,10 +265,12 @@ const submitForm = (formEl: FormInstance | undefined) => {
 const closeDr=() =>{
   drawer.value=false
     jobForm.value={
-		job_name:'',
+    id: '',
+    job_name:'',
+    job_build_id:'',
     test_ip:'',
     dev_ip:'',
-    git_address:'',
+    git_address:''
     }
 }
 
@@ -326,10 +328,9 @@ const  showjobs = computed(()=>{
   //工单编辑
 import k8s_jobEdit from '../../components/k8s_jobEdit.vue';
 // 修改
-const editref = ref(null)
+const editref = ref<{ open: (row: any) => void } | null>(null)
 const handleEdit = (row:any) => {
-    editref.value.open(row)
-	console.log(editref.value)
+    editref.value?.open(row)
 }
 
 

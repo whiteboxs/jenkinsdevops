@@ -12,11 +12,11 @@
 					</div>
 					<div class="user-info-list">
 						上次登录时间：
-						<span>2022-10-01</span>
+						<span>{{login_time}}</span>
 					</div>
 					<div class="user-info-list">
 						上次登录地点：
-						<span>东莞</span>
+						<span>中国</span>
 					</div>
 				</el-card>
 				<el-card shadow="hover" style="height: 252px">
@@ -124,9 +124,8 @@ import { useAuthStore } from '../store/login.ts';
 const usestore =useAuthStore();
 
 const name = usestore.userinfo.username;
-console.log('role',usestore.userinfo.role_id)
-const role: string = usestore.userinfo.role_id === 1 ? '超级管理员' : '普通用户';
-
+const role: string = usestore.userinfo.role_name;
+const  login_time: string = usestore.userinfo.update_time;
 const options = {
 	type: 'bar',
 	title: {

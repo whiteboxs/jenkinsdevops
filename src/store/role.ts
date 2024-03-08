@@ -1,24 +1,41 @@
 import { defineStore } from "pinia";
-import { getallroles } from '../http/api'
+import { getallroles,getrole } from '../http/api'
 import { ref } from 'vue'
 export const useallroleStore = defineStore('allrole', () => {
   // 定义数据state
 
 
   const allroleinfo = ref<any>([]);
+  const oneroleinfo = ref<any>([]);
 
-  // 定义getter
-  //const isAuthenticated = computed(() => !!userinfo.value);
-//获取id
- // const userid = computed(() => userinfo.value.user_id);
-  
-  // 定义修改数据的方法 action
-  // const login = (newToken) => {
-  //     // 在这里可以进行登录验证逻辑，验证成功后将token存储在state中
-  //     userinfo.value = newToken;
-  //     // 还可以将token存储在本地或cookie等地方，以便在页面刷新后保持认证状态
-  //     // localStorage.setItem('token', newToken);
-  // };
+
+ const menus = ref<any>([]);
+
+ const menutree = ref<any[]>([]);
+// 递归方法，根据parentid组成层级结构
+const generateMenuTree = (menus:any, parentId = null) => {
+  const result:any = [];
+
+  menus.forEach((menu: { parentid: any; id: any; children: any; }) => {
+      if (menu.parentid === parentId) {
+          const children = generateMenuTree(menus, menu.id);
+          if (children.length) {
+              menu.children = children;
+          }
+          result.push(menu);
+      }
+  });
+  return result;
+};
+
+// 在getonerole后调用生成菜单树
+const generateMenuTreeFromMenus = () => {
+  if (menus.value) {
+      menutree.value  = generateMenuTree(menus.value);
+      //console.log('zuizong',menutree.value);
+      // 这里可以将生成的菜单树赋值给一个新的变量存储或者直接使用
+  }
+};
 
  
   const getallrole = async () => {
@@ -27,9 +44,20 @@ export const useallroleStore = defineStore('allrole', () => {
     // console.log('allroleinfo.value',allroleinfo.value)
   }
 
+  const getonerole = async (id:number) => {
+    const res = await getrole(id)
+    oneroleinfo.value= res.data
+    menus.value= res.data.menus
+    generateMenuTreeFromMenus()
+  }
+
+
   return {
     allroleinfo,
-    getallrole
+    getallrole,
+    oneroleinfo,
+    getonerole,
+    menutree
   }
 },
 );

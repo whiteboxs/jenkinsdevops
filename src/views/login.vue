@@ -41,6 +41,7 @@ import { ElMessage } from 'element-plus';
 import type { FormInstance, FormRules } from 'element-plus';
 import { Lock, User } from '@element-plus/icons-vue';
 import { useAuthStore } from '../store/login.ts';
+
 interface LoginInfo {
 	username: string;
 	password: string;
@@ -66,6 +67,7 @@ const permiss = usePermissStore();
 const login = ref<FormInstance>();
 const usestore =useAuthStore();
 
+
 const submitForm = (formEl: FormInstance | undefined) => {
 	if (!formEl) return;
 	formEl.validate((valid: boolean) => {
@@ -74,10 +76,10 @@ const submitForm = (formEl: FormInstance | undefined) => {
 		 try {  		
 				if ( usestore.userinfo.code === 200) {
 				ElMessage.success(usestore.userinfo.msg);
-				localStorage.setItem('ms_role_id', usestore.userinfo.role_id);
-				const keys = permiss.defaultList[usestore.userinfo.role_id];
-				permiss.handleSet(keys);
-				localStorage.setItem('ms_keys', JSON.stringify(keys));
+				// localStorage.setItem('ms_role_id', usestore.userinfo.role_id);
+				// const keys = permiss.defaultList[usestore.userinfo.role_id];
+				// permiss.handleSet(keys);
+				// localStorage.setItem('ms_keys', JSON.stringify(keys));
 				router.replace('/')
 				} else {
                   ElMessage.error('usestore.userinfo.msg')

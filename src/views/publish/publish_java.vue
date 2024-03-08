@@ -47,22 +47,22 @@
         </el-table-column>
 				<el-table-column label="操作" width="650" align="center">
 					<template #default="scope">
-            <el-button text :icon="ArrowRight" type="warning" @click="handlepushlisttest(scope.row)" v-permiss="22">
-							测试构建
+            <el-button text :icon="ArrowRight" type="warning" @click="handlepushlisttest(scope.row)" >
+							灰度构建
 						</el-button>
-            <el-button text :icon="ArrowRight" type="warning" @click="handlepushlistdev(scope.row.job_name)" v-permiss="23">
-							开发构建
+            <el-button text :icon="ArrowRight" type="warning" @click="handlepushlistdev(scope.row.job_name)" >
+							生产构建
 						</el-button>
-            <el-button text :icon="ArrowLeftBold" type="danger" @click="rollback(scope.row)" v-permiss="23">
+            <el-button text :icon="ArrowLeftBold" type="danger" @click="rollback(scope.row)">
 							回滚
 						</el-button>
-            <el-button text :icon="View" type="success" @click="opennode(scope.row)" v-permiss="23">
+            <el-button text :icon="View" type="success" @click="opennode(scope.row)" >
 							节点管理
 						</el-button>
-						<el-button text :icon="Edit" type="primary"  @click="handleEdit(scope.row)" v-permiss="15">
+						<el-button text :icon="Edit" type="primary"  @click="handleEdit(scope.row)">
 							编辑
 						</el-button>
-						<el-button text :icon="Delete" type="danger" @click="handleDelete(scope.row.id)" v-permiss="16">
+						<el-button text :icon="Delete" type="danger" @click="handleDelete(scope.row.id)" >
 							删除
 						</el-button>
 					</template>
@@ -141,10 +141,10 @@ import pushlist_branch from '../../components/pushlist_branch.vue';
 
 
 // 修改
-const pushlist_branchref = ref(null)
+const pushlist_branchref = ref<{ query_branch: (row: any) => void } | null>(null)
 const handlepushlisttest = async (row:any) => {
   await brancheslist(row.id);
-  pushlist_branchref.value.query_branch(row)
+  pushlist_branchref.value?.query_branch(row)
 }
 
 
@@ -201,7 +201,7 @@ const validgit_address = (_: any, value: any, callback: any) => {
 
 
 
-const rules = ref<FormRules<typeof jobForm>>({
+const rules = ref<FormRules>({
     job_name: [{ validator: validjob_name, trigger: 'blur' }],
     // test_ip: [{ validator: validtest_id, trigger: 'blur' }],
     // dev_ip: [{ validator: validdev_id, trigger: 'blur' }],
@@ -218,7 +218,6 @@ const submitForm = (formEl: FormInstance | undefined) => {
       try {
         // 新增
         await addk8sjob(jobForm.value)
-        console.log('新增', jobForm.value)
         ElMessage.success('新增成功')
         drawer.value = false
         // 刷新页面
@@ -243,10 +242,14 @@ const submitForm = (formEl: FormInstance | undefined) => {
 const closeDr=() =>{
   drawer.value=false
     jobForm.value={
-		job_name:'',
+    id: '',
+    job_name:'',
+    job_build_id:'',
     test_ip:'',
     dev_ip:'',
     git_address:'',
+    lastgray_build_id: '',
+    lastprod_build_id:'',
     }
 }
 
@@ -303,22 +306,23 @@ const  showjobs = computed(()=>{
 
   //工单编辑
 import k8s_jobEdit from '../../components/k8s_jobEdit.vue';
+
 // 修改
-const editref = ref(null)
+const editref = ref<{ open: (row: any) => void } | null>(null)
 const handleEdit = (row:any) => {
-    editref.value.open(row)
+    editref.value?.open(row)
 	console.log(editref.value)
 }
 
 
  //跳转到worknode
-const worknoderef = ref(null)
+const worknoderef = ref<{ disnode: (hosts:any,row: any) => void } | null>(null)
 const hosts = ref([])
 const opennode = async(row:any) => {
   const res = await  service_status(row.job_name)
   hosts.value = res.data.data
   console.log(hosts.value)
-  worknoderef.value.disnode(hosts,row)
+  worknoderef.value?.disnode(hosts,row)
 }
 
 

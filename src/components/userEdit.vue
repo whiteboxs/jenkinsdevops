@@ -136,7 +136,7 @@ const validRoleId = (_: any, value: any, callback: any) => {
   }
 }
 
-const rules = ref<FormRules<typeof usereditForm>>({
+const rules = ref<FormRules>({
     username: [{ validator: validRoleUserName, trigger: 'blur' }],
     role_id: [{ validator: validRoleId, trigger: 'blur' }],
     department: [{ validator: validDepartment, trigger: 'blur' }],

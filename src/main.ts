@@ -6,6 +6,8 @@ import router from './router';
 import { usePermissStore } from './store/permiss';
 import 'element-plus/dist/index.css';
 import './assets/css/icon.css';
+//全局密码加密
+// import { AES_Encrypt, AES_Decrypt } from './utils/aes.ts';
 
 
 const app = createApp(App);
@@ -20,9 +22,15 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 const permiss = usePermissStore();
 app.directive('permiss', {
     mounted(el, binding) {
-        if (!permiss.key.includes(String(binding.value))) {
+        console.log('binding',binding)
+        if (!permiss.accesspermiss.includes(String(binding.value))) {
             el['hidden'] = true;
         }
     },
 });
+
+
+// app.config.globalProperties.$AES_Encrypt = AES_Encrypt //全局加密
+// app.config.globalProperties.$AES_Decrypt = AES_Decrypt //全局解密
+
 app.mount('#app');
