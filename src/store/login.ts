@@ -8,7 +8,8 @@ export const useAuthStore = defineStore('login', () => {
   const isAuthenticated = computed(() => !!userinfo.value);
 //获取id
   const userid = computed(() => userinfo.value.user_id);
-  
+
+
   //定义修改数据的方法 action
   const updateToken = (newToken:any) => {
       // 在这里可以进行登录验证逻辑，验证成功后将token存储在state中
@@ -34,7 +35,7 @@ export const useAuthStore = defineStore('login', () => {
     logout,
     getuserinfo,
     userid,
-    updateToken
+    updateToken,
   }
 },
     //开启数据缓存

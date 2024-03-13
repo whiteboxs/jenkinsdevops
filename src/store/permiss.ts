@@ -19,6 +19,8 @@ const getPremission =  async (id:number) => {
 	//console.log('权限接口返回',accesspermiss.value);
 };
 
+
+
 return {
 accesspermiss,
 getPremission,

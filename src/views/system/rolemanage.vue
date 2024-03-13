@@ -81,10 +81,10 @@
 <!-- 角色管理 -->
 <script setup lang="ts" name="role">
 import { ref,onMounted,nextTick,reactive} from 'vue';
-import { useallroleStore } from '../store/role'
-import { usePermissStore } from '../store/permiss';
+import { useallroleStore } from '../../store/role'
+import { usePermissStore } from '../../store/permiss';
 import { ElTree } from 'element-plus';
-import { updaterolemenupermiss,addrole,delrole} from '../http/api'
+import { updaterolemenupermiss,addrole,delrole} from '../../http/api'
 import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage,ElMessageBox } from 'element-plus';
@@ -104,7 +104,7 @@ const handleSearch = () => {
 
 
 
-// 新增用户  
+// 新增角色
 const drawer = ref(false)
 // 定义一个ref对象绑定表单
 const ruleFormRef = ref<FormInstance>()

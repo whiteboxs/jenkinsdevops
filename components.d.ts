@@ -49,6 +49,7 @@ declare module '@vue/runtime-core' {
     ElUpload: typeof import('element-plus/es')['ElUpload']
     Header: typeof import('./src/components/header.vue')['default']
     K8s_jobEdit: typeof import('./src/components/k8s_jobEdit.vue')['default']
+    MenuEdit: typeof import('./src/components/menuEdit.vue')['default']
     Pushlist_branch: typeof import('./src/components/pushlist_branch.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

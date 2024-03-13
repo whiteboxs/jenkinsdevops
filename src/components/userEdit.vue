@@ -15,16 +15,13 @@
 							<el-form-item label="账号" prop="username">
 								<el-input v-model="usereditForm.username" autocomplete="off" />
 							</el-form-item>
-							<el-form-item label="密码" prop="password">
-								<el-input v-model="usereditForm.password" autocomplete="off" />
-							</el-form-item>
 							<el-form-item label="部门" prop="department">
 								<el-input v-model="usereditForm.department" autocomplete="off" />
 							</el-form-item>
 							<el-form-item label="头像">
 								<el-upload
 								class="avatar-uploader"
-								:action="baseURL_dev+'/my/upload'"
+								:action="baseURL_dev+'/my/upload/'+ usereditForm.user_id"
 								:show-file-list="false"
 								:on-success="handleAvatarSuccess"
 								:before-upload="beforeAvatarUpload"
@@ -82,7 +79,6 @@ const drawer = ref(false)
 interface UserForm {  
   user_id: number;  
   username: string;  
-  password: string;  
   department: string;  
   role_id: number;  
   userPic: string;  
@@ -93,7 +89,6 @@ const ruleFormRef = ref<FormInstance>()
 const usereditForm = ref<UserForm>({
   user_id:0,
   username:'',
-	password:'',
 	department:'',
   role_id:0,
 	userPic:"",
@@ -113,14 +108,6 @@ const validRoleUserName = (_: any, value: any, callback: any) => {
   }
 }
 
-const validRolePwd = (_: any, value: any, callback: any) => {
-  if (value === '') {
-    callback(new Error('密码不能为空'))
-  } else {
-    callback()
-  }
-}
-
 const validDepartment = (_: any, value: any, callback: any) => {
   if (value === '') {
     callback(new Error('部门不能为空'))
@@ -129,7 +116,7 @@ const validDepartment = (_: any, value: any, callback: any) => {
   }
 }
 const validRoleId = (_: any, value: any, callback: any) => {
-  if (value === '') {
+  if (!value) {
     callback(new Error('请选择角色'))
   } else {
     callback()
@@ -137,11 +124,9 @@ const validRoleId = (_: any, value: any, callback: any) => {
 }
 
 const rules = ref<FormRules>({
-    username: [{ validator: validRoleUserName, trigger: 'blur' }],
-    role_id: [{ validator: validRoleId, trigger: 'blur' }],
-    department: [{ validator: validDepartment, trigger: 'blur' }],
-	  password: [{ validator: validRolePwd, trigger: 'blur' }],
-	
+    username: [{ required: true,validator: validRoleUserName, trigger: 'blur' }],
+    role_id: [{ required: true, validator: validRoleId, trigger: 'change' }],
+    department: [{ required: true,validator: validDepartment, trigger: 'blur' }],
 })
 
 
@@ -150,10 +135,10 @@ const rules = ref<FormRules>({
 //  抽屉关闭时的回调
 const closeDr=() =>{
   drawer.value=false
+    ruleFormRef.value?.resetFields();
     usereditForm.value={
     user_id:0,
 		username:'',
-		password:'',
 		department:'',
 		role_id:0,
 		userPic:'',
@@ -162,7 +147,7 @@ const closeDr=() =>{
 
 
 // 上传中附带token
-const token = usestore.userinfo.token
+const token = usestore.userinfo.access_token
 
 // 文件上传成功时的钩子
 const handleAvatarSuccess: UploadProps['onSuccess'] = (
@@ -195,7 +180,6 @@ const open = (row:any) => {
   console.log('当前编辑行', row)
   usereditForm.value.user_id = row.id
   usereditForm.value.username = row.username
-  usereditForm.value.password = row.password
   usereditForm.value.department = row.department
   usereditForm.value.role_id = row.role_id
   usereditForm.value.userPic = row.userPic !== null ? baseURL_dev+'/my/view/'+row.userPic : baseURL_dev+"/my/view/default.png"

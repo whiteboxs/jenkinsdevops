@@ -31,20 +31,6 @@
 							<el-form-item label="部门" prop="department">
 								<el-input v-model="userForm.department" autocomplete="off" />
 							</el-form-item>
-							<el-form-item label="头像">
-								<el-upload
-								class="avatar-uploader"
-								:action="baseURL_dev+'/my/upload'"
-								:show-file-list="false"
-								:on-success="handleAvatarSuccess"
-								:before-upload="beforeAvatarUpload"
-								:headers="{Authorization: 'Bearer ' + encodeURIComponent(token)}"
-								name="file"
-								>
-								<img v-if="userForm.userPic" :src="userForm.userPic" class="avatar" />
-								<el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
-								</el-upload>
-							</el-form-item>
 							<el-form-item label="角色" prop="role_id">
                                 <el-select 
 								   v-model="userForm.role_id" 
@@ -89,10 +75,10 @@
 				<el-table-column prop="create_time" label="创建时间"></el-table-column>
 				<el-table-column label="操作" width="220" align="center">
 					<template #default="scope">
-						<el-button text :icon="Edit" @click="handleEdit(scope.row)">
+						<el-button text type="primary" :icon="Edit" @click="handleEdit(scope.row)">
 							编辑
 						</el-button>
-						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.row.id)">
+						<el-button text type="danger" :icon="Delete" class="red" @click="handleDelete(scope.row.id)">
 							删除
 						</el-button>
 					</template>
@@ -114,17 +100,18 @@
 </template>
 
 <script setup lang="ts" name="usermanage">
-import {baseURL_dev} from '../config/baseURL'
+import {baseURL_dev} from '../../config/baseURL'
 import { ref, reactive, onMounted, computed  } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
-import { usealluserStore } from '../store/user.ts';
-import { updateuserinfo, adduser,deluser ,updateuserstatus} from '../http/api';
+import { usealluserStore } from '../../store/user.ts';
+import { updateuserinfo, adduser,deluser ,updateuserstatus,upload} from '../../http/api';
 import type { FormInstance, FormRules } from 'element-plus'
-import { useallroleStore } from '../store/role'
+import { useallroleStore } from '../../store/role'
 import type { UploadProps } from 'element-plus'
-import {useAuthStore} from '../store/login.ts'
-
+import {useAuthStore} from '../../store/login.ts'
+//工单编辑
+import userEdit from '../../components/userEdit.vue';
 //角色store
 const allroleStore = useallroleStore()
 //用户store
@@ -167,7 +154,6 @@ const userForm = ref({
 	password:'',
 	department:'',
     role_id:'',
-	userPic:'',
 })
 
 //  取消
@@ -243,7 +229,6 @@ const closeDr=() =>{
 		password:'',
 		department:'',
 		role_id:'',
-		userPic:'',
     }
 }
 
@@ -273,35 +258,6 @@ const handleDelete=async (id:any)=>{
   )
 }
 
-// 上传中附带token
-const token = usestore.userinfo.token
-
-// 文件上传成功时的钩子
-const handleAvatarSuccess: UploadProps['onSuccess'] = (
-  response
-) => {
-  if(response.code==200){
-    userForm.value.userPic=baseURL_dev+'/my/view/'+response.image
-  }else{
-    return false
-  }
-}
-// 上传文件之前的钩子
-const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
-  //图片格式
-  let imgTypes=['image/jpeg','image/jpg','image/png','image/gif']
-  if (!imgTypes.includes(rawFile.type)) {
-    ElMessage.error('上传头像图片只能是 JPG/PNG/GIF 格式!')
-    return false
-  } else if (rawFile.size / 1024 / 1024 > 2) {
-    ElMessage.error('上传头像图片大小不能超过 2MB!')
-    return false
-  }
-  return true
-}
-
-
-
 /**
  * 用户状态change
  */
@@ -313,27 +269,6 @@ const handleStatusChange = async (row:any) => {
     })
 }	
 
-// const handleStatusChange = async (row:any) => {
-// 	ElMessageBox.confirm(
-//     '确定要修改吗?',
-//     '提示',
-//     {
-//       confirmButtonText: '确定',
-//       cancelButtonText: '取消',
-//       type: 'warning',
-//     }).then(async () => {
-//       await updateuserinfo(row.id,row.status).then(()=>{
-//         ElMessage.success('修改完成')
-//       })
-//     })
-//     .catch(() => {
-//       ElMessage({
-//         type: 'info',
-//         message: '取消修改',
-//       })
-//     }
-//   )
-// }
 
 
 //前端分页
@@ -345,8 +280,7 @@ const  showUsers = computed(()=>{
 })	
 
 
-  //工单编辑
-  import userEdit from '../components/userEdit.vue';
+
 // 修改
 const editref = ref<{ open: (row: any) => void } | null>(null)
 const handleEdit = (row:any) => {
@@ -411,4 +345,3 @@ const handleEdit = (row:any) => {
   border: 1px dashed #d9d9d9;
 }
 </style>
-../http/index

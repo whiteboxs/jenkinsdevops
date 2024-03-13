@@ -26,10 +26,11 @@ export const refresh_token =  async () => {
 };
 
 
-//获取menu
+//获取allmenu
 export const getallmenus = () => {
   return http.get('/api/all/menus');
 };
+
 //获取角色菜单的权限
 export const getrolemenupermiss = (id:number) => {
   return http.get(`/api/menu_permiss/${id}`);
@@ -37,6 +38,16 @@ export const getrolemenupermiss = (id:number) => {
 //更新角色菜单的权限
 export const updaterolemenupermiss = (id:number,data:object) => {
   return http.put(`/api/menu_permiss/${id}`,data);
+};
+
+//创建菜单
+export const addmenu = (data:object) => {
+  const formDataConfig = {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  };
+  return http.post('/api/add_user',data,formDataConfig);
 };
 
 //登录接口
@@ -182,6 +193,22 @@ export const create_ticket_processing_feedbacks = (data:object) => {
     return http.post('/api/ticket_processing_feedbacks', data, formDataConfig);
 };
 
+
+
+
+//附件
+export const upload = (file:File) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  console.log(formData);
+  const formDataConfig = {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  };
+
+  return http.post('/my/upload', formData, formDataConfig);
+};
 
 
 

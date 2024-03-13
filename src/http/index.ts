@@ -23,7 +23,7 @@ const http = axios.create({
 
     // 请求拦截器：在发送请求前做一些处理
 http.interceptors.request.use(
-  (config: AxiosRequestConfig) => { 
+  (config) => { 
       // if (localStorage.getItem('userinfo')) {
         // if (diffTokenTime()) {
         //     const usestore =useAuthStore()

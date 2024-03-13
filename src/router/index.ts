@@ -32,7 +32,7 @@ const routes: RouteRecordRaw[] = [
                     title: '用户管理',
                     permiss: '2',
                 },
-                component: () => import(/* webpackChunkName: "usermanage" */ '../views/usermanage.vue'),
+                component: () => import(/* webpackChunkName: "usermanage" */ '../views/system/usermanage.vue'),
             },
             {
                 path: '/rolemanage',
@@ -41,7 +41,7 @@ const routes: RouteRecordRaw[] = [
                     title: '角色管理',
                     permiss: '2',
                 },
-                component: () => import(/* webpackChunkName: "rolemanage" */ '../views/rolemanage.vue'),
+                component: () => import(/* webpackChunkName: "rolemanage" */ '../views/system/rolemanage.vue'),
             },
             {
                 path: '/charts',
@@ -175,7 +175,7 @@ const routes: RouteRecordRaw[] = [
                     title: '导出Excel',
                     permiss: '2',
                 },
-                component: () => import(/* webpackChunkName: "export" */ '../views/export.vue'),
+                component: () => import(/* webpackChunkName: "export" */ '../views/system/export.vue'),
             },
             {
                 path: '/import',
@@ -184,7 +184,16 @@ const routes: RouteRecordRaw[] = [
                     title: '导入Excel',
                     permiss: '2',
                 },
-                component: () => import(/* webpackChunkName: "import" */ '../views/import.vue'),
+                component: () => import(/* webpackChunkName: "import" */ '../views/system/import.vue'),
+            },
+            {
+                path: '/menu',
+                name: 'menu',
+                meta: {
+                    title: '菜单管理',
+                    permiss: '2',
+                },
+                component: () => import(/* webpackChunkName: "menu" */ '../views/system/menu.vue'),
             },
         ],
     },
@@ -204,14 +213,6 @@ const routes: RouteRecordRaw[] = [
         },
         component: () => import(/* webpackChunkName: "403" */ '../views/403.vue'),
     },
-    // {
-    //     path: '/worknode',
-    //     name: 'worknode',
-    //     meta: {
-    //         title: '节点管理',
-    //     },
-    //     component: () => import(/* webpackChunkName: "worknode" */ '../views/worknode.vue'),
-    // },
 ];
 
 const router = createRouter({
