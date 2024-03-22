@@ -63,7 +63,6 @@ const rules: FormRules = {
 	],
 	password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
 };
-const permiss = usePermissStore();
 const login = ref<FormInstance>();
 const usestore =useAuthStore();
 

@@ -220,13 +220,15 @@ const defaultProps = {
 const permiss = usePermissStore();
 const roleid = ref<number>(0);
 const handleEdit = async (row:any) => {
+	//在路由守卫中get过了这里取消
 	roleid.value = row.id;	
-    await permiss.getPremission(row.id)
+    await permiss.getrolePremission(row.id)
 	dialogVisible.value = true
 	// 获取角色权限
 	await nextTick(() => {
     const nodes:any = [] 
-    permiss.accesspermiss.forEach((item) => {
+	console.log('rolemenu',permiss.accesspermiss)
+    permiss.rolepermiss.forEach((item) => {
 	  //使用getNode方法获取节点
       const node = tree.value?.getNode(item)
 	  // 判断是否是叶子节点

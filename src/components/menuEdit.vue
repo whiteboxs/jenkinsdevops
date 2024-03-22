@@ -1,50 +1,52 @@
 <template>
     <div>
-      <el-drawer v-model="drawer" 
-                          title="I am the title" 
-                              :with-header="false"
-                              @close="closeDr()">
-                          <el-form
-                              ref="ruleFormRef"
-                              :model="usereditForm"
-                              status-icon
-                              :rules="rules"
-                              label-width="120px"
-                              class="demo-ruleForm"
-                              >
-                              <el-form-item label="账号" prop="username">
-                                  <el-input v-model="usereditForm.username" autocomplete="off" />
-                              </el-form-item>
-                              <el-form-item label="部门" prop="department">
-                                  <el-input v-model="usereditForm.department" autocomplete="off" />
-                              </el-form-item>
-                              <el-form-item label="头像">
-                                  <el-upload
-                                  class="avatar-uploader"
-                                  :action="baseURL_dev+'/my/upload/'+ usereditForm.user_id"
-                                  :show-file-list="false"
-                                  :on-success="handleAvatarSuccess"
-                                  :before-upload="beforeAvatarUpload"
-                                  :headers="{Authorization: 'Bearer ' + encodeURIComponent(token)}"
-                                  name="file"
-                                  >
-                                  <img v-if="usereditForm.userPic" :src="usereditForm.userPic" class="avatar" />
-                                  <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
-                                  </el-upload>
-                              </el-form-item>
-                              <el-form-item label="角色" prop="role_id">
-                                  <el-select 
-                                     v-model="usereditForm.role_id" 
-                                     placeholder="请选择角色">
-                                    <el-option :label="item.role_name" :value="item.id" v-for="item in allroleStore.allroleinfo" :key="item.id" />
-                                    </el-select>
-                              </el-form-item>
-                              <el-form-item>
-                                  <el-button type="primary" @click="onupdate(ruleFormRef)">提交</el-button>
-                                  <el-button @click="resetForm()">取消</el-button>
-                              </el-form-item>
-                          </el-form>
-                      </el-drawer>
+        <el-drawer v-model="drawer" 
+					         title="I am the title" 
+							 :with-header="false"
+							 @close="closeDr()">
+							 
+						<el-form
+							ref="menuFormRef"
+							:model="menueditForm"
+							status-icon
+							:rules="rules"
+							label-width="120px"
+							class="demo-ruleForm"
+							>
+							<el-form-item label="菜单名称" prop="menu_name">
+								<el-input v-model="menueditForm.menu_name" autocomplete="off" />
+							</el-form-item>
+							<el-form-item label="菜单路径" prop="menu_path">
+								<el-input v-model="menueditForm.menu_path" autocomplete="off" />
+							</el-form-item>							
+                            <el-form-item label="菜单类型" prop="menu_type">
+                                <el-radio-group v-model="menueditForm.menu_type">
+                                    <el-radio label="directory"></el-radio>
+                                    <el-radio label="menu"></el-radio>
+                                    <el-radio label="button"></el-radio>
+                                </el-radio-group>
+                            </el-form-item>
+                            <el-form-item label="权限" prop="permiss">
+								<el-input v-model="menueditForm.permiss" disabled />
+							</el-form-item>
+                            <el-form-item label="菜单图标" prop="icon">
+								<el-input v-model="menueditForm.icon" autocomplete="off" />
+							</el-form-item>
+                            <el-form-item label="父菜单名称" prop="parentname">
+								<el-input v-model="menueditForm.parentname" autocomplete="off" />
+							</el-form-item>	
+                            <el-form-item label="父菜单id" prop="parentid">
+								<el-input v-model="menueditForm.parentid" autocomplete="off" />
+							</el-form-item>	
+                            <el-form-item label="路由组件路径" prop="route_component">
+								<el-input v-model="menueditForm.route_component" autocomplete="off" />
+							</el-form-item>	
+							<el-form-item>
+								<el-button type="primary" @click="onupdate(menuFormRef)">提交</el-button>
+								<el-button @click="resetForm()">取消</el-button>
+							</el-form-item>
+						</el-form>
+					</el-drawer>
     </div>
   </template>
   
@@ -52,82 +54,78 @@
   
   // TODO: 编辑
   import type { FormInstance, FormRules } from 'element-plus'
-  import {baseURL_dev} from '../config/baseURL'
-  import { updateuserinfo } from '../http/api';
-  import { useallroleStore } from '../store/role'
-  import {useAuthStore} from '../store/login.ts'
-  import { usealluserStore } from '../store/user.ts';
+  import { updatemenu } from '../http/api';
+
   import { ref, onMounted,defineEmits } from 'vue';
-  import type { UploadProps } from 'element-plus'
   import { ElMessage, ElMessageBox } from 'element-plus';
   
-  //角色store
-  const allroleStore = useallroleStore()
-  //用户store
-  const  alluserStore = usealluserStore()
+
   
-  //登录store
-  const usestore =useAuthStore()
-  onMounted(() => {
-      alluserStore.getalluser()
-      allroleStore.getallrole()
-  })
-  // 编辑用户  
+
+  // 开关
   const drawer = ref(false)
   
-  // 使用 TypeScript 类型注解  
-  interface UserForm {  
-    user_id: number;  
-    username: string;  
-    department: string;  
-    role_id: number;  
-    userPic: string;  
-  }  
   
   // 定义一个ref对象绑定表单
-  const ruleFormRef = ref<FormInstance>()
-  const usereditForm = ref<UserForm>({
-    user_id:0,
-    username:'',
-      department:'',
-    role_id:0,
-      userPic:"",
-  })
+const menuFormRef = ref<FormInstance>()
+const menueditForm = ref({
+id:0,
+menu_name:'',
+menu_path:'',
+menu_type:'',
+permiss:null,
+icon:'',
+parentname:null,
+parentid:null,
+route_component:'',
+})
   
   //  取消
   const resetForm = () => {
      drawer.value=false
   }
   
-  //验证添加的账号字段
-  const validRoleUserName = (_: any, value: any, callback: any) => {
-    if (value === '') {
-      callback(new Error('账号不能为空'))
-    } else {
-      callback()
-    }
+//验证rule
+const validmenu_name = (_: any, value: any, callback: any) => {
+  if (value === '') {
+    callback(new Error('菜单名不能为空'))
+  } else {
+    callback()
   }
-  
-  const validDepartment = (_: any, value: any, callback: any) => {
-    if (value === '') {
-      callback(new Error('部门不能为空'))
-    } else {
-      callback()
-    }
+}
+
+
+const validmenu_type = (_: any, value: any, callback: any) => {
+  if (value === '') {
+    callback(new Error('菜单类型不能为空'))
+  } else {
+    callback()
   }
-  const validRoleId = (_: any, value: any, callback: any) => {
-    if (!value) {
-      callback(new Error('请选择角色'))
-    } else {
-      callback()
-    }
+}
+const validmenu_icon = (_: any, value: any, callback: any) => {
+  if (value === '') {
+    callback(new Error('菜单图标不能为空'))
+  } else {
+    callback()
   }
-  
-  const rules = ref<FormRules>({
-      username: [{ required: true,validator: validRoleUserName, trigger: 'blur' }],
-      role_id: [{ required: true, validator: validRoleId, trigger: 'change' }],
-      department: [{ required: true,validator: validDepartment, trigger: 'blur' }],
-  })
+}
+
+const validmenu_permiss = (_: any, value: any, callback: any) => {
+  if (value === '') {
+    callback(new Error('菜单权限不能为空'))
+  } else {
+    callback()
+  }
+}
+
+
+const rules = ref<FormRules>({
+    menu_name: [{  required: true,validator: validmenu_name, trigger: 'blur' }],
+    menu_type: [{  required: true,validator: validmenu_type, trigger: 'blur' }],
+	icon:  [{  required: true,validator: validmenu_icon, trigger: 'blur' }],
+    permiss: [{  required: true,validator: validmenu_permiss, trigger: 'blur' }],
+	
+})
   
   
   
@@ -135,56 +133,42 @@
   //  抽屉关闭时的回调
   const closeDr=() =>{
     drawer.value=false
-      ruleFormRef.value?.resetFields();
-      usereditForm.value={
-      user_id:0,
-          username:'',
-          department:'',
-          role_id:0,
-          userPic:'',
+      menuFormRef.value?.resetFields();
+      menueditForm.value={
+        id:0,
+        menu_name:'',
+        menu_path:'',
+        menu_type:'',
+        permiss:null,
+        icon:'',
+        parentname:null,
+        parentid:null,
+        route_component:'',
       }
   }
   
   
-  // 上传中附带token
-  const token = usestore.userinfo.access_token
+
   
-  // 文件上传成功时的钩子
-  const handleAvatarSuccess: UploadProps['onSuccess'] = (
-    response
-  ) => {
-    if(response.code==200){
-      usereditForm.value.userPic=baseURL_dev+'/my/view/'+response.image
-    }else{
-      return false
-    }
-  }
-  // 上传文件之前的钩子
-  const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
-    //图片格式
-    let imgTypes=['image/jpeg','image/jpg','image/png','image/gif']
-    if (!imgTypes.includes(rawFile.type)) {
-      ElMessage.error('上传头像图片只能是 JPG/PNG/GIF 格式!')
-      return false
-    } else if (rawFile.size / 1024 / 1024 > 2) {
-      ElMessage.error('上传头像图片大小不能超过 2MB!')
-      return false
-    }
-    return true
-  }
+
+
   
   
   
   
   const open = (row:any) => {
     console.log('当前编辑行', row)
-    usereditForm.value.user_id = row.id
-    usereditForm.value.username = row.username
-    usereditForm.value.department = row.department
-    usereditForm.value.role_id = row.role_id
-    usereditForm.value.userPic = row.userPic !== null ? baseURL_dev+'/my/view/'+row.userPic : baseURL_dev+"/my/view/default.png"
+    menueditForm.value.id = row.id
+    menueditForm.value.menu_name = row.title
+    menueditForm.value.menu_path = row.path
+    menueditForm.value.menu_type = row.menu_type
+    menueditForm.value.permiss = row.permiss
+    menueditForm.value.icon = row.icon
+    menueditForm.value.parentname = row.parentname
+    menueditForm.value.parentid = row.parentid
+    menueditForm.value.route_component = row.route_component
     drawer.value = true
-    console	.log('没提交前的', usereditForm.value)
+    console	.log('没提交前的', menueditForm.value)
   }
   defineExpose({
     open
@@ -196,12 +180,14 @@
   
   const onupdate = async (formEl: FormInstance | undefined) => {  
     if (!formEl) return;  
-      
+    if (menueditForm.value.parentid === null) {
+        delete menueditForm.value.parentid;
+    }
     formEl.validate(async (valid) => {  
       if (valid) {  
         // 编辑操作  
-        await updateuserinfo(usereditForm.value.user_id, usereditForm.value);  
-        console.log('编辑提交', usereditForm.value);  
+        await updatemenu(menueditForm.value.id,menueditForm.value);  
+        console.log('编辑提交', menueditForm.value);  
         ElMessage.success('编辑成功');  
         drawer.value = false;  
           
@@ -212,53 +198,7 @@
       }  
     });  
   };  
-  
-  
-  
-  
-  
-  //更新
-  // const emit = defineEmits(['onupdate'])
-  // const addRuleForm = ref();
-  // const onupdate = async () => {
-  //   try {
-  //     await addRuleForm.value.validate();
-  //       if (!usereditForm) {
-  //       console.log("表单验证不通过");
-  //       return; // 验证不通过时，停止继续执行下面的代码
-  //     } 
-  //   // // 0. 转换经办人和环境的名称为 ID
-  //   // const environmentId = envdata.value.find(item => item.name === form.value.environment_id)?.id;
-  //   // const assigneeId = assigneedata.value.find(item => item.name === form.value.assignee_id)?.id;
-  
-  //   // if (!environmentId || !assigneeId) {
-  //   //   console.error('无效的环境或经办人名称');
-  //   // //   return;
-  //   // }
-  //     //1.收集表单数据，调用接口
-  //     const updatedData = {
-  //       username: usereditForm.value.username,
-  //       password: usereditForm.value.password,
-  //       department: usereditForm.value.department,
-  //       role_id: usereditForm.value.role_id
-  //     };
-  //     console.log('put前没有转换的值',usereditForm.value)
-  //     console.log('转换后的',updatedData)
-  //     await updateuserinfo(usereditForm.value.user_id, usereditForm)
-  //     //清除提交的表单
-  //     addRuleForm.value.resetFields()
-  //     // 关闭窗口和刷新列表
-  //     drawer.value = false;
-  
-  //     //3.通知父主键做列表更新(子传父)都感觉超难
-  //     emit('onupdate')
-  //   } catch (error) {
-  //     console.error('更新工单出错：', error);
-  //     // 根据需要处理错误
-  //   }
-  // }
-  
-  
+    
   </script>
   
   

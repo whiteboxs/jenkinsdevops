@@ -47,8 +47,25 @@ export const addmenu = (data:object) => {
       'Content-Type': 'multipart/form-data',
     },
   };
-  return http.post('/api/add_user',data,formDataConfig);
+  return http.post('/api/menu',data,formDataConfig);
 };
+
+
+// 编辑菜单
+export const updatemenu = (id:number,data:object) => {
+    const formDataConfig = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    };
+      return http.put(`/api/menu/${id}`,data,formDataConfig);
+};
+
+  //删除菜单接口
+  export const delmenu = (id:number) => {
+    return http.delete(`/api/menu/${id}`);
+  };
+
 
 //登录接口
 export const login = (data:object) => { 
@@ -59,6 +76,7 @@ export const login = (data:object) => {
 export const getallusers = () => {
   return http.get('/api/all/users');
 };
+
 // 创建用户
 export const adduser = (data:object) => {
   const formDataConfig = {
@@ -109,7 +127,14 @@ export const updateuserinfo = (id:number,data:any) => {
 
 
 
-
+//获取所有路由
+export const getallroute = () => {
+  return http.get('/api/all/route');
+};
+//获取单个路由
+export const getroute = (roue_id:number) => {
+  return http.get(`/api/route/${roue_id}`);
+};
 
 
 //获取所有角色

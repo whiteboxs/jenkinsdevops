@@ -22,9 +22,9 @@
 				<!-- 用户头像 -->
 				<el-avatar class="user-avator" :size="30" :src="imgurl" />
 				<!-- 用户名下拉菜单 -->
-				<el-dropdown class="user-name" trigger="click" @command="handleCommand">
+				<el-dropdown class="user-name" trigger="click" >
 					<span class="el-dropdown-link">
-						{{ username }}
+						{{ usestore.userinfo.username }}
 						<el-icon class="el-icon--right">
 							<arrow-down />
 						</el-icon>
@@ -34,8 +34,8 @@
 							<a href="https://github.com/lin-xin/vue-manage-system" target="_blank">
 								<el-dropdown-item>项目仓库</el-dropdown-item>
 							</a>
-							<el-dropdown-item command="user">个人中心</el-dropdown-item>
-							<el-dropdown-item divided command="loginout">退出登录</el-dropdown-item>
+							<el-dropdown-item @click="user">个人中心</el-dropdown-item>
+							<el-dropdown-item @click="handleLogout">退出登录</el-dropdown-item>
 						</el-dropdown-menu>
 					</template>
 				</el-dropdown>
@@ -48,8 +48,9 @@ import { onMounted } from 'vue';
 import { useSidebarStore } from '../store/sidebar';
 import { useRouter } from 'vue-router';
 import imgurl from '../assets/img/img.jpg';
+import { useAuthStore } from '../store/login.ts';
+import {usePermissStore} from '../store/permiss'
 
-const username: string | null = localStorage.getItem('ms_username');
 const message: number = 2;
 
 const sidebar = useSidebarStore();
@@ -66,14 +67,16 @@ onMounted(() => {
 
 // 用户名下拉菜单选择事件
 const router = useRouter();
-const handleCommand = (command: string) => {
-	if (command == 'loginout') {
-		localStorage.removeItem('ms_username');
-		router.push('/login');
-	} else if (command == 'user') {
-		router.push('/user');
-	}
+const usestore =useAuthStore() 
+const handleLogout = () => {
+usestore.logout()
+router.push('/login');
 };
+
+const user = () => {
+	router.push('/user');
+}
+
 </script>
 <style scoped>
 .header {

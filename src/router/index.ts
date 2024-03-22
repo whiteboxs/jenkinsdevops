@@ -1,12 +1,12 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
 import { usePermissStore } from '../store/permiss';
 import Home from '../views/home.vue';
+import { useAuthStore } from '../store/login.ts';
+import { getallroute,getroute } from '../http/api'
+import { useallrouteoStore } from '../store/route.ts'
+import {getrolemenupermiss} from '../http/api';
 
-
-
-
-
-const routes: RouteRecordRaw[] = [
+const routes: Array<RouteRecordRaw> = [
     {
         path: '/',
         redirect: '/dashboard',
@@ -16,184 +16,13 @@ const routes: RouteRecordRaw[] = [
         name: 'Home',
         component: Home,
         children: [
-            {
-                path: '/dashboard',
-                name: 'dashboard',
-                meta: {
-                    title: '系统首页',
-                    permiss: '1',
-                },
-                component: () => import(/* webpackChunkName: "dashboard" */ '../views/dashboard.vue'),
-            },
-            {
-                path: '/usermanage',
-                name: 'usermanage',
-                meta: {
-                    title: '用户管理',
-                    permiss: '2',
-                },
-                component: () => import(/* webpackChunkName: "usermanage" */ '../views/system/usermanage.vue'),
-            },
-            {
-                path: '/rolemanage',
-                name: 'rolemanage',
-                meta: {
-                    title: '角色管理',
-                    permiss: '2',
-                },
-                component: () => import(/* webpackChunkName: "rolemanage" */ '../views/system/rolemanage.vue'),
-            },
-            {
-                path: '/charts',
-                name: 'basecharts',
-                meta: {
-                    title: '图表',
-                    permiss: '11',
-                },
-                component: () => import(/* webpackChunkName: "charts" */ '../views/charts.vue'),
-            },
-            {
-                path: '/form',
-                name: 'baseform',
-                meta: {
-                    title: '表单',
-                    permiss: '5',
-                },
-                component: () => import(/* webpackChunkName: "form" */ '../views/form.vue'),
-            },
-            {
-                path: '/tabs',
-                name: 'tabs',
-                meta: {
-                    title: 'tab标签',
-                    permiss: '3',
-                },
-                component: () => import(/* webpackChunkName: "tabs" */ '../views/tabs.vue'),
-            },
-            {
-                path: '/user_tickets',
-                name: 'myticket',
-                meta: {  
-                    title: '我的工单',
-                    permiss: '17',
-                },
-                component: () => import(/* webpackChunkName: "myticket" */ '../views/ticket/myticket.vue'),
-            },
-            {
-                path: '/ticket_processing',
-                name: 'ticket_processing',
-                meta: {  
-                    title: '工单处理',
-                    permiss: '17',
-                },
-                component: () => import(/* webpackChunkName: "ticket_processing" */ '../views/ticket/ticket_processing.vue'),
-            },
-            {
-                path: '/publish_k8s',
-                name: 'publish_k8s',
-                meta: {  
-                    title: '发布k8s',
-                    permiss: '19',
-                },
-                component: () => import(/* webpackChunkName: "publish_k8s" */ '../views/publish/publish_k8s.vue'),
-            },
-            {
-                path: '/publish_java',
-                name: 'publish_java',
-                meta: {  
-                    title: '发布后端',
-                    permiss: '20',
-                },
-                component: () => import(/* webpackChunkName: "publish_java" */ '../views/publish/publish_java.vue'),
-            },
-            {
-                path: '/publish_h5',
-                name: 'publish_h5',
-                meta: {  
-                    title: '发布前端',
-                    permiss: '21',
-                },
-                component: () => import(/* webpackChunkName: "publish_h5" */ '../views/publish/publish_h5.vue'),
-            },
-            {
-                path: '/permission',
-                name: 'permission',
-                meta: {
-                    title: '权限管理',
-                    permiss: '13',
-                },
-                component: () => import(/* webpackChunkName: "permission" */ '../views/permission.vue'),
-            },
-            {
-                path: '/upload',
-                name: 'upload',
-                meta: {
-                    title: '上传插件',
-                    permiss: '6',
-                },
-                component: () => import(/* webpackChunkName: "upload" */ '../views/upload.vue'),
-            },
-            {
-                path: '/icon',
-                name: 'icon',
-                meta: {
-                    title: '自定义图标',
-                    permiss: '10',
-                },
-                component: () => import(/* webpackChunkName: "icon" */ '../views/icon.vue'),
-            },
-            {
+           {
                 path: '/user',
                 name: 'user',
                 meta: {
                     title: '个人中心',
                 },
                 component: () => import(/* webpackChunkName: "user" */ '../views/user.vue'),
-            },
-            {
-                path: '/editor',
-                name: 'editor',
-                meta: {
-                    title: '富文本编辑器',
-                    permiss: '8',
-                },
-                component: () => import(/* webpackChunkName: "editor" */ '../views/editor.vue'),
-            },
-            {
-                path: '/markdown',
-                name: 'markdown',
-                meta: {
-                    title: 'markdown编辑器',
-                    permiss: '9',
-                },
-                component: () => import(/* webpackChunkName: "markdown" */ '../views/markdown.vue'),
-            },
-            {
-                path: '/export',
-                name: 'export',
-                meta: {
-                    title: '导出Excel',
-                    permiss: '2',
-                },
-                component: () => import(/* webpackChunkName: "export" */ '../views/system/export.vue'),
-            },
-            {
-                path: '/import',
-                name: 'import',
-                meta: {
-                    title: '导入Excel',
-                    permiss: '2',
-                },
-                component: () => import(/* webpackChunkName: "import" */ '../views/system/import.vue'),
-            },
-            {
-                path: '/menu',
-                name: 'menu',
-                meta: {
-                    title: '菜单管理',
-                    permiss: '2',
-                },
-                component: () => import(/* webpackChunkName: "menu" */ '../views/system/menu.vue'),
             },
         ],
     },
@@ -213,27 +42,216 @@ const routes: RouteRecordRaw[] = [
         },
         component: () => import(/* webpackChunkName: "403" */ '../views/403.vue'),
     },
+    {
+        path: '/:pathMatch(.*)*',// 此写法解决动态路由页面刷新的 warning 警告
+        component: () => import('../views/404.vue'),
+    },
 ];
+
+// const asyncRoutes = []
 
 const router = createRouter({
     history: createWebHashHistory(),
-    routes,
+    routes
 });
 
+
+//全局获取路径不然带路径的匹配不到
+let modules = import.meta.glob('../views/**/**/*.vue')
+// 添加一个标志来标记是否已经添加过路由
+let isRoutesAdded = false; 
+
+let routerGuardCallCount = 0;
 router.beforeEach((to, from, next) => {
-    document.title = `${to.meta.title} | vue-manage-system`;
-    const role = localStorage.getItem('ms_role_id');
-    const permiss = usePermissStore();
-    if (!role && to.path !== '/login') {
-        next('/login');
-    }  else {
-        next();
-    }
+    if (to.path === '/login' || to.path === '/403'||to.path === '/:pathMatch(.*)*') {  
+        return next();  
+    } 
+    routerGuardCallCount++;
+    console.log('trouterGuardCallCount',routerGuardCallCount)
+    document.title = `${to.meta.title} | devops平台`;
+    const usestore = useAuthStore();
+    const routestore = useallrouteoStore(); 
+    const permiss = usePermissStore()
+    
+    if (!usestore.userinfo.access_token && to.path !== '/login') {  
+        return next('/login');  
+    }  
+    
+    if(usestore.userinfo.access_token){
+        if(!isRoutesAdded) {
+        console.log('isRoutesAdded',isRoutesAdded)
+        getallroute().then(res => {
+            const dynamicRoutes = res.data.data;
+            dynamicRoutes.forEach((item: { path: any; title: any; permiss: any; route_name: any; route_component: any; }) => {
+                //routes[1].children?.push({
+                    const route = {
+                        path: item.path,
+                        meta: { title: item.title, 
+                                permiss: item.permiss },
+                        name: item.route_name,
+                        component: modules[`../views/${item.route_component}.vue`]
+                        //component: () => import(`../views/system/usermanage.vue`)
+                    }    
+                        //这样加入也可以虽然打印出来都不在Home的子路由中，但是实际好像是生效了
+                    router.addRoute('Home', route);
+                    
+            });
+            // routestore.updaterouteinfo(router.getRoutes())
+            // console.log('updatepiniaroute',routestore.routeinfo)
+                //console.log('push路由',router.getRoutes());    
+            //routes.forEach((route) => router.addRoute(route))
+            isRoutesAdded = true;
+            console.log('查看现有路由',router.getRoutes());
+            console.log('router.hasRoutedashboard',router.hasRoute('dashboard'))
+            console.log('permiss',to.path,to.meta.permiss,to.meta.title)
+            next({ ...to, replace: true });
+        });
+      } else { 
+             console.log('isPermisssAdded',permiss.isPermisssAdded)
+            if(!permiss.isPermisssAdded) {
+                console.log('permiss.accesspermiss前',permiss.accesspermiss);
+                if (permiss.accesspermiss.length == 0) {
+                    permiss.getPremission(usestore.userinfo.role_id).then((res1) => { 
+                    console.log('permiss.accesspermiss后',permiss.accesspermiss);
+                    permiss.isPermisssAdded = true
+                    next({ ...to, replace: true });
+                    })
+                }  
+            } else 
+                    {
+                    console.log('中断2次后开始比对')
+                    console.log('router.hasRoutedashboard',router.hasRoute(to.name!))
+                    if (permiss.accesspermiss.includes(to.meta.permiss)){ 
+                           
+                            console.log(' 比对通过放行', to.meta.permiss);
+                            next()
+                            return   
+                    
+                    } else {
+                           if (router.hasRoute(to.name!)){
+                            console.log(' 403403')
+                            next('/403');  
+                           } else {
+                            next('/:pathMatch(.*)*')
+                           }
+                           
+                    }
+                    }
+            }            
+    } else {    
+     next()
+    } 
 });
 
 
-// else if (to.meta.permiss && !permiss.key.includes(to.meta.permiss)) {
-//     // 如果没有权限，则进入403
-//     next('/403');
+
+
+    //获取角色权限持久化
+    // console.log('permiss.accesspermiss',permiss.accesspermiss);
+    // if (!permiss.accesspermiss) {
+    //     permiss.getPremission(usestore.userinfo.role_id).then((res1) => { 
+    //     next({ ...to, replace: true });
+    //     }).catch((error) => {  
+    //         // 处理错误情况  
+    //         console.error('获取权限失败:', error);  
+    //         next('/:pathMatch(.*)*'); // 导航到错误页面  
+    //     });  
+
+    // }
+        
+    // else {
+    //     if (!permiss.accesspermiss.includes(to.meta.permiss)){ 
+    //     console.log(' 403403');
+    //     next('/403')  
+
+    //     } else {
+    //         console.log(' 比对后通过', to.meta.permiss);
+    //         //isRoutesAdded = false;
+    //         next();  
+    //     }   
+    //} 
+
+
+// 这么写追加到根目录
+// function adderouteData(){
+//     getallroute().then(res => {
+//         const dynamicRoutes = res.data.data;
+//         dynamicRoutes.forEach((item: { path: any; title: any; permiss: any; route_name: any; route_component: any; }) => {
+//             //routes[1].children?.push({
+//                 const route = {
+//                     path: item.path,
+//                     meta: { title: item.title, 
+//                             permiss: item.permiss },
+//                     name: item.route_name,
+//                     component: modules[`../views/${item.route_component}.vue`]
+//                     //component: () => import(`../views/system/usermanage.vue`)
+//                 }    
+//                     //这样加入也可以虽然打印出来都不在Home的子路由中，但是实际好像是生效了
+//                 router.addRoute('Home', route);
+                
+//         });
+//         // routestore.updaterouteinfo(router.getRoutes())
+//         // console.log('updatepiniaroute',routestore.routeinfo)
+//             //console.log('push路由',router.getRoutes());    
+//         //routes.forEach((route) => router.addRoute(route))
+//         isRoutesAdded = true;
+//         console.log('查看现有路由',router.getRoutes());
+//         console.log('router.hasRoutedashboard',router.hasRoute('dashboard'))
+// })
 // }
+
+
+
+
+    //if(useallroleStore().menutree && useallroleStore().menutree.length == 0){
+    //     useallroleStore().getonerole(usestore.userinfo.role_id).then(()=>{
+    //         console.log('menutree11',useallroleStore().menutree)
+    //     useallroleStore().oneroleinfo.menus.forEach((p) => {
+    //         router.addRoute({
+    //             path: p.path,
+    //             meta: { title: p.title, isAsync: true, permiss: p.permiss },
+    //             name: p.route_name,
+    //             component: () => import(`../views/${p.route_component}.vue`),
+    //             children: p.children.map((item)=> ({
+    //                 path: item.path,
+    //                 component:()=>import(`../views/${p.route_component}.vue`),
+    //             })),
+    //         });
+    //     console.log(router.getRoutes(), '循环现有路由');
+    //     })
+    //     console.log(router.getRoutes(), '查看现有路由');
+    //         next({ ...to, replace: true }); // 如果已经添加过路由，则直接放行
+    //     })
+    // //} else
+    // {
+    //     next();
+    //       } 
+
+//     //获取数据，拼接数据
+// function routesData(result:any){
+//     //根据数据动态生成路由
+//     const routesdata:any = [];
+//     result.forEach((item)=>{
+//       routes.push({
+//         path: item.path,
+//         name: item.route_name,
+//         meta: {
+//             title: item.title,
+//             permiss: item.permiss,
+//         },
+//         component:()=>import(`../views/${item.route_component}.vue`)
+//         })
+//     })
+//     console.log('routesdata',routes);
+//     return routesdata;
+// }
+
+
+
+
+
+
+
+
+
 export default router;

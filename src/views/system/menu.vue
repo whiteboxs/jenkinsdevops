@@ -15,17 +15,17 @@
 							 @close="closeDr()">
 							 
 						<el-form
-							ref="ruleFormRef"
+							ref="menuFormRef"
 							:model="menuForm"
 							status-icon
 							:rules="rules"
 							label-width="120px"
 							class="demo-ruleForm"
 							>
-							<el-form-item label="菜单名称" prop="menu_name">
+							<el-form-item label="菜单名称" prop="title">
 								<el-input v-model="menuForm.menu_name" autocomplete="off" />
 							</el-form-item>
-							<el-form-item label="菜单路径" prop="menu_path">
+							<el-form-item label="菜单路径" prop="path">
 								<el-input v-model="menuForm.menu_path" autocomplete="off" />
 							</el-form-item>							
                             <el-form-item label="菜单类型" prop="menu_type">
@@ -35,20 +35,20 @@
                                     <el-radio label="button"></el-radio>
                                 </el-radio-group>
                             </el-form-item>
-                            <el-form-item label="权限" prop="permiss">
-								<el-input v-model="menuForm.permiss" autocomplete="off" />
+              <el-form-item label="菜单图标" prop="icon">
+								<el-input v-model="menuForm.icon" autocomplete="off" />
 							</el-form-item>
-                            <el-form-item label="父菜单名称" prop="parentname">
+              <el-form-item label="父菜单名称" prop="parentname">
 								<el-input v-model="menuForm.parentname" autocomplete="off" />
 							</el-form-item>	
-                            <el-form-item label="父菜单id" prop="parentid">
+              <el-form-item label="父菜单id" prop="parentid">
 								<el-input v-model="menuForm.parentid" autocomplete="off" />
 							</el-form-item>	
-                            <el-form-item label="路由组件路径" prop="route_component">
+              <el-form-item label="路由组件路径" prop="route_component">
 								<el-input v-model="menuForm.route_component" autocomplete="off" />
 							</el-form-item>	
 							<el-form-item>
-								<el-button type="primary" @click="submitForm(ruleFormRef)">提交</el-button>
+								<el-button type="primary" @click="submitForm(menuFormRef)">提交</el-button>
 								<el-button @click="resetForm()">取消</el-button>
 							</el-form-item>
 						</el-form>
@@ -66,7 +66,7 @@
             :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
             >
                 <el-table-column prop="id" label="ID" width="55" align="center" type=""></el-table-column>
-                <el-table-column  label="菜单名称" width="200">
+                <el-table-column  label="菜单名称" width="220" >
                     <template #default="scope">
                         <el-icon>
                             <component :is="scope.row.icon"></component>
@@ -77,7 +77,7 @@
                 <el-table-column prop="path" label="菜单路径"></el-table-column>
                 <el-table-column prop="menu_type" label="菜单类型"></el-table-column>
                 <el-table-column prop="permiss" label="权限"></el-table-column>
-                <el-table-column prop="icon" label="icon"></el-table-column>
+                <el-table-column prop="icon" label="菜单图标"></el-table-column>
                 <el-table-column prop="parentname" label="父菜单名称"></el-table-column>
                 <el-table-column prop="parentid" label="父菜单id"></el-table-column>
                 <el-table-column prop="route_component" label="路由组件路径"></el-table-column>
@@ -92,20 +92,20 @@
                     </template>
                 </el-table-column>
 			</el-table>
-			<userEdit ref="editref" @onupdate="allmenuStore.getallmenu()" />
+			<menuEdit ref="editref" @onupdate="allmenuStore.getallmenu()" />
 		</div>
 	</div>
 </template>
 
-<script setup lang="ts" name="usermanage">
-import { ref, reactive, onMounted, computed  } from 'vue';
-import { ElMessage, ElMessageBox, rowContextKey } from 'element-plus';
+<script setup lang="ts" name="menumanage">
+import { ref, reactive, onMounted } from 'vue';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
-import { addmenu,deluser ,updateuserstatus} from '../../http/api';
+import { addmenu,delmenu } from '../../http/api';
 import type { FormInstance, FormRules } from 'element-plus'
 import { useallmenuStore } from '../../store/menu'
 //工单编辑
-import userEdit from '../../components/menuEdit.vue';
+import menuEdit from '../../components/menuEdit.vue';
 //菜单store
 const allmenuStore = useallmenuStore()
 
@@ -133,24 +133,24 @@ const handleSearch = () => {
 // 新增用户  
 const drawer = ref(false)
 // 定义一个ref对象绑定表单
-const ruleFormRef = ref<FormInstance>()
+const menuFormRef = ref<FormInstance>()
 const menuForm = ref({
-    menu_name:'',
+  menu_name:'',
 	menu_path:'',
 	menu_type:'',
-    permiss:'',
-    icon:'',
-    parentname:'',
-    parentid:'',
-    route_component:'',
+  icon:'',
+  parentname:null,
+  parentid:null,
+  route_component:'',
 })
 
 //  取消
 const resetForm = () => {
+   menuFormRef.value?.resetFields();
    drawer.value=false
 }
 
-//验证rule
+//验证菜单
 const validmenu_name = (_: any, value: any, callback: any) => {
   if (value === '') {
     callback(new Error('菜单名不能为空'))
@@ -185,7 +185,7 @@ const validmenu_permiss = (_: any, value: any, callback: any) => {
 
 
 const rules = ref<FormRules>({
-    menu_name: [{  required: true,validator: validmenu_name, trigger: 'blur' }],
+  menu_name: [{  required: true,validator: validmenu_name, trigger: 'blur' }],
     menu_type: [{  required: true,validator: validmenu_type, trigger: 'blur' }],
 	icon:  [{  required: true,validator: validmenu_icon, trigger: 'blur' }],
     permiss: [{  required: true,validator: validmenu_permiss, trigger: 'blur' }],
@@ -196,12 +196,15 @@ const rules = ref<FormRules>({
 //提交
 const submitForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
+  if (menuForm.value.parentid === null) {
+        delete menuForm.value.parentid;
+    }
   formEl.validate(async (valid) => {
     if (valid) {
         //新增
         await addmenu(menuForm.value).then((response)=>{
             ElMessage.success(response.data.msg || '新增成功')
-			drawer.value=false
+			      drawer.value=false
 			//刷新页面
 		    allmenuStore.getallmenu()
         })
@@ -216,18 +219,17 @@ const closeDr=() =>{
   drawer.value=false
     menuForm.value={
     menu_name:'',
-	menu_path:'',
-	menu_type:'',
-    permiss:'',
+    menu_path:'',
+    menu_type:'',
     icon:'',
-    parentname:'',
-    parentid:'',
+    parentname:null,
+    parentid:null,
     route_component:'',
     }
 }
 
 // 删除操作
-const handleDelete=async (id:any)=>{
+const handleDelete=async (id:number)=>{
   
   ElMessageBox.confirm(
     '确定要删除吗?',
@@ -237,7 +239,7 @@ const handleDelete=async (id:any)=>{
       cancelButtonText: '取消',
       type: 'warning',
     }).then(async () => {
-      await deluser(id).then(()=>{
+      await delmenu(id).then(()=>{
         ElMessage.success('删除成功')
 		//刷新页面
 		allmenuStore.getallmenu()

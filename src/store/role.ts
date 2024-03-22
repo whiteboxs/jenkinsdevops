@@ -9,7 +9,7 @@ export const useallroleStore = defineStore('allrole', () => {
   const oneroleinfo = ref<any>([]);
 
 
- const menus = ref<any>([]);
+//  const menus = ref<any>([]);
 
  const menutree = ref<any[]>([]);
 // 递归方法，根据parentid组成层级结构
@@ -30,8 +30,8 @@ const generateMenuTree = (menus:any, parentId = null) => {
 
 // 在getonerole后调用生成菜单树
 const generateMenuTreeFromMenus = () => {
-  if (menus.value) {
-      menutree.value  = generateMenuTree(menus.value);
+  if (oneroleinfo.value.menus) {
+      menutree.value  = generateMenuTree(oneroleinfo.value.menus);
       //console.log('zuizong',menutree.value);
       // 这里可以将生成的菜单树赋值给一个新的变量存储或者直接使用
   }
@@ -47,7 +47,7 @@ const generateMenuTreeFromMenus = () => {
   const getonerole = async (id:number) => {
     const res = await getrole(id)
     oneroleinfo.value= res.data
-    menus.value= res.data.menus
+    //menus.value= res.data.menus
     generateMenuTreeFromMenus()
   }
 

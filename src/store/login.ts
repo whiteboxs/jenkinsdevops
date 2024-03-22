@@ -20,9 +20,9 @@ export const useAuthStore = defineStore('login', () => {
 
   const logout = () => {  
     // 在这里可以进行登出逻辑，清除token并执行其他操作
-    userinfo.value = '';
+    userinfo.value = [];
     // 同样要清除本地存储的token
-    //localStorage.removeItem('token');
+    localStorage.removeItem('userinfo');
   };
   const getuserinfo = async (logDate:any) => {
     const res = await login(logDate)

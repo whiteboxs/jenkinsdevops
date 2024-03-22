@@ -4,10 +4,10 @@ import { ref } from 'vue'
 export const useallmenuStore = defineStore('allmenu', () => {
   // 定义数据state
 
-
+  
   const allmenuinfo = ref<any>([]);
 
-
+   
   const menutree = ref<any[]>([]);
  // 递归方法，根据parentid组成层级结构
  const generateMenuTree = (menus:any, parentId = null) => {
@@ -29,7 +29,7 @@ export const useallmenuStore = defineStore('allmenu', () => {
  const generateMenuTreeFromMenus = () => {
    if (allmenuinfo.value) {
        menutree.value  = generateMenuTree(allmenuinfo.value);
-       console.log('菜单',menutree.value);
+       //console.log('菜单',menutree.value);
        // 这里可以将生成的菜单树赋值给一个新的变量存储或者直接使用
    }
  };
