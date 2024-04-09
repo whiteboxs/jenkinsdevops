@@ -23,8 +23,9 @@ const permiss = usePermissStore();
 app.directive('permiss', {
     mounted(el, binding) {
         console.log('binding',binding)
-        if (!permiss.accesspermiss.includes(String(binding.value))) {
-            el['hidden'] = true;
+        if (!permiss.button_accesspermiss.includes(binding.value)) {
+            //el['hidden'] = true;
+            el.remove();
         }
     },
 });

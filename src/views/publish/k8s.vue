@@ -133,14 +133,18 @@ import pushlist_branch from '../../components/pushlist_branch.vue';
 //构建test/dev
 
 
-// 修改
+// 修改测试环境
 const pushlist_branchref = ref<{ query_branch: (row: any) => void } | null>(null)
 const handlepushlisttest = async (row:any) => {
   await brancheslist(row.id);
   pushlist_branchref.value?.query_branch(row)
 }
 
-
+// 修改测试开发
+const handlepushlistdev = async (row:any) => {
+  await brancheslist(row.id);
+  pushlist_branchref.value?.query_branch(row)
+}
 
   //  分支
   const branches = ref([])

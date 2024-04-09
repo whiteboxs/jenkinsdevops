@@ -10,7 +10,7 @@
             router
             :default-active="$route.path"
         >
-            <template v-for="item in useallroleStore().menutree">
+            <template v-for="item in role.menutree">
                 <template v-if="item.children">
                     <el-sub-menu  :index="item.path|| ''" :key="item.path" >
                         <template #title>
@@ -68,10 +68,7 @@ import { useAuthStore } from '../store/login.ts';
 
 
 
-onMounted(() => {
-    useallroleStore().getonerole(useAuthStore().userinfo.role_id)
-
-})
+const role = useallroleStore();
 
 //default-active="$route.path" 刷新保持在当前位置，element带的不然就需要使用sessionstore
 

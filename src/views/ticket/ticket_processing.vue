@@ -49,12 +49,13 @@
   </template>
   
   
-  <script setup >
+  <script setup lang="ts">
   // import { Search, UploadFilled } from '@/element-plus/icons-vue'
   import { onMounted } from 'vue';
-  import { useassigneestore } from '@/store/assignee.ts'
-  import { useenvironmentstore } from '@/store/environment.ts'
-  import { usemyticket_processing } from '@/store/ticket_processing.ts'
+  import { useassigneestore } from '../../store/assignee.ts'
+  import { useenvironmentstore } from '../../store/environment.ts'
+  import { usemyticket_processing } from '../../store/ticket_processing.ts'
+  import { createticket } from '../../http/api'
   // onMounted(() => {
   // const usestore =useAuthStore();
   //    const userid= usestore.userid;
@@ -71,7 +72,7 @@
   onMounted(() => {
       assigneestore.getassignee(),
       environmentstore.getenvironment(),
-      myticket_processing.getmyticket_processing()
+      myticket_processing.getmyticket_processing(queryform)
     })
     
   
@@ -115,7 +116,7 @@
       addRuleForm.value.resetFields()
       // 关闭窗口和刷新列表
       centerDialogVisible.value = false;
-      myticket_processing.getmyticket_processing()
+      myticket_processing.getmyticket_processing(queryform)
     } catch (err) {
       console.log("表单验证出错：" + err);
     }
@@ -196,10 +197,10 @@
   
   
   
-  const editref = ref(null)
-  const onEdit = (row) => {
+  const editref = ref<{ open: (row: any) => void } | null>(null)
+  const onEdit = (row:any) => {
     console.log('onedit', onEdit)
-    editref.value.open(row)
+    editref.value?.open(row)
   }
   
   //查询
@@ -214,13 +215,13 @@
 
 
   //表格里的附件和图片显示判定
-const isImage = (url) => {
+const isImage = (url:any) => {
   const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp'];
   const ext = url.substring(url.lastIndexOf('.')).toLowerCase();
   return imageExtensions.includes(ext);
 }
 
-const getFileNameFromUrl = (url) => {
+const getFileNameFromUrl = (url:any) => {
   const fileName = url.split('/').pop();
   const extension = fileName.split('.').pop();
   const truncatedName = fileName.substring(0, 5);
@@ -232,7 +233,7 @@ const getFileNameFromUrl = (url) => {
 const dialogVisible = ref(false);
 const dialogImageUrl = ref('');
 
-const showDialog = (url) => {
+const showDialog = (url:any) => {
   dialogVisible.value = true;
   dialogImageUrl.value = url;
   window.open(url, 'ImageWindow', 'width=1024,height=768');
@@ -244,7 +245,7 @@ const showDialog = (url) => {
   
   const fileList = ref([])
   
-  const handleChange = (file, files) => {
+  const handleChange = (file:any, files:any) => {
     // file是当前上传的文件，files是当前所有的文件，
     // 不懂得话可以打印一下这两个数据 就能明白
   
@@ -271,14 +272,14 @@ const showDialog = (url) => {
   
   
   
-  const handleSizeChange =(pageSize) => {
+  const handleSizeChange =(pageSize:any) => {
     queryform.value.pagenum =1
     queryform.value.pagesize = pageSize
     myticket_processing.getmyticket_processing(queryform.value);
   }
   
   // 处理当前页码改变事件
-  const handleCurrentChange =  (pageNum) => {
+  const handleCurrentChange =  (pageNum:any) => {
    // console.log('Change', pageNum
     queryform.value.pagenum = pageNum;
     console.log('上传的参数',queryform.value)

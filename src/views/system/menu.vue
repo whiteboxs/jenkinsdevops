@@ -22,27 +22,33 @@
 							label-width="120px"
 							class="demo-ruleForm"
 							>
-							<el-form-item label="菜单名称" prop="title">
+							<el-form-item label="菜单名称" prop="menu_name">
 								<el-input v-model="menuForm.menu_name" autocomplete="off" />
 							</el-form-item>
 							<el-form-item label="菜单路径" prop="path">
 								<el-input v-model="menuForm.menu_path" autocomplete="off" />
 							</el-form-item>							
-                            <el-form-item label="菜单类型" prop="menu_type">
-                                <el-radio-group v-model="menuForm.menu_type">
-                                    <el-radio label="directory"></el-radio>
-                                    <el-radio label="menu"></el-radio>
-                                    <el-radio label="button"></el-radio>
-                                </el-radio-group>
-                            </el-form-item>
+                <el-form-item label="菜单类型" prop="menu_type">
+                    <el-radio-group v-model="menuForm.menu_type">
+                        <el-radio label="directory"></el-radio>
+                        <el-radio label="menu"></el-radio>
+                        <el-radio label="button"></el-radio>
+                </el-radio-group>
+              </el-form-item>
               <el-form-item label="菜单图标" prop="icon">
 								<el-input v-model="menuForm.icon" autocomplete="off" />
 							</el-form-item>
+              <el-form-item label="显示顺序" prop="menu_order">
+                  <el-input v-model="menuForm.menu_order" autocomplete="off" />
+              </el-form-item>
               <el-form-item label="父菜单名称" prop="parentname">
 								<el-input v-model="menuForm.parentname" autocomplete="off" />
 							</el-form-item>	
               <el-form-item label="父菜单id" prop="parentid">
 								<el-input v-model="menuForm.parentid" autocomplete="off" />
+							</el-form-item>	
+              <el-form-item label="路由名称" prop="route_name">
+								<el-input v-model="menuForm.route_name" autocomplete="off" />
 							</el-form-item>	
               <el-form-item label="路由组件路径" prop="route_component">
 								<el-input v-model="menuForm.route_component" autocomplete="off" />
@@ -64,8 +70,10 @@
             default-expand-all
             highlight-current-row
             :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+            :cell-style="cellStyle"
+            fit
             >
-                <el-table-column prop="id" label="ID" width="55" align="center" type=""></el-table-column>
+                <el-table-column prop="id" label="ID/权限" width="80" align="center" type=""></el-table-column>
                 <el-table-column  label="菜单名称" width="220" >
                     <template #default="scope">
                         <el-icon>
@@ -76,10 +84,11 @@
                 </el-table-column>
                 <el-table-column prop="path" label="菜单路径"></el-table-column>
                 <el-table-column prop="menu_type" label="菜单类型"></el-table-column>
-                <el-table-column prop="permiss" label="权限"></el-table-column>
                 <el-table-column prop="icon" label="菜单图标"></el-table-column>
+                <el-table-column prop="menu_order" label="显示顺序"></el-table-column>
                 <el-table-column prop="parentname" label="父菜单名称"></el-table-column>
                 <el-table-column prop="parentid" label="父菜单id"></el-table-column>
+                <el-table-column prop="route_name" label="路由名称"></el-table-column>
                 <el-table-column prop="route_component" label="路由组件路径"></el-table-column>
                 <el-table-column label="操作" width="220" align="center">
                     <template #default="scope">
@@ -104,6 +113,9 @@ import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
 import { addmenu,delmenu } from '../../http/api';
 import type { FormInstance, FormRules } from 'element-plus'
 import { useallmenuStore } from '../../store/menu'
+import { useAuthStore } from '../../store/login.ts';
+//获取role_id
+const usestore =useAuthStore();
 //工单编辑
 import menuEdit from '../../components/menuEdit.vue';
 //菜单store
@@ -135,13 +147,16 @@ const drawer = ref(false)
 // 定义一个ref对象绑定表单
 const menuFormRef = ref<FormInstance>()
 const menuForm = ref({
+  role_id:usestore.userinfo.role_id,
   menu_name:'',
 	menu_path:'',
 	menu_type:'',
   icon:'',
   parentname:null,
-  parentid:null,
+  parentid:undefined,
   route_component:'',
+  route_name:'',
+  menu_order:'',
 })
 
 //  取消
@@ -153,7 +168,7 @@ const resetForm = () => {
 //验证菜单
 const validmenu_name = (_: any, value: any, callback: any) => {
   if (value === '') {
-    callback(new Error('菜单名不能为空'))
+    callback(new Error('菜单名称不能为空'))
   } else {
     callback()
   }
@@ -175,20 +190,38 @@ const validmenu_icon = (_: any, value: any, callback: any) => {
   }
 }
 
-const validmenu_permiss = (_: any, value: any, callback: any) => {
+const validmenu_order = (_: any, value: any, callback: any) => {
   if (value === '') {
-    callback(new Error('菜单权限不能为空'))
+    callback(new Error('显示顺序权限不能为空'))
   } else {
     callback()
   }
 }
 
+// const validroute_name = (_: any, value: any, callback: any) => {
+//   if (value === '') {
+//     callback(new Error('路由名称名不能为空'))
+//   } else {
+//     callback()
+//   }
+// }
+
+// const validroute_component = (_: any, value: any, callback: any) => {
+//   if (value === '') {
+//     callback(new Error('路由组件路径名不能为空'))
+//   } else {
+//     callback()
+//   }
+// }
+
 
 const rules = ref<FormRules>({
   menu_name: [{  required: true,validator: validmenu_name, trigger: 'blur' }],
-    menu_type: [{  required: true,validator: validmenu_type, trigger: 'blur' }],
+  menu_type: [{  required: true,validator: validmenu_type, trigger: 'blur' }],
 	icon:  [{  required: true,validator: validmenu_icon, trigger: 'blur' }],
-    permiss: [{  required: true,validator: validmenu_permiss, trigger: 'blur' }],
+  menu_order: [{  required: true,validator: validmenu_order, trigger: 'blur' }],
+  // route_name: [{  required: true,validator: validroute_name, trigger: 'blur' }],
+  // route_component: [{  required: true,validator: validroute_component, trigger: 'blur' }],
 	
 })
 
@@ -196,13 +229,14 @@ const rules = ref<FormRules>({
 //提交
 const submitForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
-  if (menuForm.value.parentid === null) {
+  if (menuForm.value.parentid === undefined) {
         delete menuForm.value.parentid;
     }
   formEl.validate(async (valid) => {
     if (valid) {
         //新增
         await addmenu(menuForm.value).then((response)=>{
+          console.log('新建menu',menuForm.value)
             ElMessage.success(response.data.msg || '新增成功')
 			      drawer.value=false
 			//刷新页面
@@ -218,13 +252,16 @@ const submitForm = (formEl: FormInstance | undefined) => {
 const closeDr=() =>{
   drawer.value=false
     menuForm.value={
+    role_id:usestore.userinfo.role_id,
     menu_name:'',
     menu_path:'',
     menu_type:'',
     icon:'',
     parentname:null,
-    parentid:null,
+    parentid:undefined,
     route_component:'',
+    route_name:'',
+    menu_order:'',
     }
 }
 
@@ -263,6 +300,44 @@ const handleEdit = (row:any) => {
     editref.value?.open(row)
 	console.log(editref.value)
   }
+
+
+
+  const cellStyle = ({ row, column, rowIndex, columnIndex }: { row: any, column: any, rowIndex: any, columnIndex: any }) => {
+    // 状态列字体颜色
+    // columnIndex 列下标
+    // rowIndex 行下标
+    // row 行
+    // column 列
+    // if (columnIndex === 3) {
+    //     return {
+    //     fontWeight: 'bold'
+    //     };
+    // }  
+    if(row.menu_type == 'directory' ) {
+      return { color: "#1CD66C",fontWeight: 'bold' }
+    } 
+    if(row.menu_type == 'menu' ) {
+      return { color: "#189EFF" }
+    } 
+    if(row.menu_type == 'button' ) {
+      return { color: "#e6a23c" }
+    } 
+    // if (columnIndex === 0) {
+    //     return {
+    //     color: "#1CD66C", 
+    //     fontWeight: 'bold'
+    //     };
+    // } 
+    // if (columnIndex === 1) {
+    //     return {
+    //     color: "#189EFF", 
+    //     };
+    // }
+}
+
+
+
 </script>
 
 <style scoped>

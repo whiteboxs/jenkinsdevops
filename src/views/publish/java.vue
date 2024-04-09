@@ -3,8 +3,8 @@
 		<div class="container">
 			<div class="handle-box">
 				<el-input v-model="query.name" placeholder="项目名" class="handle-input mr10"></el-input>
-				<el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
-				<el-button type="primary" :icon="Plus" @click="drawer = true" >新增JOB</el-button>
+				<el-button type="primary" :icon="Search" @click="handleSearch" v-permiss="47" >搜索</el-button>
+				<el-button type="primary" :icon="Plus" @click="drawer = true" v-permiss="48" >新增JOB</el-button>
 					<el-drawer v-model="drawer" 
 					      title="I am the title" 
 							 :with-header="false"
@@ -47,22 +47,22 @@
         </el-table-column>
 				<el-table-column label="操作" width="650" align="center">
 					<template #default="scope">
-            <el-button text :icon="ArrowRight" type="warning" @click="handlepushlisttest(scope.row)" >
+            <el-button text :icon="ArrowRight" type="warning" @click="handlepushlistgray(scope.row)" v-permiss="49" >
 							灰度构建
 						</el-button>
-            <el-button text :icon="ArrowRight" type="warning" @click="handlepushlistdev(scope.row.job_name)" >
+            <el-button text :icon="ArrowRight" type="warning" @click="handlepushlistprod(scope.row.job_name)" v-permiss="50">
 							生产构建
 						</el-button>
-            <el-button text :icon="ArrowLeftBold" type="danger" @click="rollback(scope.row)">
+            <el-button text :icon="ArrowLeftBold" type="danger" @click="rollback(scope.row)" v-permiss="51">
 							回滚
 						</el-button>
-            <el-button text :icon="View" type="success" @click="opennode(scope.row)" >
+            <el-button text :icon="View" type="success" @click="opennode(scope.row)"  v-permiss="57">
 							节点管理
 						</el-button>
-						<el-button text :icon="Edit" type="primary"  @click="handleEdit(scope.row)">
+						<el-button text :icon="Edit" type="primary"  @click="handleEdit(scope.row)" v-permiss="55">
 							编辑
 						</el-button>
-						<el-button text :icon="Delete" type="danger" @click="handleDelete(scope.row.id)" >
+						<el-button text :icon="Delete" type="danger" @click="handleDelete(scope.row.id)"  v-permiss="56">
 							删除
 						</el-button>
 					</template>
@@ -95,13 +95,14 @@ import { addk8sjob, deljob,branch } from '../../http/api';
 import type { FormInstance, FormRules } from 'element-plus'
 import worknode from '../../components/worknode.vue';
 import { service_status} from '../../http/api'
-
+//导入构建模块
+import pushlist_branch from '../../components/pushlist_branch.vue';
 
 //k8s_jobstore
 const  k8sjobStore = useallk8sjobStore()
 
 onMounted(() => {
-    k8sjobStore.getallk8sjob()	
+    k8sjobStore.getallk8sjob()
 })
 
 
@@ -121,6 +122,7 @@ const handleSearch = () => {
 
 
 
+
 // 新增JOB
 const drawer = ref(false)
 // 定义一个ref对象绑定表单
@@ -136,13 +138,25 @@ const jobForm = ref({
     lastprod_build_id:'',
 })
 
-import pushlist_branch from '../../components/pushlist_branch.vue';
-//构建test/dev
 
 
-// 修改
+
+// 修改灰度
 const pushlist_branchref = ref<{ query_branch: (row: any) => void } | null>(null)
-const handlepushlisttest = async (row:any) => {
+const handlepushlistgray = async (row:any) => {
+  await brancheslist(row.id);
+  pushlist_branchref.value?.query_branch(row)
+}
+
+//修改生产
+const handlepushlistprod = async (row:any) => {
+  await brancheslist(row.id);
+  pushlist_branchref.value?.query_branch(row)
+}
+
+
+//回滚
+const rollback = async (row:any) => {
   await brancheslist(row.id);
   pushlist_branchref.value?.query_branch(row)
 }

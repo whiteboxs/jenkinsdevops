@@ -63,14 +63,12 @@ import { ElMessage, ElMessageBox } from 'element-plus';
 
 //角色store
 const allroleStore = useallroleStore()
-//用户store
-const  alluserStore = usealluserStore()
 
 //登录store
 const usestore =useAuthStore()
 onMounted(() => {
-    alluserStore.getalluser()
-	allroleStore.getallrole()
+
+	  allroleStore.getallrole()
 })
 // 编辑用户  
 const drawer = ref(false)
@@ -184,7 +182,7 @@ const open = (row:any) => {
   usereditForm.value.role_id = row.role_id
   usereditForm.value.userPic = row.userPic !== null ? baseURL_dev+'/my/view/'+row.userPic : baseURL_dev+"/my/view/default.png"
   drawer.value = true
-  console	.log('没提交前的', usereditForm.value)
+  console.log('没提交前的', usereditForm.value)
 }
 defineExpose({
   open

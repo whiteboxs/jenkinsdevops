@@ -72,9 +72,15 @@ export const login = (data:object) => {
     return http.post('/api/user/login', data);
   };
 
+//修改密码
+export const changepasswd = (data:object) => { 
+  return http.post('/api/changepasswd', data);
+};
+  
+
 //获取所有用户
-export const getallusers = () => {
-  return http.get('/api/all/users');
+export const getallusers = (data:any) => {
+  return http.get('/api/all/users',{params:data});
 };
 
 // 创建用户
@@ -151,6 +157,7 @@ export const getrole = (id:number) => {
 export const getalltickets = (data:object) => {
   return http.get('/api/all/tickets',{params:data});
 };
+
 // 获取登录用户的工单
 export const getusertickets = (data:object) => {
   return http.get('/api/user_tickets',{params:data});
@@ -221,18 +228,14 @@ export const create_ticket_processing_feedbacks = (data:object) => {
 
 
 
-//附件
-export const upload = (file:File) => {
-  const formData = new FormData();
-  formData.append("file", file);
-  console.log(formData);
+//附件上传
+export const upload = (id:number,data:any) => {
   const formDataConfig = {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
   };
-
-  return http.post('/my/upload', formData, formDataConfig);
+  return http.post(`/my/upload/${id}`, data, formDataConfig);
 };
 
 
@@ -353,3 +356,37 @@ export const nodestop = (data:object) => {
   };
   return http.post('/api/node_stop',data,formDataConfig);
 };
+
+//aliyun-super
+export const node_list = () => {
+  return http.get(`/api/jump_node_list`);
+};
+
+// 快速创建实例
+export const quick_ecs = (data:object) => {
+  const formDataConfig = {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
+  return http.post('/api/aliyun/quick_ecs',data,formDataConfig);
+};
+// 标准创建实例
+export const normal_ecs = (data:object) => {
+  const formDataConfig = {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
+  return http.post('/api/aliyun/normal_ecs',data,formDataConfig);
+};
+
+//获取所有ecs列表
+export const getall_ecs = (data:object) => {
+  return http.get('/api/aliyun/all_ecs',{ params: data });
+};
+//获取ecsdisk
+export const getecsdisk = (data:object) => {
+  return http.get('/api/aliyun/ecsdisk',{ params: data });
+};
+

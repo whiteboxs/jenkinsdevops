@@ -20,21 +20,21 @@
 					<span class="btn-bell-badge" v-if="message"></span>
 				</div>
 				<!-- 用户头像 -->
-				<el-avatar class="user-avator" :size="30" :src="imgurl" />
+				<el-avatar class="user-avator" :size="30" :src="baseURL_dev+'/my/view/'+user.userinfo.userPic ||'../public/default.png'" />
 				<!-- 用户名下拉菜单 -->
 				<el-dropdown class="user-name" trigger="click" >
 					<span class="el-dropdown-link">
-						{{ usestore.userinfo.username }}
+						{{ user.userinfo.username }}
 						<el-icon class="el-icon--right">
 							<arrow-down />
 						</el-icon>
 					</span>
 					<template #dropdown>
 						<el-dropdown-menu>
-							<a href="https://github.com/lin-xin/vue-manage-system" target="_blank">
+							<a href="https://github.com/whiteboxs/jenkinsdevops" target="_blank">
 								<el-dropdown-item>项目仓库</el-dropdown-item>
 							</a>
-							<el-dropdown-item @click="user">个人中心</el-dropdown-item>
+							<el-dropdown-item @click="usercenter">个人中心</el-dropdown-item>
 							<el-dropdown-item @click="handleLogout">退出登录</el-dropdown-item>
 						</el-dropdown-menu>
 					</template>
@@ -47,9 +47,10 @@
 import { onMounted } from 'vue';
 import { useSidebarStore } from '../store/sidebar';
 import { useRouter } from 'vue-router';
-import imgurl from '../assets/img/img.jpg';
 import { useAuthStore } from '../store/login.ts';
 import {usePermissStore} from '../store/permiss'
+import { useallroleStore } from '../store/role'
+import {baseURL_dev} from '../config/baseURL'
 
 const message: number = 2;
 
@@ -67,14 +68,20 @@ onMounted(() => {
 
 // 用户名下拉菜单选择事件
 const router = useRouter();
-const usestore =useAuthStore() 
+const user =useAuthStore() 
+const permiss =usePermissStore()
+const role = useallroleStore()
 const handleLogout = () => {
-usestore.logout()
+user.logout()
+permiss.cleanaccesspermiss()
+location.reload();
+//role.cleanoneroleinfo()
 router.push('/login');
+
 };
 
-const user = () => {
-	router.push('/user');
+const usercenter = () => {
+	router.push('/usercenter');
 }
 
 </script>

@@ -45,19 +45,20 @@
     </el-dialog>
   </template>
   
-  <script setup>
+  <script setup lang="ts" >
   
   
   
   
   // TODO: 编辑
   import { getenvironments, getassignees, create_ticket_processing_feedbacks } from '../http/api.ts'
-  import { ref } from 'vue'
+  import { ref,reactive,onMounted } from 'vue'
   // 弹框开关
   const DialogVisible = ref(false)
   //弹窗里获取父表单里对应列的数据
   const form = ref({
     title: '',
+    ticket_id:'',
     environment_id: '',
     description: '',
     assignee_id: '',
@@ -94,7 +95,7 @@
     })   
   
   //环境接口
-  const envdata = ref([])
+  const envdata = ref<any>([])
   const envlist = async () => {
     const res = await getenvironments()
     envdata.value = res.data.data
@@ -102,7 +103,7 @@
   onMounted(() => envlist())
   
   // 经办人接口
-  const assigneedata = ref([])
+  const assigneedata = ref<any>([])
   const assigneelist = async () => {
     const res = await getassignees()
     assigneedata.value = res.data.data
@@ -122,7 +123,7 @@
     label: "已完成",
   }]
   
-  const open = (row) => {
+  const open = (row:any) => {
     console.log('当前编辑行', row)
     form.value.title = row.title
     form.value.ticket_id = row.ticket_id

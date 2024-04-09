@@ -4,7 +4,7 @@
 			<el-col :span="8">
 				<el-card shadow="hover" class="mgb20" style="height: 252px">
 					<div class="user-info">
-						<el-avatar :size="120" :src="imgurl" />
+						<el-avatar :size="120" :src="baseURL_dev+'/my/view/'+user.userinfo.userPic ||'../public/default.png'" />
 						<div class="user-info-cont">
 							<div class="user-info-name">{{ name }}</div>
 							<div>{{ role }}</div>
@@ -119,13 +119,14 @@
 <script setup lang="ts" name="dashboard">
 import Schart from 'vue-schart';
 import { reactive } from 'vue';
-import imgurl from '../assets/img/img.jpg';
 import { useAuthStore } from '../store/login.ts';
-const usestore =useAuthStore();
+import {baseURL_dev} from '../config/baseURL'
 
-const name = usestore.userinfo.username;
-const role: string = usestore.userinfo.role_name;
-const  login_time: string = usestore.userinfo.update_time;
+const user =useAuthStore();
+
+const name = user.userinfo.username;
+const role: string = user.userinfo.role_name;
+const  login_time: string = user.userinfo.update_time;
 const options = {
 	type: 'bar',
 	title: {

@@ -123,8 +123,8 @@ const props = defineProps({
         let currentWaitTime = 0;
 
         while (currentWaitTime < maxWaitTime) {
-          // 等待5秒
-          await new Promise(resolve => setTimeout(resolve, 5000));
+          // 等待3秒
+          await new Promise(resolve => setTimeout(resolve, 3000));
 
           //每次循环前关闭上一次的提示
           ElMessageBox.close();
@@ -144,7 +144,7 @@ const props = defineProps({
             ElMessage.success(buildResult.data.msg)
             console.log('构建中，请等待！', buildResult);
             }
-          currentWaitTime += 5000;
+          currentWaitTime += 3000;
         }
 
     

@@ -58,7 +58,7 @@
 					<el-tree
 					    title="权限配置"
 						ref="tree"
-						:data="useallroleStore().menutree"
+						:data="useallmenuStore().menutree"
 						node-key="id"
 						default-expand-all
 						show-checkbox
@@ -84,11 +84,11 @@ import { ref,onMounted,nextTick,reactive} from 'vue';
 import { useallroleStore } from '../../store/role'
 import { usePermissStore } from '../../store/permiss';
 import { ElTree } from 'element-plus';
-import { updaterolemenupermiss,addrole,delrole} from '../../http/api'
+import { updaterolemenupermiss,addrole,delrole, getallmenus} from '../../http/api'
 import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage,ElMessageBox } from 'element-plus';
-
+import { useallmenuStore } from '../../store/menu'
 
 const query = reactive({
 	role_name: '',
@@ -205,9 +205,11 @@ const dialogVisible = ref(false)
 
 const allroleStore = useallroleStore()
 
+
+// allrole里的菜单用于页面显示了。里面没有botton信息，这里用allmenu函数来让权限分配显示所有信息
 onMounted(() => {
-    allroleStore.getallrole()
-	
+	allroleStore.getallrole()
+	useallmenuStore().getallmenu()
 })
 
 
@@ -220,14 +222,13 @@ const defaultProps = {
 const permiss = usePermissStore();
 const roleid = ref<number>(0);
 const handleEdit = async (row:any) => {
-	//在路由守卫中get过了这里取消
 	roleid.value = row.id;	
     await permiss.getrolePremission(row.id)
 	dialogVisible.value = true
 	// 获取角色权限
 	await nextTick(() => {
     const nodes:any = [] 
-	console.log('rolemenu',permiss.accesspermiss)
+	console.log('rolemenu',permiss.rolepermiss)
     permiss.rolepermiss.forEach((item) => {
 	  //使用getNode方法获取节点
       const node = tree.value?.getNode(item)

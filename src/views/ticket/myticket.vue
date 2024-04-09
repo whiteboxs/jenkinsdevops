@@ -10,7 +10,7 @@
           +新增工单
         </el-button>
       </el-row>
-      <el-dialog v-model="centerDialogVisible" title="创建工单" width="50%" align-center :before-close="handleClose">
+      <el-dialog v-model="centerDialogVisible" title="创建工单" width="50%"  :before-close="handleClose">
         <el-form :model="form" label-width="80px" :rules="rules" ref="addRuleForm">
           <el-form-item label="标题" prop="title"><el-input v-model="form.title" />
           </el-form-item>
@@ -81,13 +81,13 @@
 </template>
   
   
-  <script setup >
+  <script setup lang="ts">
   // import { Search, UploadFilled } from '@/element-plus/icons-vue'
   import { onMounted } from 'vue';
-  import { delticket, createticket } from '@/http/api.ts'
-  import { useassigneestore } from '@/store/assignee.ts'
-  import { useenvironmentstore } from '@/store/environment.ts'
-  import { usemyticketstore } from '@/store/userticket.ts'
+  import { delticket, createticket } from '../../http/api.ts'
+  import { useassigneestore } from '../../store/assignee.ts'
+  import { useenvironmentstore } from '../../store/environment.ts'
+  import { usemyticketstore } from '../../store/userticket.ts'
   import { Plus } from '@element-plus/icons-vue'
   // onMounted(() => {
   // const usestore =useAuthStore();
@@ -105,7 +105,8 @@
   onMounted(() => {
     assigneestore.getassignee(),
       environmentstore.getenvironment(),
-      myticketstore.getmytickets()
+      myticketstore.getmytickets(queryform)
+
   })
   
   
@@ -149,7 +150,7 @@
       addRuleForm.value.resetFields()
       // 关闭窗口和刷新列表
       centerDialogVisible.value = false;
-      myticketstore.getmytickets();
+      myticketstore.getmytickets(queryform);
     } catch (err) {
       console.log("表单验证出错：" + err);
     }
@@ -224,10 +225,10 @@
   
   
   //工单删除
-  const ticketDelete = async (id) => {
+  const ticketDelete = async (id:any) => {
     console.log('ticketDelete', id)
     await delticket(id)
-    myticketstore.getmytickets()
+    myticketstore.getmytickets(queryform)
   
   }
   
@@ -236,9 +237,9 @@
   
   
   
-  const editref = ref(null)
-  const onEdit = (row) => {
-    editref.value.open(row)
+  const editref = ref<{ open: (row: any) => void } | null>(null)
+  const onEdit = (row:any) => {
+    editref.value?.open(row)
   }
   
   //查询
@@ -251,13 +252,13 @@
   
   
   //表格里的附件和图片显示判定
-  const isImage = (url) => {
+  const isImage = (url:any) => {
     const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp'];
     const ext = url.substring(url.lastIndexOf('.')).toLowerCase();
     return imageExtensions.includes(ext);
   }
   
-  const getFileNameFromUrl = (url) => {
+  const getFileNameFromUrl = (url:any) => {
     const fileName = url.split('/').pop();
     const extension = fileName.split('.').pop();
     const truncatedName = fileName.substring(0, 5);
@@ -269,7 +270,7 @@
   const dialogVisible = ref(false);
   const dialogImageUrl = ref('');
   
-  const showDialog = (url) => {
+  const showDialog = (url:any) => {
     dialogVisible.value = true;
     dialogImageUrl.value = url;
     window.open(url, 'ImageWindow', 'width=1024,height=768');
@@ -279,7 +280,7 @@
   
   const fileList = ref([])
   
-  const handleChange = (file, files) => {
+  const handleChange = (file:any, files:any) => {
     // file是当前上传的文件，files是当前所有的文件，
     // 不懂得话可以打印一下这两个数据 就能明白
   
@@ -306,14 +307,14 @@
   
   
   
-  const handleSizeChange = (pageSize) => {
+  const handleSizeChange = (pageSize:any) => {
     queryform.value.pagenum = 1
     queryform.value.pagesize = pageSize
     myticketstore.getmytickets(queryform.value);
   }
   
   // 处理当前页码改变事件
-  const handleCurrentChange = (pageNum) => {
+  const handleCurrentChange = (pageNum:any) => {
     // console.log('Change', pageNum
     queryform.value.pagenum = pageNum;
     console.log('上传的参数', queryform.value)

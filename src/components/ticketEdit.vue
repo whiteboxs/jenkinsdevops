@@ -33,11 +33,11 @@
   </el-dialog>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 // TODO: 编辑
 import { getenvironments, getassignees, putticket } from '../http/api.ts'
-import { ref } from 'vue'
+import { ref,reactive,onMounted } from 'vue'
 // 弹框开关
 const DialogVisible = ref(false)
 //弹窗里获取父表单里对应列的数据
@@ -46,8 +46,8 @@ const form = ref({
   environment_id: '',
   description: '',
   assignee_id: '',
-  ticket_id: '',
-  status:''
+  ticket_id: 0,
+  status:'',
 })
 
 const rules = reactive ({
@@ -73,7 +73,7 @@ const rules = reactive ({
   })   
 
 //环境接口
-const envdata = ref([])
+const envdata = ref<any>([])
 const envlist = async () => {
   const res = await getenvironments()
   envdata.value = res.data.data
@@ -84,7 +84,7 @@ const envlist = async () => {
 onMounted(() => envlist())
 
 // 经办人接口
-const assigneedata = ref([])
+const assigneedata = ref<any>([])
 const assigneelist = async () => {
   const res = await getassignees()
   assigneedata.value = res.data.data
@@ -92,7 +92,7 @@ const assigneelist = async () => {
 
 onMounted(() => assigneelist())
 
-const open = (row) => {
+const open = (row:any) => {
   console.log('当前编辑行', row)
   form.value.title = row.title
   form.value.ticket_id = row.ticket_id
@@ -118,8 +118,8 @@ const onupdate = async () => {
       return; // 验证不通过时，停止继续执行下面的代码
     } 
   // 0. 转换经办人和环境的名称为 ID
-  const environmentId = envdata.value.find(item => item.name === form.value.environment_id)?.id;
-  const assigneeId = assigneedata.value.find(item => item.name === form.value.assignee_id)?.id;
+  const environmentId = envdata.value.find((item: { name: string; }) => item.name === form.value.environment_id)?.id;
+  const assigneeId = assigneedata.value.find((item: { name: string; }) => item.name === form.value.assignee_id)?.id;
 
   if (!environmentId || !assigneeId) {
     console.error('无效的环境或经办人名称');

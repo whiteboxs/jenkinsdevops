@@ -6,7 +6,7 @@
 					<el-option key="1" label="广东省" value="广东省"></el-option>
 					<el-option key="2" label="湖南省" value="湖南省"></el-option>
 				</el-select> -->
-				<el-input v-model="query.name" placeholder="用户名" class="handle-input mr10"></el-input>
+				<el-input v-model="query.username" placeholder="用户名" class="handle-input mr10"></el-input>
 				<el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
 				<el-button type="primary" :icon="Plus" @click="drawer = true" >新增</el-button>
 					<el-drawer v-model="drawer" 
@@ -101,14 +101,13 @@
 
 <script setup lang="ts" name="usermanage">
 import {baseURL_dev} from '../../config/baseURL'
-import { ref, reactive, onMounted, computed  } from 'vue';
+import { ref, onMounted, computed  } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
 import { usealluserStore } from '../../store/user.ts';
-import { updateuserinfo, adduser,deluser ,updateuserstatus,upload} from '../../http/api';
+import { adduser,deluser ,updateuserstatus } from '../../http/api';
 import type { FormInstance, FormRules } from 'element-plus'
 import { useallroleStore } from '../../store/role'
-import type { UploadProps } from 'element-plus'
 import {useAuthStore} from '../../store/login.ts'
 //工单编辑
 import userEdit from '../../components/userEdit.vue';
@@ -120,7 +119,7 @@ const  alluserStore = usealluserStore()
 //登录store
 const usestore =useAuthStore()
 onMounted(() => {
-    alluserStore.getalluser()
+    alluserStore.getalluser(query.value)
 	allroleStore.getallrole()
 
 	
@@ -130,17 +129,14 @@ onMounted(() => {
 
 
 
-const query = reactive({
-	department: '',
-	name: '',
-	pageIndex: 1,
-	pageSize: 10
+const query = ref<{username: string;}>({
+	username: '',
 });
 
 
 // 查询操作
 const handleSearch = () => {
-	//alluserStore.alluserinfo();
+	alluserStore.getalluser(query.value)
 };
 
 
@@ -213,7 +209,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
             ElMessage.success('新增成功')
 			drawer.value=false
 			//刷新页面
-		    alluserStore.getalluser()
+		    alluserStore.getalluser(query.value)
         })
       } else {
       return false
@@ -246,7 +242,7 @@ const handleDelete=async (id:any)=>{
       await deluser(id).then(()=>{
         ElMessage.success('删除成功')
 		//刷新页面
-		alluserStore.getalluser()
+		alluserStore.getalluser(query.value)
       })
     })
     .catch(() => {

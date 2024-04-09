@@ -147,7 +147,7 @@ const permiss = usePermissStore();
 const checkedKeys = ref<string[]>([]);
 const getPremission = () => {
 	// 请求接口返回权限
-	checkedKeys.value = permiss.defaultList[role.value];
+	checkedKeys.value = permiss.rolepermiss[role.value];
 	console.log('权限接口返回',checkedKeys.value);
 };
 getPremission();
@@ -160,7 +160,7 @@ const onSubmit = () => {
 };
 
 const handleChange = (val: string[]) => {
-	tree.value!.setCheckedKeys(permiss.defaultList[role.value]);
+	tree.value!.setCheckedKeys(permiss.rolepermiss[role.value]);
 };
 </script>
 

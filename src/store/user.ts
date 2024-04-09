@@ -21,8 +21,8 @@ export const usealluserStore = defineStore('alluser', () => {
   // };
 
  
-  const getalluser = async() => {
-    const res = await getallusers()
+  const getalluser = async(data:any) => {
+    const res = await getallusers(data)
     alluserinfo.value= res.data.data
   }
 

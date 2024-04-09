@@ -7,13 +7,17 @@ export const usePermissStore = defineStore('permiss', () => {
 // 登录获取当前权限
 const accesspermiss = ref<string[]>([]);
 
+//登录获取的按钮权限
+const button_accesspermiss = ref<string[]>([]);
 
-// 登录路由守卫获取权限
+// 登录路由守卫获取权限 
 const getPremission =  async (id:number) => {
 	const res= await getrolemenupermiss(id)
     accesspermiss.value = res.data.access
-	
+	button_accesspermiss.value = res.data.button_access
+	console.log('按钮权限',button_accesspermiss.value);
 };
+
 
 
 //角色分配获取不同角色的权限存储ref
@@ -39,10 +43,10 @@ const getrolePremission =  async (id:number) => {
 const  isPermisssAdded = ref(false);
 
 const cleanaccesspermiss  = () => {  
-	// 在这里可以进行登出逻辑，清除token并执行其他操作
-	accesspermiss.value = [];
-	// 同样要清除本地存储的token
-	sessionStorage.removeItem('accesspermiss');
+	// 在这里可以进行登出逻辑，清除持久化并执行其他操作
+	 accesspermiss.value = [];
+	// // 同样要清除本地存储的token
+	// sessionStorage.removeItem('accesspermiss');
 	isPermisssAdded.value = false
   };
 
@@ -54,7 +58,8 @@ updatepermiss,
 cleanaccesspermiss,
 isPermisssAdded,
 getrolePremission,
-rolepermiss
+rolepermiss,
+button_accesspermiss
 
 }
 },
