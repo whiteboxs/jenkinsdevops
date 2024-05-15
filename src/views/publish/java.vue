@@ -16,9 +16,11 @@
 							:rules="rules"
 							label-width="120px"
 							class="demo-ruleForm"
+              v-loading="loading"
+              element-loading-text="Loading..."
 							>
-							<el-form-item label="项目名" placeholder="jenkins项目名称" prop="job_name">
-								<el-input v-model="jobForm.job_name" autocomplete="off" />
+							<el-form-item label="项目名"  prop="job_name">
+								<el-input v-model="jobForm.job_name" autocomplete="off" placeholder="jenkins项目名称" />
               </el-form-item>
               <el-form-item label="git地址" placeholder="git地址" prop="git_address">
 								<el-input v-model="jobForm.git_address" autocomplete="off" />
@@ -33,7 +35,7 @@
 			<el-table :data="showjobs" border class="table" ref="multipleTable" header-cell-class-name="table-header">
         <el-table-column width="45" size="small" prop="id" label="ID"></el-table-column>
 				<el-table-column width="180" size="small" prop="job_name" label="项目名"></el-table-column>
-        <el-table-column width="110" size="small" prop="test_ip" label="灰度ip"></el-table-column>
+        <el-table-column width="110" size="small" prop="gray_ip" label="灰度ip"></el-table-column>
         <el-table-column width="85" size="small" prop="lastgray_build_id" label="当前灰度构建号"></el-table-column>
         <el-table-column width="120" size="small" prop="lastgray_build_time" label="构建日期"></el-table-column>
         <el-table-column width="85" size="small" prop="lastprod_build_id" label="当前生产构建号"></el-table-column>
@@ -103,7 +105,16 @@ const  k8sjobStore = useallk8sjobStore()
 
 onMounted(() => {
     k8sjobStore.getallk8sjob()
+      .then(() => {
+            // 加载完成后关闭加载动画
+            loading.value = false;
+      })
+      .catch(error => {
+        // 处理加载失败的情况
+        console.error('Failed to load form:', error);
+    });
 })
+
 
 
 const query = reactive({
@@ -112,6 +123,9 @@ const query = reactive({
 	pageIndex: 1,
 	pageSize: 10
 });
+
+//table表单加载动画
+const loading = ref(true)
 
 
 
@@ -131,8 +145,8 @@ const jobForm = ref({
     id: '',
     job_name:'',
     job_build_id:'',
-    test_ip:'',
-    dev_ip:'',
+    gray_ip:'',
+    prod_ip:'',
     git_address:'',
     lastgray_build_id: '',
     lastprod_build_id:'',
@@ -141,14 +155,14 @@ const jobForm = ref({
 
 
 
-// 修改灰度
+// 发布灰度
 const pushlist_branchref = ref<{ query_branch: (row: any) => void } | null>(null)
 const handlepushlistgray = async (row:any) => {
   await brancheslist(row.id);
   pushlist_branchref.value?.query_branch(row)
 }
 
-//修改生产
+//发布生产
 const handlepushlistprod = async (row:any) => {
   await brancheslist(row.id);
   pushlist_branchref.value?.query_branch(row)
@@ -259,8 +273,8 @@ const closeDr=() =>{
     id: '',
     job_name:'',
     job_build_id:'',
-    test_ip:'',
-    dev_ip:'',
+    gray_ip:'',
+    prod_ip:'',
     git_address:'',
     lastgray_build_id: '',
     lastprod_build_id:'',
@@ -318,7 +332,7 @@ const  showjobs = computed(()=>{
 })	
 
 
-  //工单编辑
+  //测试灰度发布编辑
 import k8s_jobEdit from '../../components/k8s_jobEdit.vue';
 
 // 修改

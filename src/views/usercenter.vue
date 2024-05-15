@@ -119,14 +119,10 @@ const onSubmit = async(formEl: FormInstance | undefined) => {
 				ElMessage.error('新密码两次密码输入不一致')
 				return false
 			}
-	
 			const res = await changepasswd(changepasswdform.value);
 			ElMessage.success(res.data.msg);
-		
-			//重置下表单
-			changepasswdform.value.old_password=''
-			changepasswdform.value.new_password=''
-			changepasswdform.value.confirmPassword=''
+			//清除表单信息
+            formEl.resetFields(); 
 		} else {
 				return false;
 			}

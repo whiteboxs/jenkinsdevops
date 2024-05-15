@@ -2,10 +2,6 @@
 	<div>
 		<div class="container">
 			<div class="handle-box">
-				<!-- <el-select v-model="query.address" placeholder="地址" class="handle-select mr10">
-					<el-option key="1" label="广东省" value="广东省"></el-option>
-					<el-option key="2" label="湖南省" value="湖南省"></el-option>
-				</el-select> -->
 				<el-input v-model="query.username" placeholder="用户名" class="handle-input mr10"></el-input>
 				<el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
 				<el-button type="primary" :icon="Plus" @click="drawer = true" >新增</el-button>
@@ -35,7 +31,7 @@
                                 <el-select 
 								   v-model="userForm.role_id" 
 								   placeholder="请选择角色">
-                                  <el-option :label="item.role_name" :value="item.id" v-for="item in allroleStore.allroleinfo" :key="item.id" />
+                                  <el-option :label="item.role_name" :value="item.id" v-for="item in allrole.allroleinfo" :key="item.id" />
                                   </el-select>
                             </el-form-item>
 							<el-form-item>
@@ -68,6 +64,8 @@
 						<el-switch
 						v-model="scope.row.status"
 						@change="handleStatusChange(scope.row)"
+						class="ml-2"
+   						 style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
 						/>
 					</template>
 					</el-table-column>
@@ -89,11 +87,11 @@
 					small
 					background
 					layout="prev, pager, next"
-					:total=alluserStore.alluserinfo.length
+					:total=alluser.alluserinfo.length
 					v-model:current-page=pageIndex
 					class="mt-4"
 				/>
-			<userEdit ref="editref" @onupdate="alluserStore.getalluser" />
+			<userEdit ref="editref" @onupdate="alluser.getalluser" />
 			</div>
 		</div>
 	</div>
@@ -110,17 +108,17 @@ import type { FormInstance, FormRules } from 'element-plus'
 import { useallroleStore } from '../../store/role'
 import {useAuthStore} from '../../store/login.ts'
 //工单编辑
-import userEdit from '../../components/userEdit.vue';
+import userEdit from '../../components/system/userEdit.vue';
 //角色store
-const allroleStore = useallroleStore()
+const allrole = useallroleStore()
 //用户store
-const  alluserStore = usealluserStore()
+const  alluser = usealluserStore()
 
 //登录store
 const usestore =useAuthStore()
 onMounted(() => {
-    alluserStore.getalluser(query.value)
-	allroleStore.getallrole()
+    alluser.getalluser(query.value)
+	allrole.getallrole()
 
 	
 })
@@ -136,7 +134,7 @@ const query = ref<{username: string;}>({
 
 // 查询操作
 const handleSearch = () => {
-	alluserStore.getalluser(query.value)
+	alluser.getalluser(query.value)
 };
 
 
@@ -209,7 +207,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
             ElMessage.success('新增成功')
 			drawer.value=false
 			//刷新页面
-		    alluserStore.getalluser(query.value)
+		    alluser.getalluser(query.value)
         })
       } else {
       return false
@@ -242,7 +240,7 @@ const handleDelete=async (id:any)=>{
       await deluser(id).then(()=>{
         ElMessage.success('删除成功')
 		//刷新页面
-		alluserStore.getalluser(query.value)
+		alluser.getalluser(query.value)
       })
     })
     .catch(() => {
@@ -271,7 +269,7 @@ const handleStatusChange = async (row:any) => {
 const pageIndex =ref(1)
 //取所有数据放到数组中，一行显示10个
 const  showUsers = computed(()=>{
-  return alluserStore.alluserinfo.slice((pageIndex.value-1)*10,pageIndex.value*10)
+  return alluser.alluserinfo.slice((pageIndex.value-1)*10,pageIndex.value*10)
   
 })	
 

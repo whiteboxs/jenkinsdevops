@@ -60,7 +60,7 @@
   
   // TODO: 编辑
   import type { FormInstance, FormRules } from 'element-plus'
-  import { updatemenu } from '../http/api';
+  import { updatemenu } from '../../http/api';
 
   import { ref, onMounted,defineEmits } from 'vue';
   import { ElMessage, ElMessageBox } from 'element-plus';

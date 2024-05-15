@@ -117,7 +117,7 @@ import { useAuthStore } from '../../store/login.ts';
 //获取role_id
 const usestore =useAuthStore();
 //工单编辑
-import menuEdit from '../../components/menuEdit.vue';
+import menuEdit from '../../components/system/menuEdit.vue';
 //菜单store
 const allmenuStore = useallmenuStore()
 

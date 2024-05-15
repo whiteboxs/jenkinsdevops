@@ -22,7 +22,7 @@ const routes: Array<RouteRecordRaw> = [
                     title: '个人中心',
                 },
                 component: () => import(/* webpackChunkName: "usercenter" */ '../views/usercenter.vue'),
-            }
+            },
         ],
     },
     {

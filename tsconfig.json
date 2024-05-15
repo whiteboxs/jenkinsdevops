@@ -17,6 +17,6 @@
     "allowImportingTsExtensions": true,
     "types": ["element-plus/global"],
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts","src/**/*.vue"],
+  "include": ["src/**/*.ts", "src/**/*.d.ts","src/**/*.vue", "src/utils/ruoyi.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

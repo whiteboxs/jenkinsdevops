@@ -2,7 +2,7 @@
  <div>
     <el-dialog v-model="dialogTableVisible" title="节点管理" width="60%" 
     @close="closeDr()">
-        <el-table :data="form.hosts" border class="table" ref="multipleTable" header-cell-class-name="table-header">
+        <el-table :data="form.hosts" border class="table" ref="multipleTable" header-cell-class-name="table-header" :cell-style="cellStyle">
         <el-table-column width="160" prop="hostname" label="主机名"  />
         <el-table-column width="120" prop="ip" label="ip" />
         <el-table-column width="100" prop="state" label="运行状态" />
@@ -199,6 +199,39 @@ const handlerstop = async (row:any) => {
   }, 1000); // 这里的 2000 表示刷新间隔，单位是毫秒
   }
 }
+
+
+// 状态列字体颜色
+// columnIndex 列下标
+// rowIndex 行下标
+// row 行
+// column 列
+const cellStyle = ({ row, column, rowIndex, columnIndex }: { row: any, column: any, rowIndex: number, columnIndex: number }) => {
+  if (columnIndex === 2) {
+    if(row.Status == 'STOPPED'){
+      return {
+      color: "#F56C6C", 
+      fontWeight: 'bold'
+      };
+      }else
+      return {
+      color: "#189EFF", 
+      fontWeight: 'bold'
+      };
+  } 
+  if (columnIndex === 0) {
+      return {
+      color: "#1CD66C", 
+      fontWeight: 'bold'
+      };
+  }  
+  if (columnIndex === 1) {
+      return {
+      color: "#189EFF", 
+      };
+  }
+}
+
 
 const handlerlog = () => {
   console.log('click')

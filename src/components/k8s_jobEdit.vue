@@ -15,11 +15,11 @@
                               <el-form-item label="项目名" prop="job_name">
                                   <el-input v-model="jobeditForm.job_name" autocomplete="off" />
                               </el-form-item>
-                              <el-form-item label="测试ip" prop="test_ip">
-                                  <el-input v-model="jobeditForm.test_ip" autocomplete="off" />
+                              <el-form-item label="灰度ip" prop="gray_ip">
+                                  <el-input v-model="jobeditForm.gray_ip" autocomplete="off" />
                               </el-form-item>
                               <el-form-item label="部门" prop="dev_ip">
-                                  <el-input v-model="jobeditForm.dev_ip" autocomplete="off" />
+                                  <el-input v-model="jobeditForm.prod_ip" autocomplete="off" />
                               </el-form-item>
                               <el-form-item label="git地址" prop="git_address">
                                 <el-input v-model="jobeditForm.git_address" autocomplete="off" />
@@ -57,8 +57,8 @@ onMounted(() => {
   interface UserForm {  
     id: number;  
     job_name: string;  
-    test_ip: string;  
-    dev_ip: string;  
+    gray_ip: string;  
+    prod_ip: string;  
     git_address: string;  
   }  
   
@@ -67,8 +67,8 @@ onMounted(() => {
   const jobeditForm = ref<UserForm>({
     id:0,
     job_name:'',
-    test_ip:'',
-    dev_ip:'',
+    gray_ip:'',
+    prod_ip:'',
     git_address:'',
   })
   
@@ -86,7 +86,7 @@ onMounted(() => {
     }
   }
   
-  const validtest_ip = (_: any, value: any, callback: any) => {
+  const validgray_ip = (_: any, value: any, callback: any) => {
     if (value === '') {
       callback(new Error('密测试ip不能为空'))
     } else {
@@ -94,7 +94,7 @@ onMounted(() => {
     }
   }
   
-  const validdev_ip = (_: any, value: any, callback: any) => {
+  const validprod_ip = (_: any, value: any, callback: any) => {
     if (value === '') {
       callback(new Error('开发ip不能为空'))
     } else {
@@ -111,8 +111,8 @@ onMounted(() => {
   
   const rules = ref<FormRules>({
       job_name: [{ validator: validjob_name, trigger: 'blur' }],
-      test_ip: [{ validator: validtest_ip, trigger: 'blur' }],
-      dev_ip: [{ validator: validdev_ip, trigger: 'blur' }],
+      test_ip: [{ validator: validgray_ip, trigger: 'blur' }],
+      dev_ip: [{ validator: validprod_ip, trigger: 'blur' }],
       git_address: [{ validator: validgit_address, trigger: 'blur' }],
       
   })
@@ -126,8 +126,8 @@ onMounted(() => {
       jobeditForm.value={
        id:0,
        job_name:'',
-       test_ip:'',
-       dev_ip:'',
+       gray_ip:'',
+       prod_ip:'',
        git_address:'',
       }
   }
@@ -141,8 +141,8 @@ onMounted(() => {
     console.log('当前编辑行', row)
     jobeditForm.value.id = row.id
     jobeditForm.value.job_name = row.job_name
-    jobeditForm.value.test_ip = row.test_ip
-    jobeditForm.value.dev_ip = row.dev_ip
+    jobeditForm.value.gray_ip = row.gray_ip
+    jobeditForm.value.prod_ip = row.prod_ip
     jobeditForm.value.git_address = row.git_address
     drawer.value = true
     console	.log('没提交前的', jobeditForm.value)

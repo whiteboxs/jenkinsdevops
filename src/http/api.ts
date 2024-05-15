@@ -273,14 +273,8 @@ export const build = (data:object) => {
   return http.post('/api/build', data, formDataConfig);
 };
 //查询构建中的项目状态
-
 export const buildstatus = (data:object) => {
-  const formDataConfig = {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  };
-  return http.post('/api/build_status', data, formDataConfig);
+  return http.get('/api/build_status',{params:data});
 };
 
 
@@ -319,42 +313,42 @@ export const save_build_id = (data:object) => {
 
 //查询jump对应的节点上的业务工作情况
 export const service_status = (hostname:string) => {
-  const formDataConfig = {
+  const JsonConfig = {
     headers: {
       'Content-Type': 'application/json',
     },
   };
-  return http.post(`/api/service_status/${hostname}`,formDataConfig);
+  return http.post(`/api/service_status/${hostname}`,JsonConfig);
 };
 
 //重启节点noderestart
 export const noderestart = (data:object) => {
-  const formDataConfig = {
+  const JsonConfig = {
     headers: {
       'Content-Type': 'application/json',
     },
   };
-  return http.post('/api/node_restart',data,formDataConfig);
+  return http.post('/api/node_restart',data,JsonConfig);
 };
 
 //启动节点
 export const nodestart = (data:object) => {
-  const formDataConfig = {
+  const JsonConfig = {
     headers: {
       'Content-Type': 'application/json',
     },
   };
-  return http.post('/api/node_start',data,formDataConfig);
+  return http.post('/api/node_start',data,JsonConfig);
 };
 
 //关闭节点
 export const nodestop = (data:object) => {
-  const formDataConfig = {
+  const JsonConfig = {
     headers: {
       'Content-Type': 'application/json',
     },
   };
-  return http.post('/api/node_stop',data,formDataConfig);
+  return http.post('/api/node_stop',data,JsonConfig);
 };
 
 //aliyun-super
@@ -364,21 +358,21 @@ export const node_list = () => {
 
 // 快速创建实例
 export const quick_ecs = (data:object) => {
-  const formDataConfig = {
+  const JsonConfig = {
     headers: {
       'Content-Type': 'application/json',
     },
   };
-  return http.post('/api/aliyun/quick_ecs',data,formDataConfig);
+  return http.post('/api/aliyun/quick_ecs',data,JsonConfig);
 };
 // 标准创建实例
 export const normal_ecs = (data:object) => {
-  const formDataConfig = {
+  const JsonConfig = {
     headers: {
       'Content-Type': 'application/json',
     },
   };
-  return http.post('/api/aliyun/normal_ecs',data,formDataConfig);
+  return http.post('/api/aliyun/normal_ecs',data,JsonConfig);
 };
 
 //获取所有ecs列表
@@ -390,3 +384,64 @@ export const getecsdisk = (data:object) => {
   return http.get('/api/aliyun/ecsdisk',{ params: data });
 };
 
+// 初始化supervisor
+export const init_supervisor = (data:object) => {
+  const JsonConfig = {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
+  return http.post('/api/jump_super_task',data,JsonConfig);
+};
+
+
+// 修改hostname
+export const hostnamectl = (data:object) => {
+  const JsonConfig = {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
+  return http.post('/api/jump_hostname_task',data,JsonConfig);
+};
+
+// 登录日志
+export const allloginlog = (data:object) => {
+  return http.get('/api/all/loginlog',{params: data});
+};
+
+// 查询所有操作日志
+export const alloperlog = (data:object) => {
+  return http.get('/api/all/operlog',{params: data});
+};
+
+// 查询单个id操作日志
+export const getoperlog = (id:number) => {
+  return http.get(`/api/operlog/${id}`);
+};
+// 删除单个id操作日志
+  export const deloperlog = (id:number) => {
+    return http.delete(`/api/operlog/${id}`);
+  };
+
+
+
+// 添加监控和删除监控
+export const monitor = (data:object) => {
+  const JsonConfig = {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
+  return http.post('/api/monitor',data,JsonConfig);
+};
+
+// 监控group
+export const monitor_group = () => {
+  return http.get('/api/monitor_group');
+};
+
+//monitor_check
+export const monitor_check = (data:object) => {
+  return http.get('/api/monitor_check',{params: data});
+};

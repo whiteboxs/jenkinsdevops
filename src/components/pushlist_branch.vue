@@ -116,41 +116,46 @@ const props = defineProps({
         ElMessage.success(building.data.msg);
         // 关闭弹窗
         dialogVisible.value = false;
-        ElMessageBox.alert(`${building.data.msg}`,)
-        
-             // 等待构建完成或超时
+        ElMessageBox.alert(`${building.data.msg}`)
+        // 等待构建完成或超时
         const maxWaitTime = 600000;  // 10分钟超时
         let currentWaitTime = 0;
-
+        let firstWait = true; // 标记是否第一次等待
         while (currentWaitTime < maxWaitTime) {
-          // 等待3秒
-          await new Promise(resolve => setTimeout(resolve, 3000));
+          // 根据是否是第一次等待来决定等待时间
+          const waitTime = firstWait ? 4000 : 1000;
+          firstWait = false; // 将第一次等待标记为 false
+          console.log(waitTime)
+          // 等待2秒
+          await new Promise(resolve => setTimeout(resolve, waitTime));
 
-          //每次循环前关闭上一次的提示
-          ElMessageBox.close();
           // 获取构建状态
           const buildResult = await buildstatus(form.value);  // 自定义获取构建状态的函数，根据实际情况实现
              console.log('buildResult',buildResult)
           // 判定构建状态
           if (buildResult.data.status === 'SUCCESS' || buildResult.data.status === 'FAILURE'|| buildResult.data.status === 'ABORTED') {
+            //每次循环前关闭上一次的提示
+            ElMessageBox.close();
             ElMessageBox.alert(`构建结束！状态为：${buildResult.data.status}`)
             ElMessage.success(buildResult.data.msg);
             //保存构建id到数据库
             await save_build_id(form.value); 
             emit('onupdatebranch');
             return;
-            } else {
-            ElMessageBox.alert('构建中，请等待！状态为：building')
+          } else {
+            //每次循环前关闭上一次的提示
+            ElMessageBox.close();
+            // 更新提示框内容
+            ElMessageBox.alert('构建中，请等待！状态为：building',{
+            showClose: false,
+            closeOnClickModal: false,
+            type: 'info'
+            })
             ElMessage.success(buildResult.data.msg)
             console.log('构建中，请等待！', buildResult);
             }
-          currentWaitTime += 3000;
+          currentWaitTime += waitTime;
         }
-
-    
-          
-        // 通知父组件更新操作  
-      //  emit('onupdatebranch');  
 }  
  
   
