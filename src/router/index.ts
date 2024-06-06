@@ -1,8 +1,9 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
 import { usePermissStore } from '../store/permiss';
 import Home from '../views/home.vue';
-import { useAuthStore } from '../store/login.ts';
+import { useAuthStore } from '../store/login';
 import { useallroleStore } from '../store/role'
+ //获取角色菜单
 import { getrole } from '../http/api'
 
 const routes: Array<RouteRecordRaw> = [
@@ -80,7 +81,7 @@ router.beforeEach((to, from, next) => {
     if(usestore.userinfo.access_token){
         if(!isRoutesAdded) {
         //console.log('isRoutesAdded',isRoutesAdded)
-        getrole(usestore.userinfo.role_id).then(res => {
+        getrole(usestore.userinfo.role_id).then((res:any) => {
             //将服务端返回的数据转换为路由配置数据
             role.updateoneroleinfo(res.data)
             const dynamicRoute = addDynamicRoute(role.oneroleinfo.menus)

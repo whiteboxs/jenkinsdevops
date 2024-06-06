@@ -64,7 +64,7 @@
         :page-sizes="[10, 20, 30, 40]"
     
         layout="total, sizes, prev, pager, next, jumper"
-        :total=loginlog.loginloginfo.count
+        :total=loginlog.count
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
@@ -74,7 +74,7 @@
 
 <script setup lang="ts" name="loginlog">
 import { ref, computed,onMounted } from 'vue';
-import { useloginlogStore } from '../../store/loginlog';
+import { useloginlogStore } from '@/store/system/loginlog';
 
 const loginlog = useloginlogStore();
 

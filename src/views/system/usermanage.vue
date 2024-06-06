@@ -8,7 +8,7 @@
 					<el-drawer v-model="drawer" 
 					         title="I am the title" 
 							 :with-header="false"
-							 @close="closeDr()">
+							 @close="closeDr(ruleFormRef)">
 							 
 						<el-form
 							ref="ruleFormRef"
@@ -98,17 +98,17 @@
 </template>
 
 <script setup lang="ts" name="usermanage">
-import {baseURL_dev} from '../../config/baseURL'
+import {baseURL_dev} from '@/config/baseURL'
 import { ref, onMounted, computed  } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
-import { usealluserStore } from '../../store/user.ts';
-import { adduser,deluser ,updateuserstatus } from '../../http/api';
+import { usealluserStore } from '@/store/user';
+import { adduser,deluser ,updateuserstatus } from '@/http/api';
 import type { FormInstance, FormRules } from 'element-plus'
-import { useallroleStore } from '../../store/role'
-import {useAuthStore} from '../../store/login.ts'
+import { useallroleStore } from '@/store/role'
+import {useAuthStore} from '@/store/login'
 //工单编辑
-import userEdit from '../../components/system/userEdit.vue';
+import userEdit from '@/components/system/userEdit.vue';
 //角色store
 const allrole = useallroleStore()
 //用户store
@@ -188,10 +188,10 @@ const validRoleId = (_: any, value: any, callback: any) => {
 }
 
 const rules = ref<FormRules>({
-    username: [{ validator: validRoleUserName, trigger: 'blur' }],
-    role_id: [{ validator: validRoleId, trigger: 'blur' }],
-    department: [{ validator: validDepartment, trigger: 'blur' }],
-	password: [{ validator: validRolePwd, trigger: 'blur' }],
+    username: [{ validator: validRoleUserName, required: true, trigger: 'blur' }],
+    role_id: [{ validator: validRoleId, required: true, trigger: 'blur' }],
+    department: [{ validator: validDepartment, required: true, trigger: 'blur' }],
+	password: [{ validator: validRolePwd, required: true, trigger: 'blur' }],
 	
 })
 
@@ -216,15 +216,16 @@ const submitForm = (formEl: FormInstance | undefined) => {
 }
 
 //  抽屉关闭时的回调
-const closeDr=() =>{
-  drawer.value=false
-    userForm.value={
-		username:'',
-		password:'',
-		department:'',
-		role_id:'',
-    }
-}
+const closeDr=(formEl: FormInstance | undefined) =>{
+drawer.value=false
+if (!formEl) return;
+	formEl.resetFields();
+userForm.value={
+username:'',
+password:'',
+department:'',
+role_id:'',
+}}
 
 // 删除操作
 const handleDelete=async (id:any)=>{

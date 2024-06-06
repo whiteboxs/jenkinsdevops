@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import {getrolemenupermiss} from '../http/api';
+import {getrolemenupermiss} from '@/http/api';
 import { ref } from 'vue'
 
 export const usePermissStore = defineStore('permiss', () => {

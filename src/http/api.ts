@@ -1,5 +1,5 @@
 
-import http from './index.ts';
+import http from './index';
 
 
 export const fetchData = () => {
@@ -440,6 +440,12 @@ export const monitor = (data:object) => {
 export const monitor_group = () => {
   return http.get('/api/monitor_group');
 };
+
+// 监控monitor_instance
+export const monitor_instance = () => {
+  return http.get('/api/monitor_instance');
+};
+
 
 //monitor_check
 export const monitor_check = (data:object) => {

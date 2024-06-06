@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { login } from '../http/api'
+import { login } from '@/http/api'
 import { ref,computed } from 'vue'
 export const useAuthStore = defineStore('login', () => {
   // 定义数据state

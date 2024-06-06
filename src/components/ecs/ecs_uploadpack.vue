@@ -43,7 +43,7 @@
   
   // TODO: 编辑
   import type { FormInstance, FormRules } from 'element-plus'
-  import { init_supervisor } from '../../http/api';
+  import { init_supervisor } from '@/http/api';
   import { ref,defineEmits } from 'vue';
   import { ElMessage, ElMessageBox,ElDrawer } from 'element-plus';
 
@@ -172,7 +172,7 @@ function formatDataToHTMLString(data:any) {
        
         type: 'warning',
         }).then(async () => {
-          await init_supervisor(ecsinitForm.value).then((res)=>{
+          await init_supervisor(ecsinitForm.value).then((res:any)=>{
               //ElMessage.success('初始化supservisor成功')
               ElMessageBox.alert(res.data.result[ecsinitForm.value.hostname].stdout);      
           })

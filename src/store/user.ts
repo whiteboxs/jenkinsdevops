@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { getallusers} from '../http/api'
+import { getallusers} from '@/http/api'
 import { ref,computed } from 'vue'
 export const usealluserStore = defineStore('alluser', () => {
   // 定义数据state

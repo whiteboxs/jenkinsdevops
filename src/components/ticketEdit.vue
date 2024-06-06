@@ -36,7 +36,7 @@
 <script setup lang="ts">
 
 // TODO: 编辑
-import { getenvironments, getassignees, putticket } from '../http/api.ts'
+import { getenvironments, getassignees, putticket } from '../http/api'
 import { ref,reactive,onMounted } from 'vue'
 // 弹框开关
 const DialogVisible = ref(false)

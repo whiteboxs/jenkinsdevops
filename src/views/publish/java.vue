@@ -92,14 +92,15 @@
 import { ref, reactive, onMounted, computed  } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { ArrowRight, Delete, Edit, Search, Plus, View,ArrowLeftBold} from '@element-plus/icons-vue';
-import { useallk8sjobStore } from '../../store/k8s_job.ts';
-import { addk8sjob, deljob,branch } from '../../http/api';
+import { useallk8sjobStore } from '@/store/k8s_job';
+import { addk8sjob, deljob,branch } from '@/http/api';
 import type { FormInstance, FormRules } from 'element-plus'
-import worknode from '../../components/worknode.vue';
-import { service_status} from '../../http/api'
+import worknode from '@/components/worknode.vue';
+import { service_status} from '@/http/api'
 //导入构建模块
-import pushlist_branch from '../../components/pushlist_branch.vue';
-
+import pushlist_branch from '@/components/pushlist_branch.vue';
+  //测试灰度发布编辑
+import k8s_jobEdit from '@/components/k8s_jobEdit.vue';
 //k8s_jobstore
 const  k8sjobStore = useallk8sjobStore()
 
@@ -332,8 +333,7 @@ const  showjobs = computed(()=>{
 })	
 
 
-  //测试灰度发布编辑
-import k8s_jobEdit from '../../components/k8s_jobEdit.vue';
+
 
 // 修改
 const editref = ref<{ open: (row: any) => void } | null>(null)

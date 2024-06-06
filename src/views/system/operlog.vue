@@ -100,7 +100,7 @@
                 :page-size="query.pagesize" 
                 :page-sizes="[10, 20, 30, 40]"
                 background layout="total, sizes, prev, pager, next, jumper" 
-                :total=operlog.operloginfo.count
+                :total=operlog.count
                 @size-change="handleSizeChange" 
                 @current-change="handleCurrentChange" />
 			</div>
@@ -144,9 +144,9 @@
 
 <script setup lang="ts" name="loginlog">
 import { ref,onMounted } from 'vue';
-import { useoperlogStore } from '../../store/operlog';
+import { useoperlogStore } from '@/store/system/operlog';
 import { View } from '@element-plus/icons-vue';
-import { getoperlog,deloperlog } from '../../http/api'
+import { getoperlog,deloperlog } from '@/http/api'
 import { Refresh} from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import * as XLSX from 'xlsx';

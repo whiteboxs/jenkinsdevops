@@ -55,7 +55,7 @@
                 </el-table-column>
                 <el-table-column prop="createtime" label="创建时间" align="center" width="160" >
                     <template #default="{ row }">
-                        <span>{{ formatTime(row.createtime) }}</span>
+                        <span>{{ row.createtime }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column label="操作" width="380" align="center">
@@ -104,13 +104,13 @@
 
 <script setup lang="ts" name="ecs_manage">
 import { ref,onMounted } from 'vue';
-import { useecsstore } from '../../store/ecs_list';
+import { useecsstore } from '@/store/aliyun/ecs_list';
 import { Search,Finished,Upload,SwitchButton,Close,VideoCamera,Edit} from '@element-plus/icons-vue';
 //initsupervisor子主件
-import ecs_super from '../../components/ecs/ecs_super.vue';
-import ecs_hostname from '../../components/ecs/ecs_hostname.vue';
-import ecs_monitor from '../../components/ecs/ecs_monitor.vue';
-import { monitor_group } from '../../http/api';
+import ecs_super from '@/components/ecs/ecs_super.vue';
+import ecs_hostname from '@/components/ecs/ecs_hostname.vue';
+import ecs_monitor from '@/components/ecs/ecs_monitor.vue';
+import { monitor_group } from '@/http/api';
 
 const ecsstore = useecsstore();
 
@@ -207,16 +207,16 @@ const cellStyle = ({ row, column, rowIndex, columnIndex }: { row: any, column: a
 }
 
 //时间转换
-function formatTime(isoTime:any) {
-      const date = new Date(isoTime);
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      const hours = String(date.getHours()).padStart(2, '0');
-      const minutes = String(date.getMinutes()).padStart(2, '0');
-      const seconds = String(date.getSeconds()).padStart(2, '0');
-      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-}
+// function formatTime(isoTime:any) {
+//       const date = new Date(isoTime);
+//       const year = date.getFullYear();
+//       const month = String(date.getMonth() + 1).padStart(2, '0');
+//       const day = String(date.getDate()).padStart(2, '0');
+//       const hours = String(date.getHours()).padStart(2, '0');
+//       const minutes = String(date.getMinutes()).padStart(2, '0');
+//       const seconds = String(date.getSeconds()).padStart(2, '0');
+//       return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+// }
 
 
 // ecs初始化 主要是配置配置super打开子组件 

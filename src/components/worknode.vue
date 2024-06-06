@@ -34,7 +34,7 @@
   
   <script lang="ts" setup>
   import {  ref } from 'vue'
-  import { noderestart, nodestop, nodestart,service_status} from '../http/api'
+  import { noderestart, nodestop, nodestart,service_status} from '@/http/api'
   import { ElMessage, ElMessageBox } from 'element-plus';
   const dialogTableVisible = ref(false)
   

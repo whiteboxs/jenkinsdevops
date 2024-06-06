@@ -32,7 +32,7 @@
   
   // TODO: 编辑
   import type { FormInstance, FormRules } from 'element-plus'
-  import { hostnamectl } from '../../http/api';
+  import { hostnamectl } from '@/http/api';
   import { ref,defineEmits } from 'vue';
   import { ElMessage, ElMessageBox,ElDrawer } from 'element-plus';
 
@@ -115,7 +115,7 @@
        
         type: 'warning',
         }).then(async () => {
-          await hostnamectl(ecshostnameForm.value).then((res)=>{
+          await hostnamectl(ecshostnameForm.value).then((res:any)=>{
               //ElMessage.success('初始化supservisor成功')
               ElMessageBox.alert('主机名' + res.data.data.result[ecshostnameForm.value.aliname].stdout + '修改成功', '提示', {
                   confirmButtonText: '确定',

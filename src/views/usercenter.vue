@@ -57,14 +57,14 @@
 <script setup lang="ts" name="usercenter">
 import { ref } from 'vue';
 
-import { useAuthStore } from '../store/login.ts';
-import {baseURL_dev} from '../config/baseURL'
-import { changepasswd } from '../http/api.ts'
+import { useAuthStore } from '@/store/login';
+import {baseURL_dev} from '@/config/baseURL'
+import { changepasswd } from '@/http/api'
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage } from 'element-plus';
 
 //图标裁剪编辑
-import cropper from '../components/cropper.vue';
+import cropper from '@/components/cropper.vue';
 
 const user =useAuthStore() 
 const ruleFormRef = ref<FormInstance>()

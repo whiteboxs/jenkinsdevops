@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { branch} from '../http/api'
+import { branch} from '@/http/api'
 import { ref } from 'vue'
 export const useallbransh = defineStore('branch', () => {
   // 定义数据state

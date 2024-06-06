@@ -119,8 +119,8 @@
 <script setup lang="ts" name="dashboard">
 import Schart from 'vue-schart';
 import { reactive } from 'vue';
-import { useAuthStore } from '../store/login.ts';
-import {baseURL_dev} from '../config/baseURL'
+import { useAuthStore } from '@/store/login';
+import {baseURL_dev} from '@/config/baseURL'
 
 const user =useAuthStore();
 

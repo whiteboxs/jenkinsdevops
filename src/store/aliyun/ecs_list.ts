@@ -1,6 +1,6 @@
 
 import { defineStore } from "pinia";
-import { getall_ecs } from '../http/api'
+import { getall_ecs } from '@/http/api'
 import { ref } from "vue";
 
 export const useecsstore = defineStore('ecs_list', () => {

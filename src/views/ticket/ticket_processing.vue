@@ -52,10 +52,13 @@
   <script setup lang="ts">
   // import { Search, UploadFilled } from '@/element-plus/icons-vue'
   import { onMounted } from 'vue';
-  import { useassigneestore } from '../../store/assignee.ts'
-  import { useenvironmentstore } from '../../store/environment.ts'
-  import { usemyticket_processing } from '../../store/ticket_processing.ts'
-  import { createticket } from '../../http/api'
+  import { ref, reactive } from 'vue'
+  import { useassigneestore } from '@/store/assignee'
+  import { useenvironmentstore } from '@/store/environment'
+  import { usemyticket_processing } from '@/store/ticket_processing'
+  import { createticket } from '@/http/api'
+   //工单编辑
+   import ticket_processingEdit from '@/components/ticket_processingEdit.vue';
   // onMounted(() => {
   // const usestore =useAuthStore();
   //    const userid= usestore.userid;
@@ -78,7 +81,7 @@
   
   const centerDialogVisible = ref(false)
   
-  import { ref, reactive } from 'vue'
+
   const form = reactive({
     title: '',
     environment_id: '',
@@ -97,20 +100,7 @@
         console.log("表单验证不通过");
         return; // 验证不通过时，停止继续执行下面的代码
       }
-      // 如果验证通过，执行表单提交逻辑
-      const formData = new FormData();
-      formData.append('title', form.title);
-      formData.append('environment_id', form.environment_id);
-      formData.append('description', form.description);
-      formData.append('assignee_id', form.assignee_id);  
-      fileList.value.forEach(item => {
-        // 这里有个坑，在将文件append到formData的时候， item其实并不是真是数据 item.raw才是
-        formData.append('attachment', item.raw)
-      })
-      for (let pair of formData.entries()) {
-        console.log('xx', pair);
-      }
-      const res = await createticket(formData);
+      const res = await createticket(form);
       console.log("验证成功");
       //清除提交的表单
       addRuleForm.value.resetFields()
@@ -192,8 +182,7 @@
   
 
   
-  //工单编辑
-  import ticket_processingEdit from '@/components/ticket_processingEdit.vue';
+ 
   
   
   

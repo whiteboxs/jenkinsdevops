@@ -16,6 +16,10 @@
     "noEmit": true, 
     "allowImportingTsExtensions": true,
     "types": ["element-plus/global"],
+    "baseUrl":"./",   
+    "paths":{
+      "@/*": ["src/*"]
+    }
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts","src/**/*.vue", "src/utils/ruoyi.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]

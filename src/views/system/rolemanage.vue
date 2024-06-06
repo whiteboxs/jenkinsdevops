@@ -12,7 +12,7 @@
 				<el-drawer v-model="drawer" 
 					         title="I am the title" 
 							 :with-header="false"
-							 @close="closeDr()">
+							 @close="closeDr(ruleFormRef)">
 							 
 						<el-form
 							ref="ruleFormRef"
@@ -81,14 +81,14 @@
 <!-- 角色管理 -->
 <script setup lang="ts" name="role">
 import { ref,onMounted,nextTick,reactive} from 'vue';
-import { useallroleStore } from '../../store/role'
-import { usePermissStore } from '../../store/permiss';
+import { useallroleStore } from '@/store/role'
+import { usePermissStore } from '@/store/permiss';
 import { ElTree } from 'element-plus';
-import { updaterolemenupermiss,addrole,delrole, getallmenus} from '../../http/api'
+import { updaterolemenupermiss,addrole,delrole, getallmenus} from '@/http/api'
 import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage,ElMessageBox } from 'element-plus';
-import { useallmenuStore } from '../../store/menu'
+import { useallmenuStore } from '@/store/system/menu'
 
 const query = reactive({
 	role_name: '',
@@ -140,13 +140,13 @@ const submitForm = (formEl: FormInstance | undefined) => {
   formEl.validate(async (valid) => {
     if (valid) {
         //新增
-        await addrole(roleForm.value).then((response) => {
+        await addrole(roleForm.value).then((response:any) => {
             // 提示
             ElMessage.success(response.data.msg || '添加成功');
             drawer.value = false;
             // 刷新页面
             useallroleStore().getallrole();
-        }).catch((error) => {
+        }).catch((error:any) => {
             // 错误处理
             console.error('添加角色失败:', error);;
         });
@@ -184,8 +184,10 @@ const handleDelete=async (id:number)=>{
 
 
 //  抽屉关闭时的回调
-const closeDr=() =>{
+const closeDr=(formEl: FormInstance | undefined) =>{
   drawer.value=false
+  if (!formEl) return;
+	formEl.resetFields();
     roleForm.value={
 		role_name:'',
 

@@ -1,5 +1,5 @@
   import { defineStore } from "pinia";
-  import { getenvironments } from '../http/api'
+  import { getenvironments } from '@/http/api'
   import { ref } from 'vue'
   export const useenvironmentstore = defineStore('environment', () => {
       //定义数据state

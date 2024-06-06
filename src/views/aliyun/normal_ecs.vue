@@ -95,11 +95,11 @@
 </template>
 
 <script setup lang="ts" name="normal_ecs">
-import { useecsstore } from '../../store/ecs_list';
+import { useecsstore } from '@/store/aliyun/ecs_list';
 import {ref,onMounted,computed } from 'vue';
 import { ElMessage,ElMessageBox } from 'element-plus';
 import type { FormInstance, FormRules } from 'element-plus';
-import { node_list,normal_ecs } from '../../http/api'
+import { node_list,normal_ecs } from '@/http/api'
 import {  Plus,Remove,Connection } from '@element-plus/icons-vue';
 //步骤index
 const active = ref(0)

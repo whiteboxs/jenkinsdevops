@@ -33,9 +33,9 @@
 import {ref } from 'vue';
 import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
-import { useAuthStore } from '../store/login.ts';
-import {baseURL_dev} from '../config/baseURL'
-import { upload } from '../http/api';
+import { useAuthStore } from '@/store/login';
+import {baseURL_dev} from '@/config/baseURL'
+import { upload } from '@/http/api';
 import { ElMessage } from 'element-plus';
 
 const user =useAuthStore() 

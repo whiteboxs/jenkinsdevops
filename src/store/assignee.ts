@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { getassignees } from '../http/api'
+import { getassignees } from '@/http/api'
 import { ref } from 'vue'
 export const useassigneestore = defineStore('assignee', () => {
     //定义数据state

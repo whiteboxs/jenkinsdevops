@@ -1,6 +1,6 @@
 
 import { defineStore } from "pinia";
-import { getticket_processing } from '../http/api'
+import { getticket_processing } from '@/http/api'
 import { ref } from "vue";
 
 export const usemyticket_processing = defineStore('ticket_processing', () => {

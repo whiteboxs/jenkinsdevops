@@ -86,12 +86,12 @@
 import { ref, reactive, onMounted, computed  } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { ArrowRight, Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
-import { useallk8sjobStore } from '../../store/k8s_job.ts';
-import { addk8sjob, deljob,branch } from '../../http/api';
+import { useallk8sjobStore } from '@/store/k8s_job';
+import { addk8sjob, deljob,branch } from '@/http/api';
 import type { FormInstance, FormRules } from 'element-plus'
-
-
-
+import pushlist_branch from '@/components/pushlist_branch.vue';
+  //工单编辑
+  import k8s_jobEdit from '@/components/k8s_jobEdit.vue';
 //k8s_jobstore
 const  k8sjobStore = useallk8sjobStore()
 
@@ -129,7 +129,6 @@ const jobForm = ref({
     git_address:''
 })
 
-import pushlist_branch from '../../components/pushlist_branch.vue';
 //构建test/dev
 
 
@@ -329,8 +328,7 @@ const  showjobs = computed(()=>{
 })	
 
 
-  //工单编辑
-import k8s_jobEdit from '../../components/k8s_jobEdit.vue';
+
 // 修改
 const editref = ref<{ open: (row: any) => void } | null>(null)
 const handleEdit = (row:any) => {

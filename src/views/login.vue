@@ -33,13 +33,13 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
-import { useTagsStore } from '../store/tags';
+import { useTagsStore } from '@/store/tags';
 import { useRouter } from 'vue-router';
 //import router from '../router/index.ts'
 import { ElMessage } from 'element-plus';
 import type { FormInstance, FormRules } from 'element-plus';
 import { Lock, User } from '@element-plus/icons-vue';
-import { useAuthStore } from '../store/login.ts';
+import { useAuthStore } from '@/store/login';
 
 interface LoginInfo {
 	username: string;

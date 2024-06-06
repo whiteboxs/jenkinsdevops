@@ -37,8 +37,8 @@
   
   // TODO: 编辑
   import type { FormInstance, FormRules } from 'element-plus'
-  import { updatejobinfo } from '../http/api';
-  import { useallk8sjobStore } from '../store/k8s_job.ts'
+  import { updatejobinfo } from '@/http/api';
+  import { useallk8sjobStore } from '@/store/k8s_job'
   import { ref, onMounted,defineEmits } from 'vue';
   import type { UploadProps } from 'element-plus'
   import { ElMessage, ElMessageBox } from 'element-plus';

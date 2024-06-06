@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { getk8sjob } from '../http/api'
+import { getk8sjob } from '@/http/api'
 import { ref } from 'vue'
 export const useallk8sjobStore = defineStore('k8s_job', () => {
   // 定义数据state

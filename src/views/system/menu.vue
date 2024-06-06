@@ -110,14 +110,14 @@
 import { ref, reactive, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
-import { addmenu,delmenu } from '../../http/api';
+import { addmenu,delmenu } from '@/http/api';
 import type { FormInstance, FormRules } from 'element-plus'
-import { useallmenuStore } from '../../store/menu'
-import { useAuthStore } from '../../store/login.ts';
+import { useallmenuStore } from '@/store/system/menu'
+import { useAuthStore } from '@/store/login';
+//工单编辑
+import menuEdit from '@/components/system/menuEdit.vue';
 //获取role_id
 const usestore =useAuthStore();
-//工单编辑
-import menuEdit from '../../components/system/menuEdit.vue';
 //菜单store
 const allmenuStore = useallmenuStore()
 
@@ -235,7 +235,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
   formEl.validate(async (valid) => {
     if (valid) {
         //新增
-        await addmenu(menuForm.value).then((response)=>{
+        await addmenu(menuForm.value).then((response:any)=>{
           console.log('新建menu',menuForm.value)
             ElMessage.success(response.data.msg || '新增成功')
 			      drawer.value=false

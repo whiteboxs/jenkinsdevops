@@ -31,7 +31,7 @@
   
   // TODO: 编辑
   import type { FormInstance, FormRules } from 'element-plus'
-  import { build,buildstatus,save_build_id } from '../http/api.ts'
+  import { build,buildstatus,save_build_id } from '@/http/api'
   import { ref} from 'vue'
   import { ElMessage,ElMessageBox } from 'element-plus';
   //import { useallbransh } from '../store/branch.ts'

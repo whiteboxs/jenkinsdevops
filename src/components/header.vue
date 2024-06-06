@@ -9,7 +9,7 @@
 		<div class="header-right">
 			<div class="header-user-con">
 				<!-- 消息中心 -->
-				<div class="btn-bell" @click="router.push('/tabs')">
+				<!-- <div class="btn-bell" @click="router.push('/tabs')">
 					<el-tooltip
 						effect="dark"
 						:content="message ? `有${message}条未读消息` : `消息中心`"
@@ -18,7 +18,7 @@
 						<i class="el-icon-lx-notice"></i>
 					</el-tooltip>
 					<span class="btn-bell-badge" v-if="message"></span>
-				</div>
+				</div> -->
 				<!-- 用户头像 -->
 				<el-avatar class="user-avator" :size="30" :src="baseURL_dev+'/my/view/'+user.userinfo.userPic ||'../public/default.png'" />
 				<!-- 用户名下拉菜单 -->
@@ -45,12 +45,12 @@
 </template>
 <script setup lang="ts">
 import { onMounted } from 'vue';
-import { useSidebarStore } from '../store/sidebar';
+import { useSidebarStore } from '@/store/sidebar';
 import { useRouter } from 'vue-router';
-import { useAuthStore } from '../store/login.ts';
-import {usePermissStore} from '../store/permiss'
-import { useallroleStore } from '../store/role'
-import {baseURL_dev} from '../config/baseURL'
+import { useAuthStore } from '@/store/login';
+import {usePermissStore} from '@/store/permiss'
+import { useallroleStore } from '@/store/role'
+import {baseURL_dev} from '@/config/baseURL'
 
 const message: number = 2;
 

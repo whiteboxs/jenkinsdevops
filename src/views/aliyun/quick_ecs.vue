@@ -68,8 +68,8 @@
 import {ref,onMounted } from 'vue';
 import { ElMessage,ElMessageBox } from 'element-plus';
 import type { FormInstance, FormRules } from 'element-plus';
-import { node_list,quick_ecs } from '../../http/api'
-import { useecsstore } from '../../store/ecs_list';
+import { node_list,quick_ecs } from '@/http/api'
+import { useecsstore } from '@/store/aliyun/ecs_list';
 import {  Plus,Remove,Connection } from '@element-plus/icons-vue';
 //步骤index
 const active = ref(0)

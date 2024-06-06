@@ -43,7 +43,7 @@
                     filterable
                     clearable
                     >
-                    <el-option :label="item.group" :value="item.group" v-for="item in monitorForm.groups" :key="item.group" />
+                    <el-option :label="item" :value="item" v-for="item in monitorForm.groups" :key="item" />
                     <template #footer>
                       <el-button v-if="!isAdding" text bg  @click="addgroup">
                           添加新监控组
@@ -75,7 +75,7 @@
   
   // TODO: 编辑
   import type { FormInstance, FormRules } from 'element-plus'
-  import { monitor,monitor_check } from '../../http/api';
+  import { monitor,monitor_check } from '@/http/api';
   import { ref,defineEmits,computed,defineProps} from 'vue';
   import { ElMessage, ElMessageBox,ElDrawer } from 'element-plus';
 
@@ -95,7 +95,7 @@
     monitor_group: string;  
     monitor_hand: string;  
     monitor_type: Array<string>;  
-    groups:Array<{ group: string}>;
+    groups:Array<string>;
     // 定义其他属性...
     }
   
@@ -204,9 +204,9 @@ const addgroup = () => {
 }
 const onConfirm = () => {
   if (monitorForm.value.monitor_group) {
-      monitorForm.value.groups.push({
-      group: monitorForm.value.monitor_group
-    })
+      monitorForm.value.groups.push(
+      monitorForm.value.monitor_group
+      )
     clear()
   }
 }
@@ -222,7 +222,7 @@ const clear = () => {
   //父传子 将branches传入到子组件里
 const props = defineProps({
       monitorgroups: {
-      type: Array<{ group: string }>,
+      type: Array<string>,
       required: true
      }
 })

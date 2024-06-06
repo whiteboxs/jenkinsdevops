@@ -84,11 +84,13 @@
   <script setup lang="ts">
   // import { Search, UploadFilled } from '@/element-plus/icons-vue'
   import { onMounted } from 'vue';
-  import { delticket, createticket } from '../../http/api.ts'
-  import { useassigneestore } from '../../store/assignee.ts'
-  import { useenvironmentstore } from '../../store/environment.ts'
-  import { usemyticketstore } from '../../store/userticket.ts'
-  import { Plus } from '@element-plus/icons-vue'
+  import { ref, reactive } from 'vue'
+  import { delticket, createticket } from '@/http/api'
+  import { useassigneestore } from '@/store/assignee'
+  import { useenvironmentstore } from '@/store/environment'
+  import { usemyticketstore } from '@/store/userticket'
+  //工单编辑
+  import ticketEdit from '../../components/ticketEdit.vue';
   // onMounted(() => {
   // const usestore =useAuthStore();
   //    const userid= usestore.userid;
@@ -112,7 +114,7 @@
   
   const centerDialogVisible = ref(false)
   
-  import { ref, reactive } from 'vue'
+
   const form = reactive({
     title: '',
     environment_id: '',
@@ -131,20 +133,7 @@
         console.log("表单验证不通过");
         return; // 验证不通过时，停止继续执行下面的代码
       }
-      // 如果验证通过，执行表单提交逻辑
-      const formData = new FormData();
-      formData.append('title', form.title);
-      formData.append('environment_id', form.environment_id);
-      formData.append('description', form.description);
-      formData.append('assignee_id', form.assignee_id);
-      fileList.value.forEach(item => {
-        // 这里有个坑，在将文件append到formData的时候， item其实并不是真是数据 item.raw才是
-        formData.append('attachment', item.raw)
-      })
-      for (let pair of formData.entries()) {
-        console.log('xx', pair);
-      }
-      await createticket(formData);
+      await createticket(form);
       console.log("验证成功");
       //清除提交的表单
       addRuleForm.value.resetFields()
@@ -232,8 +221,7 @@
   
   }
   
-  //工单编辑
-  import ticketEdit from '../../components/ticketEdit.vue';
+
   
   
   
@@ -280,7 +268,7 @@
   
   const fileList = ref([])
   
-  const handleChange = (file:any, files:any) => {
+  const handleChange = (files:any) => {
     // file是当前上传的文件，files是当前所有的文件，
     // 不懂得话可以打印一下这两个数据 就能明白
   

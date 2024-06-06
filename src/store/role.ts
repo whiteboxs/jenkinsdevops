@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { getallroles,getrole } from '../http/api'
+import { getallroles,getrole } from '@/http/api'
 import { ref } from 'vue'
 export const useallroleStore = defineStore('allrole', () => {
   // 定义数据state
@@ -22,7 +22,7 @@ const updateoneroleinfo = (newroleinfo:any) => {
     //console.log('zuizong',menutree.value);
     // 这里可以将生成的菜单树赋值给一个新的变量存储或者直接使用
   }
-	console.log('当前角色信息更新',oneroleinfo.value);
+	console.log('当前角色信息更新',menutree.value);
 };
 
 // 退出的时候要清理oneroleinfo 不然不刷新页面登录其他账号显示的是上个账号的导航
@@ -35,14 +35,16 @@ const cleanoneroleinfo  = () => {
 // 递归方法，根据parentid组成层级结构
 const generateMenuTree = (menus:any, parentId = null) => {
   const result:any = [];
-
   menus
   .filter((menu: { parentid: any; id: any; children: any; menu_type:any }) => menu.parentid === parentId && menu.menu_type !== 'button')  
   .sort((a: { menu_order: number; }, b: { menu_order: number; }) => a.menu_order - b.menu_order) // 根据 menu_order 字段进行升序排序
-  .forEach((menu: { parentid: any; id: any; children: any; }) => {
+  .forEach((menu: { parentid: any; id: any; children: any;path: string}) => {
           const children = generateMenuTree(menus, menu.id);
           if (children.length) {
               menu.children = children;
+          }
+          if (menu.path.trim() === '') {
+            menu.path = String(menu.id);
           }
           result.push(menu);
   });
@@ -53,7 +55,7 @@ const generateMenuTree = (menus:any, parentId = null) => {
 const generateMenuTreeFromMenus = () => {
   if (oneroleinfo.value.menus) {
       menutree.value  = generateMenuTree(oneroleinfo.value.menus);
-      //console.log('zuizong',menutree.value);
+      //console.log('菜单树',menutree.value);
       // 这里可以将生成的菜单树赋值给一个新的变量存储或者直接使用
   }
 };

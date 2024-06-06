@@ -52,11 +52,11 @@
 
 // TODO: 编辑
 import type { FormInstance, FormRules } from 'element-plus'
-import {baseURL_dev} from '../../config/baseURL'
-import { updateuserinfo } from '../../http/api';
-import { useallroleStore } from '../../store/role'
-import {useAuthStore} from '../../store/login.ts'
-import { usealluserStore } from '../../store/user.ts';
+import {baseURL_dev} from '@/config/baseURL'
+import { updateuserinfo } from '@/http/api';
+import { useallroleStore } from '@/store/role'
+import {useAuthStore} from '@/store/login'
+import { usealluserStore } from '@/store/user';
 import { ref, onMounted,defineEmits } from 'vue';
 import type { UploadProps } from 'element-plus'
 import { ElMessage, ElMessageBox } from 'element-plus';

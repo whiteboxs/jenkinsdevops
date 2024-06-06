@@ -51,7 +51,7 @@
   
   
   // TODO: 编辑
-  import { getenvironments, getassignees, create_ticket_processing_feedbacks } from '../http/api.ts'
+  import { getenvironments, getassignees, create_ticket_processing_feedbacks } from '../http/api'
   import { ref,reactive,onMounted } from 'vue'
   // 弹框开关
   const DialogVisible = ref(false)

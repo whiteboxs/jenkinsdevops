@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { getallmenus } from '../http/api'
+import { getallmenus } from '@/http/api'
 import { ref } from 'vue'
 export const useallmenuStore = defineStore('allmenu', () => {
   // 定义数据state

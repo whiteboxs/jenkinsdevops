@@ -12,7 +12,7 @@
         >
             <template v-for="item in role.menutree">
                 <template v-if="item.children">
-                    <el-sub-menu  :index="item.path|| ''" :key="item.path" >
+                    <el-sub-menu  :index="item.path" :key="item.path" >
                         <template #title>
                             <el-icon>
                                 <component :is="item.icon"></component>
@@ -20,33 +20,26 @@
                             <span>{{ item.title }}</span>
                         </template>
                         <template v-for="subItem in item.children">
-                            <el-sub-menu
-                                v-if="subItem.children"
-                                :index="subItem.path|| ''"
-                                :key="subItem.path"
-                                
-                            >
-                                <template #title>{{ subItem.title }}</template>
+                            <el-sub-menu v-if="subItem.children" :index="subItem.path" :key="subItem.path" >
+                                    <template #title>{{ subItem.title }}</template>
                                 <el-menu-item v-for="(threeItem, subindex) in subItem.children" :key="subindex" :index="threeItem.path">
-                                    <el-icon>
-                                    <component :is="threeItem.icon"></component>
-                                    </el-icon>
-                                    {{ threeItem.title }}
-                                  
+                                        <el-icon>
+                                            <component :is="threeItem.icon"></component>
+                                        </el-icon>
+                                        {{ threeItem.title }}
                                 </el-menu-item>
-                            </el-sub-menu>
+                            </el-sub-menu> 
                             <el-menu-item v-else :index="subItem.path">
                                 <el-icon>
                                 <component :is="subItem.icon"></component>
                                 </el-icon>
-                                {{ subItem.title }}
-                                
+                                {{ subItem.title }} 
                             </el-menu-item>
                         </template>
                     </el-sub-menu>
                 </template>
                 <template v-else>
-                    <el-menu-item :index="item.path || ''" :key="item.path" >
+                    <el-menu-item :index="item.path" :key="item.path" >
                         <el-icon>
                             <component :is="item.icon"></component>
                         </el-icon>
@@ -60,10 +53,10 @@
 
 <script setup lang="ts">
 import { computed,onMounted,ref} from 'vue';
-import { useSidebarStore } from '../store/sidebar';
+import { useSidebarStore } from '@/store/sidebar';
 import { useRoute } from 'vue-router';
-import { useallroleStore } from '../store/role.ts';
-import { useAuthStore } from '../store/login.ts';
+import { useallroleStore } from '@/store/role';
+
 
 
 
