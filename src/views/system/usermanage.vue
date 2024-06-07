@@ -48,12 +48,12 @@
 						<template #default="scope">
 						<el-image v-if="scope.row.userPic"
 							style="width: 80px; height: 80px"
-							:src="baseURL_dev+'/my/view/'+scope.row.userPic"
+							:src="baseURL+'/my/view/'+scope.row.userPic"
 							fit="cover">
 						</el-image>
 						<el-image v-else
 							style="width: 80px; height: 80px"
-							src="../../public/default.png"
+							:src="baseURL +'/my/view/default.png'"
 							fit="cover">
 						</el-image>
 						</template>
@@ -98,7 +98,6 @@
 </template>
 
 <script setup lang="ts" name="usermanage">
-import {baseURL_dev} from '@/config/baseURL'
 import { ref, onMounted, computed  } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
@@ -107,8 +106,13 @@ import { adduser,deluser ,updateuserstatus } from '@/http/api';
 import type { FormInstance, FormRules } from 'element-plus'
 import { useallroleStore } from '@/store/role'
 import {useAuthStore} from '@/store/login'
+
 //工单编辑
 import userEdit from '@/components/system/userEdit.vue';
+
+const baseURL = import.meta.env.VITE_APP_BASE_API
+
+
 //角色store
 const allrole = useallroleStore()
 //用户store

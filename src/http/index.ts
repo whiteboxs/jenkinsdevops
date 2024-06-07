@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { ElMessage, ElMessageBox,  } from 'element-plus';
 import router from '../router/index'
-import {baseURL_dev,baseURL_pro} from '../config/baseURL'
 //pinia
 import {useAuthStore} from '../store/login'
 //接口
@@ -9,12 +8,9 @@ import {refresh_token} from '../http/api'
 
 
 
-//import{logout} from '../components/commonheader.vue'
-//const BASE_URL = 'http://192.168.3.173:9002' // 设置基础 URL
-
 // 创建 Axios 实例
 const http = axios.create({
-  baseURL: baseURL_dev,
+  baseURL: import.meta.env.VITE_APP_BASE_API,
   timeout: 10000, // 请求超时时间
   withCredentials: false, // 允许发送跨域凭证
 });
@@ -38,49 +34,7 @@ http.interceptors.request.use(
   }
 );
 
-// 响应拦截器
-//http.interceptors.response.use(
-//   (response) => {
-//     const { data } = response;
-//     if (data.code < 200 || data.code > 399) {
-//       ElMessage.error(data.msg || response.status);
-//       return Promise.reject('error');
-//     } else {
-//       return response;
-//     }
-//   },
-//   async (error) => {
-//     if (error.response) {
-//       const { status, config } = error.response;
-//       if (status === 401) {
-//         if (config.url?.includes('/token/refresh')) {
-//           ElMessageBox.confirm('当前页面已失效，请重新登录', {
-//             confirmButtonText: '确定',
-//             type: 'warning',
-//           }).then(() => {
-//             const usestore = useAuthStore();
-//             usestore.logout();
-//             router.replace('/login');
-//           });
-//         } else {
-//           try {
-//             const res = await refresh_token();
-//             if (res.data.msg) {
-//               useAuthStore().updateToken(res.data.access_token);
-//               return await http.request(config);
-//             }
-//           } catch (refreshError) {
-//             ElMessage.error('刷新token失败，请重新登录');
-//             const usestore = useAuthStore();
-//             usestore.logout();
-//             router.replace('/login');
-//           }
-//         }
-//       }
-//     }
-//     return Promise.reject(error);
-//   }
-// );
+
 
 let flag = false
 // 响应拦截器
@@ -136,7 +90,7 @@ http.interceptors.response.use(
             }
         } 
       } 
-    return Promise.reject(new Error(error.response || 'Error')); 
+    return Promise.reject(error)
   }
 )
 

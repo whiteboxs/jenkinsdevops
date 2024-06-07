@@ -20,7 +20,7 @@
 					<span class="btn-bell-badge" v-if="message"></span>
 				</div> -->
 				<!-- 用户头像 -->
-				<el-avatar class="user-avator" :size="30" :src="baseURL_dev+'/my/view/'+user.userinfo.userPic ||'../public/default.png'" />
+				<el-avatar class="user-avator" :size="30" :src="baseURL+'/my/view/'+user.userinfo.userPic || baseURL +'/my/view/default.png'" />
 				<!-- 用户名下拉菜单 -->
 				<el-dropdown class="user-name" trigger="click" >
 					<span class="el-dropdown-link">
@@ -50,8 +50,7 @@ import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/store/login';
 import {usePermissStore} from '@/store/permiss'
 import { useallroleStore } from '@/store/role'
-import {baseURL_dev} from '@/config/baseURL'
-
+const baseURL = import.meta.env.VITE_APP_BASE_API
 const message: number = 2;
 
 const sidebar = useSidebarStore();

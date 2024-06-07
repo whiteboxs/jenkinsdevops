@@ -13,7 +13,7 @@
             label-width="120px"
             class="demo-ruleForm"
             >
-            <el-form-item label="实例名称" prop="alianme">
+            <el-form-item label="实例名称" prop="aliname">
                 <el-input v-model="ecshostnameForm.aliname" autocomplete="off" disabled/>
             </el-form-item>
             <el-form-item label="主机名" prop="hostname">

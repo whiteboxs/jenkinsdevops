@@ -58,7 +58,6 @@
 import { ref } from 'vue';
 
 import { useAuthStore } from '@/store/login';
-import {baseURL_dev} from '@/config/baseURL'
 import { changepasswd } from '@/http/api'
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage } from 'element-plus';
@@ -66,6 +65,7 @@ import { ElMessage } from 'element-plus';
 //图标裁剪编辑
 import cropper from '@/components/cropper.vue';
 
+const baseURL = import.meta.env.VITE_APP_BASE_API
 const user =useAuthStore() 
 const ruleFormRef = ref<FormInstance>()
 const changepasswdform = ref({
@@ -137,9 +137,9 @@ const onSubmit = async(formEl: FormInstance | undefined) => {
 
 const avatar = () => {
     if (user.userinfo.userPic) {
-        return baseURL_dev + '/my/view/' + user.userinfo.userPic;
+        return baseURL + '/my/view/' + user.userinfo.userPic;
     } else {
-        return '../public/default.png';
+        return baseURL +'/my/view/default.png';
     }
 };
 
@@ -148,7 +148,7 @@ const avatarImg = ref(avatar());
 
 
 const handleUpdateAvatar = () => {
-	avatarImg.value =  baseURL_dev + '/my/view/' + user.userinfo.userPic;
+	avatarImg.value =  baseURL + '/my/view/' + user.userinfo.userPic;
     console.log('最新的小图标',avatarImg.value) //上传完成回传
 }
 

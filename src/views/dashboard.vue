@@ -4,7 +4,7 @@
 			<el-col :span="8">
 				<el-card shadow="hover" class="mgb20" style="height: 252px">
 					<div class="user-info">
-						<el-avatar :size="120" :src="baseURL_dev+'/my/view/'+user.userinfo.userPic ||'../public/default.png'" />
+						<el-avatar :size="120" :src="baseURL+'/my/view/'+user.userinfo.userPic || baseURL+'/my/view/default.png'" />
 						<div class="user-info-cont">
 							<div class="user-info-name">{{ name }}</div>
 							<div>{{ role }}</div>
@@ -120,7 +120,7 @@
 import Schart from 'vue-schart';
 import { reactive } from 'vue';
 import { useAuthStore } from '@/store/login';
-import {baseURL_dev} from '@/config/baseURL'
+const baseURL = import.meta.env.VITE_APP_BASE_API
 
 const user =useAuthStore();
 

@@ -34,7 +34,6 @@ import {ref } from 'vue';
 import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
 import { useAuthStore } from '@/store/login';
-import {baseURL_dev} from '@/config/baseURL'
 import { upload } from '@/http/api';
 import { ElMessage } from 'element-plus';
 
@@ -115,8 +114,6 @@ const saveAvatar = async () => {
         const res = await upload(user.userinfo.user_id, formData);
         if (res.data.code === 200) {
 			ElMessage.success(res.data.msg);
-            //最新的小图片穿给一个函数赋值,然后转给父组件
-			//newavatarImg.value = baseURL_dev + '/my/view/' + res.data.image
 			//更新登录的持久化信息
 			user.updateuserPic(res.data.image)
 			// 将 imgSrc.value 设置为新头像的地址

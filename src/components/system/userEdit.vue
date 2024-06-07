@@ -21,7 +21,7 @@
 							<el-form-item label="头像">
 								<el-upload
 								class="avatar-uploader"
-								:action="baseURL_dev+'/my/upload/'+ usereditForm.user_id"
+								:action="baseURL+'/my/upload/'+ usereditForm.user_id"
 								:show-file-list="false"
 								:on-success="handleAvatarSuccess"
 								:before-upload="beforeAvatarUpload"
@@ -52,7 +52,6 @@
 
 // TODO: 编辑
 import type { FormInstance, FormRules } from 'element-plus'
-import {baseURL_dev} from '@/config/baseURL'
 import { updateuserinfo } from '@/http/api';
 import { useallroleStore } from '@/store/role'
 import {useAuthStore} from '@/store/login'
@@ -60,7 +59,7 @@ import { usealluserStore } from '@/store/user';
 import { ref, onMounted,defineEmits } from 'vue';
 import type { UploadProps } from 'element-plus'
 import { ElMessage, ElMessageBox } from 'element-plus';
-
+const baseURL = import.meta.env.VITE_APP_BASE_API
 //角色store
 const allroleStore = useallroleStore()
 
@@ -152,7 +151,7 @@ const handleAvatarSuccess: UploadProps['onSuccess'] = (
   response
 ) => {
   if(response.code==200){
-    usereditForm.value.userPic=baseURL_dev+'/my/view/'+response.image
+    usereditForm.value.userPic=baseURL+'/my/view/'+response.image
   }else{
     return false
   }
@@ -180,7 +179,7 @@ const open = (row:any) => {
   usereditForm.value.username = row.username
   usereditForm.value.department = row.department
   usereditForm.value.role_id = row.role_id
-  usereditForm.value.userPic = row.userPic !== null ? baseURL_dev+'/my/view/'+row.userPic : baseURL_dev+"/my/view/default.png"
+  usereditForm.value.userPic = row.userPic !== null ? baseURL+'/my/view/'+row.userPic : baseURL+"/my/view/default.png"
   drawer.value = true
   console.log('没提交前的', usereditForm.value)
 }
