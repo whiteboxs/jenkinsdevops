@@ -1,6 +1,6 @@
 
 import { defineStore } from "pinia";
-import { allalert } from '@/http/alert/api'
+import { allalert } from '@/http/alert/alert'
 import { ref } from "vue";
 
 export const useallalertstore = defineStore('allalert', () => {

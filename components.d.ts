@@ -58,9 +58,10 @@ declare module '@vue/runtime-core' {
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     Header: typeof import('./src/components/header.vue')['default']
-    K8s_jobEdit: typeof import('./src/components/k8s_jobEdit.vue')['default']
+    Java_jobEdit: typeof import('./src/components/pushlist/java_jobEdit.vue')['default']
+    K8s_jobEdit: typeof import('./src/components/pushlist/k8s_jobEdit.vue')['default']
     MenuEdit: typeof import('./src/components/system/menuEdit.vue')['default']
-    Pushlist_branch: typeof import('./src/components/pushlist_branch.vue')['default']
+    Pushlist_branch: typeof import('./src/components/pushlist/pushlist_branch.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Sidebar: typeof import('./src/components/sidebar.vue')['default']
@@ -68,7 +69,7 @@ declare module '@vue/runtime-core' {
     Ticket_processingEdit: typeof import('./src/components/ticket_processingEdit.vue')['default']
     TicketEdit: typeof import('./src/components/ticketEdit.vue')['default']
     UserEdit: typeof import('./src/components/system/userEdit.vue')['default']
-    Worknode: typeof import('./src/components/worknode.vue')['default']
+    Worknode: typeof import('./src/components/pushlist/worknode.vue')['default']
   }
   export interface ComponentCustomProperties {
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']

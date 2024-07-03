@@ -18,11 +18,8 @@
                               <el-form-item label="灰度ip" prop="gray_ip">
                                   <el-input v-model="jobeditForm.gray_ip" autocomplete="off" />
                               </el-form-item>
-                              <el-form-item label="部门" prop="dev_ip">
-                                  <el-input v-model="jobeditForm.prod_ip" autocomplete="off" />
-                              </el-form-item>
                               <el-form-item label="git地址" prop="git_address">
-                                <el-input v-model="jobeditForm.git_address" autocomplete="off" />
+                                <el-input v-model="jobeditForm.git_address" autocomplete="off" :rows="2" type="textarea"/>
                               </el-form-item>
                               <el-form-item>
                                   <el-button type="primary" @click="onupdate(ruleFormRef)">提交</el-button>
@@ -58,7 +55,6 @@ onMounted(() => {
     id: number;  
     job_name: string;  
     gray_ip: string;  
-    prod_ip: string;  
     git_address: string;  
   }  
   
@@ -68,7 +64,6 @@ onMounted(() => {
     id:0,
     job_name:'',
     gray_ip:'',
-    prod_ip:'',
     git_address:'',
   })
   
@@ -88,19 +83,12 @@ onMounted(() => {
   
   const validgray_ip = (_: any, value: any, callback: any) => {
     if (value === '') {
-      callback(new Error('密测试ip不能为空'))
+      callback(new Error('灰度ip不能为空'))
     } else {
       callback()
     }
   }
   
-  const validprod_ip = (_: any, value: any, callback: any) => {
-    if (value === '') {
-      callback(new Error('开发ip不能为空'))
-    } else {
-      callback()
-    }
-  }
   const validgit_address = (_: any, value: any, callback: any) => {
     if (value === '') {
       callback(new Error('git地址不能为空'))
@@ -111,8 +99,7 @@ onMounted(() => {
   
   const rules = ref<FormRules>({
       job_name: [{ validator: validjob_name, trigger: 'blur' }],
-      test_ip: [{ validator: validgray_ip, trigger: 'blur' }],
-      dev_ip: [{ validator: validprod_ip, trigger: 'blur' }],
+      gray_ip: [{ validator: validgray_ip, trigger: 'blur' }],
       git_address: [{ validator: validgit_address, trigger: 'blur' }],
       
   })
@@ -127,7 +114,6 @@ onMounted(() => {
        id:0,
        job_name:'',
        gray_ip:'',
-       prod_ip:'',
        git_address:'',
       }
   }
@@ -142,7 +128,6 @@ onMounted(() => {
     jobeditForm.value.id = row.id
     jobeditForm.value.job_name = row.job_name
     jobeditForm.value.gray_ip = row.gray_ip
-    jobeditForm.value.prod_ip = row.prod_ip
     jobeditForm.value.git_address = row.git_address
     drawer.value = true
     console	.log('没提交前的', jobeditForm.value)

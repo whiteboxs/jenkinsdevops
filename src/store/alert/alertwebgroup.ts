@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { allalert_webhook } from '@/http/alert/api'
+import { allalert_webhook } from '@/http/alert/alert'
 import { ref} from 'vue'
 export const usealertwebgroupStore = defineStore('alertwebgroup', () => {
   // 定义数据state

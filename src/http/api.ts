@@ -1,6 +1,7 @@
 
 import http from './index';
-
+//qs
+import qs from 'qs'
 
 export const fetchData = () => {
   return http({
@@ -407,12 +408,23 @@ export const hostnamectl = (data:object) => {
 
 // 登录日志
 export const allloginlog = (data:object) => {
-  return http.get('/api/all/loginlog',{params: data});
+  return http.get('/api/all/loginlog',{
+    params: data,
+    paramsSerializer: function(params) {
+      return qs.stringify(params, { arrayFormat: 'repeat' });
+    }
+  });
 };
+
 
 // 查询所有操作日志
 export const alloperlog = (data:object) => {
-  return http.get('/api/all/operlog',{params: data});
+  return http.get('/api/all/operlog',{
+    params: data,
+    paramsSerializer: function(params) {
+      return qs.stringify(params, { arrayFormat: 'repeat' });
+    }
+  });
 };
 
 // 查询单个id操作日志

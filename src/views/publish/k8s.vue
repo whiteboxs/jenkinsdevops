@@ -20,11 +20,8 @@
 							<el-form-item label="项目名" placeholder="jenkins项目名称" prop="job_name">
 								<el-input v-model="jobForm.job_name" autocomplete="off" />
 							</el-form-item>
-              <el-form-item label="测试ip" placeholder="测试ip" prop="test_ip">
-								<el-input v-model="jobForm.test_ip" autocomplete="off" />
-							</el-form-item>
-              <el-form-item label="开发ip" placeholder="开发ip" prop="dev_ip">
-								<el-input v-model="jobForm.dev_ip" autocomplete="off" />
+              <el-form-item label="灰度ip" placeholder="灰度ip" prop="gray_ip">
+								<el-input v-model="jobForm.gray_ip" autocomplete="off" />
 							</el-form-item>
               <el-form-item label="git地址" placeholder="git地址" prop="git_address">
 								<el-input v-model="jobForm.git_address" autocomplete="off" />
@@ -39,8 +36,7 @@
 			<el-table :data="showjobs" border class="table" ref="multipleTable" header-cell-class-name="table-header">
         <el-table-column width="45" prop="id" label="ID"></el-table-column>
 				<el-table-column prop="job_name" label="项目名"></el-table-column>
-        <el-table-column prop="test_ip" label="测试ip"></el-table-column>
-        <el-table-column prop="dev_ip" label="开发ip"></el-table-column>
+        <el-table-column prop="gray_ip" label="灰度ip"></el-table-column>
         <el-table-column prop="job_build_ids" label="构建号" header-align="center">
             <template   #default="scope">
                 <el-select v-model="scope.row.job_build_ids.job_build_id" placeholder="请选择构建号">
@@ -89,9 +85,9 @@ import { ArrowRight, Delete, Edit, Search, Plus } from '@element-plus/icons-vue'
 import { useallk8sjobStore } from '@/store/k8s_job';
 import { addk8sjob, deljob,branch } from '@/http/api';
 import type { FormInstance, FormRules } from 'element-plus'
-import pushlist_branch from '@/components/pushlist_branch.vue';
+import pushlist_branch from '@/components/pushlist/pushlist_branch.vue';
   //工单编辑
-  import k8s_jobEdit from '@/components/k8s_jobEdit.vue';
+  import k8s_jobEdit from '@/components/pushlist/k8s_jobEdit.vue';
 //k8s_jobstore
 const  k8sjobStore = useallk8sjobStore()
 
@@ -124,8 +120,7 @@ const jobForm = ref({
     id: '',
     job_name:'',
     job_build_id:'',
-    test_ip:'',
-    dev_ip:'',
+    gray_ip:'',
     git_address:''
 })
 
@@ -271,8 +266,7 @@ const closeDr=() =>{
     id: '',
     job_name:'',
     job_build_id:'',
-    test_ip:'',
-    dev_ip:'',
+    gray_ip:'',
     git_address:''
     }
 }

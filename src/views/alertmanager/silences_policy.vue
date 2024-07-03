@@ -20,10 +20,10 @@
                 @keyup.enter="handleSearch"
                 />
             </el-form-item>
-            <el-form-item label="告警组" >
+            <el-form-item label="告警分组" >
             <el-input
                v-model="query.group"
-               placeholder="请输入告警组"
+               placeholder="请输入告警分组"
                clearable
                style="width: 150px;"
                @keyup.enter="handleSearch"
@@ -60,17 +60,17 @@
         <el-row :gutter="10" class="mb8">
             <el-col :span="1.5">
             <el-button
-              type="primary" plain icon="Plus"  @click="handleAdd" >新增</el-button>
+              type="primary" plain icon="Plus"  @click="handleAdd" v-permiss="72" >新增</el-button>
          </el-col>
          <el-col :span="1.5">
             <el-button
-               type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete" >删除</el-button>
+               type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete" v-permiss="73" >删除</el-button>
          </el-col>
          <el-col :span="1.5">
-            <el-button type="danger" plain icon="Delete" @click="handleClean" >清空</el-button>
+            <el-button type="danger" plain icon="Delete" @click="handleClean" v-permiss="74">清空</el-button>
          </el-col>
          <el-col :span="1.5">
-            <el-button type="success" plain icon="Download" @click="handleExport" >导出</el-button>
+            <el-button type="success" plain icon="Download" @click="handleExport" v-permiss="75">导出</el-button>
          </el-col>
          <el-col :span="2">
             <el-tooltip content="刷新" placement="top">
@@ -86,8 +86,8 @@
         :cell-style="cellStyle">
             <el-table-column type="selection" width="55" align="center" />
             <el-table-column prop="id" label="ID" width="90" align="center" />
-            <el-table-column prop="name" label="策略名称" align="center"></el-table-column>
-            <el-table-column prop="group" label="告警组" align="center"  >
+            <el-table-column prop="name" label="策略名称" width="150" align="center"></el-table-column>
+            <el-table-column prop="group" label="告警组" width="300" align="center"  >
                 <template #default="scope">
                     <el-tag v-for="item in scope.row.group">{{ item }}</el-tag>
                 </template>
@@ -97,7 +97,7 @@
                         <el-tag v-for="item in scope.row.instance">{{ item }}</el-tag>
                 </template>
             </el-table-column>
-            <el-table-column prop="serverity" label="告警级别"  align="center">
+            <el-table-column prop="serverity" label="告警级别" width="120" align="center">
                 <template #default="scope">
                     <div v-for="item in scope.row.serverity" >
                         <el-tag type="danger" v-if="item === 'critical'">{{ item}}</el-tag>
@@ -105,9 +105,9 @@
                     </div>  
                 </template>
             </el-table-column>
-            <el-table-column prop="starttime" label="静默开始时间" align="center"></el-table-column>
-            <el-table-column prop="endtime" label="静默结束时间" align="center"></el-table-column>
-            <el-table-column prop="create_time" label="创建时间"></el-table-column>
+            <el-table-column prop="starttime" label="静默开始时间" width="170" align="center"></el-table-column>
+            <el-table-column prop="endtime" label="静默结束时间" width="170" align="center"></el-table-column>
+            <el-table-column prop="create_time" label="创建时间" width="170" align="center"></el-table-column>
             <el-table-column label="操作" width="100" align="center">
                 <template #default="scope">
                     <div class="mb-4">  
@@ -198,7 +198,7 @@
 <script setup lang="ts" name="silences_policy">
 import { ref,onMounted } from 'vue';
 import { usesilences_policyStore } from '@/store/alert/silences_policy';
-import { add_silences_policy, delsilences_policy }  from '@/http/alert/api';
+import { add_silences_policy, delsilences_policy }  from '@/http/alert/alert';
 import { Refresh } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import * as XLSX from 'xlsx';

@@ -5,6 +5,8 @@ import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 import path from 'path'
+import removeConsole from 'vite-plugin-remove-console';
+
 
 export default defineConfig(({mode}) => {
 	const env = loadEnv(mode, process.cwd())
@@ -14,6 +16,7 @@ export default defineConfig(({mode}) => {
 	base: VITE_APP_ENV === 'production' ? '/' : '/',
 	plugins: [
 		vue(),
+		removeConsole(),
 		AutoImport({
 			imports:
 			[
@@ -50,23 +53,14 @@ export default defineConfig(({mode}) => {
 		port: 5173,
 		host: true,
 		proxy: {
-			'/dev-api': {
+			'/dev': {
 				target: 'http://127.0.0.1:9002',
 				changeOrigin: true,
-				rewrite: (p) => p.replace(/^\/dev-api/, '')
+				rewrite: (p) => p.replace(/^\/dev/, '')
 			}
 		}
 	},
 	build: {
-		outDir: 'dist', // 生成输出的根目录。如果该目录存在，则会在生成之前将其删除。 默认文件夹名称为dist
-		target: 'esnext',
-		terserOptions: {
-		  compress: {
-			drop_console: true, // 生产环境去掉控制台 console
-			drop_debugger: true, // 生产环境去掉控制台 debugger 默认就是true
-			dead_code: true, // 删除无法访问的代码 默认就是true
-		  }
-		},
 		chunkSizeWarningLimit: 2000, // 调整区块大小警告限制
 	  }
 }

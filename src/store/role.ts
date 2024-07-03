@@ -40,7 +40,7 @@ const generateMenuTree = (menus:any, parentId = null) => {
   .sort((a: { menu_order: number; }, b: { menu_order: number; }) => a.menu_order - b.menu_order) // 根据 menu_order 字段进行升序排序
   .forEach((menu: { parentid: any; id: any; children: any;path: string}) => {
           const children = generateMenuTree(menus, menu.id);
-          if (children.length) {
+            if (children.length) {
               menu.children = children;
           }
           if (menu.path.trim() === '') {

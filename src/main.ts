@@ -7,6 +7,14 @@ import { usePermissStore } from './store/permiss';
 import 'element-plus/dist/index.css';
 import './assets/css/icon.css';
 import { ElLoading } from 'element-plus'
+import 'default-passive-events'
+//echarts
+import 'echarts'
+import VueCharts from 'vue-echarts'
+
+
+
+
 //全局密码加密
 // import { AES_Encrypt, AES_Decrypt } from './utils/aes.ts';
 
@@ -31,7 +39,7 @@ app.directive('permiss', {
     },
 });
 app.directive('loading',ElLoading.directive)//【新增】
-
+app.component('v-chart', VueCharts)
 // app.config.globalProperties.$AES_Encrypt = AES_Encrypt //全局加密
 // app.config.globalProperties.$AES_Decrypt = AES_Decrypt //全局解密
 

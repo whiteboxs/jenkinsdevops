@@ -76,7 +76,8 @@
         </el-col>
           </el-row>
 
-        <el-table :data="operlog.operloginfo.data" @selection-change="handleSelectionChange" border class="table"  header-cell-class-name="table-header"  :cell-style="cellStyle">
+        <el-table :data="operlog.operloginfo.data" @selection-change="handleSelectionChange" 
+        border class="table"  header-cell-class-name="table-header"  :cell-style="cellStyle">
             <el-table-column type="selection" width="55" align="center" />
             <el-table-column label="日志编号" prop="id" width="90" align="center" />
             <el-table-column prop="username" label="用户名称" align="center"></el-table-column>

@@ -60,7 +60,7 @@ http.interceptors.response.use(
         switch (error.response.status ) {
           case 401:
             if (error.response.status === 401 && error.response.config.url.indexOf('/token/refresh') !==-1) {
-              flag = true;
+              flag = true; // 设置 flag 为 true，避免重复弹窗
               ElMessageBox.confirm(
                   '当前页面已失效，请重新登录',
                   {

@@ -1,10 +1,17 @@
 
 import http from '../index';
+//qs
+import qs from 'qs'
 
 
 // 查询所有操作日志
 export const allsilences_policy = (data:object) => {
-    return http.get('/api/all/silences_policy',{params: data});
+    return http.get('/api/all/silences_policy', {
+      params: data,
+      paramsSerializer: function(params) {
+        return qs.stringify(params, { arrayFormat: 'repeat' });
+      }
+    });
   };
   
 //创建策略
@@ -70,9 +77,14 @@ export const updatealerr_webhook = (id:number,data:object) => {
   return http.put(`/api/alert_webhook/${id}`,data,JsonConfig);
 };
 
-// 查询所有alert信息
+// 查询所有alert信信息
 export const allalert = (data:object) => {
-  return http.get('/api/all/alert',{params: data});
+  return http.get('/api/all/alert', {
+    params: data,
+    paramsSerializer: function(params) {
+      return qs.stringify(params, { arrayFormat: 'repeat' });
+    }
+  });
 };
 
 // 删除单个告警信息
@@ -82,10 +94,20 @@ export const delalert = (id:number) => {
 
 // 查询所有alert信息
 export const allsilences = (data:object) => {
-  return http.get('/api/all/silences',{params: data});
+  return http.get('/api/all/silences',  {
+    params: data,
+    paramsSerializer: function(params) {
+      return qs.stringify(params, { arrayFormat: 'repeat' });
+    }
+  });
 };
 
 // 删除单个告警信息
 export const delsilences = (id:number) => {
   return http.delete(`/api/silences/${id}`);
+};
+
+//当前告警数
+export const now_alert = () => {
+  return http.get('/api/now_alert');
 };

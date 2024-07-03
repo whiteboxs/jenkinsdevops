@@ -32,11 +32,16 @@
 						</el-form>
 					</el-drawer>
 				</div>
-			<el-table :data="allroleStore.allroleinfo" border class="table" ref="multipleTable" header-cell-class-name="table-header">
-				<el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
-				<el-table-column prop="role_name" label="角色名"></el-table-column>
-				<el-table-column prop="create_time" label="创建时间" ></el-table-column>
-				<el-table-column label="操作" width="250" align="center">
+			<el-table :data="allroleStore.allroleinfo" border class="table" ref="multipleTable" header-cell-class-name="table-header" width="auto">
+				<el-table-column prop="id" label="ID" align="center"></el-table-column>
+				<el-table-column prop="role_name" label="角色名"  align="center"></el-table-column>
+				<el-table-column prop="user" label="用户" align="center">
+                <template #default="scope">
+                    <el-tag v-for="item in scope.row.users">{{ item.username }}</el-tag>
+                </template>
+           		</el-table-column>
+				<el-table-column prop="create_time" label="创建时间" align="center"></el-table-column>
+				<el-table-column label="操作" align="center">
 					<template #default="scope">
 						<el-button type="primary" text :icon="Edit" @click="handleEdit(scope.row)" >
 							分配权限

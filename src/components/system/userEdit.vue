@@ -16,7 +16,11 @@
 								<el-input v-model="usereditForm.username" autocomplete="off" />
 							</el-form-item>
 							<el-form-item label="部门" prop="department">
-								<el-input v-model="usereditForm.department" autocomplete="off" />
+								<el-select 
+								   v-model="usereditForm.department" 
+								   placeholder="请选择部门">
+                    <el-option :label="item.name" :value="item.name" v-for="item in department" :key="item.id" />
+                </el-select>
 							</el-form-item>
 							<el-form-item label="头像">
 								<el-upload
@@ -212,7 +216,11 @@ const onupdate = async (formEl: FormInstance | undefined) => {
 
 
 
-
+const department =ref ([
+	{id:1,name:'研发'},
+	{id:2,name:'运维'},
+	{id:3,name:'测试'},
+])
 
 //更新
 // const emit = defineEmits(['onupdate'])

@@ -71,9 +71,9 @@
   
   // TODO: 编辑
   import type { FormInstance, FormRules } from 'element-plus'
-  import { ref,defineEmits,computed,defineProps} from 'vue';
+  import { ref,defineEmits,computed,defineProps,onMounted} from 'vue';
   import { ElMessage, ElMessageBox,ElDrawer } from 'element-plus';
-  import { update_silences_policy } from '@/http/alert/api';
+  import { update_silences_policy } from '@/http/alert/alert';
   import { monitor_group,monitor_instance } from '@/http/api'
 
 
@@ -82,6 +82,12 @@
 
   // 开关
   const drawer = ref(false)
+
+  onMounted(() => {
+    monitor_instancelist()
+    monitor_grouplist()
+})
+
 
   
   // 定义一个ref对象绑定表单，这个ref用于检查表单是否符合要求
@@ -131,8 +137,8 @@ const closeDr=() =>{
 const monitorgroups = ref([])
 const monitor_grouplist = async () => {
   const res = await monitor_group()
-  const mapgrouops = res.data.monitor_group.map((i:any) => {
-  return { value: i, label: i };
+  const mapgrouops = res.data.monitor_group.map((item:any) => {
+  return { value: item, label: item };
   });
   monitorgroups.value = mapgrouops
 }
@@ -141,13 +147,12 @@ const monitor_grouplist = async () => {
 const monitorinstances = ref([])
 const monitor_instancelist = async () => {
   const res = await monitor_instance()
-  const mapinstances = res.data.data.map((i:any) => {
-  return { value: i, label: i };
+  const mapinstances = res.data.data.map((item:any) => {
+  return { value: item, label: item };
   });
   monitorinstances.value = mapinstances
 }
-monitor_instancelist()
-monitor_grouplist()
+
 //告警级别
 const alert_serverity = ref([
   {

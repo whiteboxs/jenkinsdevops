@@ -126,7 +126,7 @@ const user =useAuthStore();
 
 const name = user.userinfo.username;
 const role: string = user.userinfo.role_name;
-const  login_time: string = user.userinfo.update_time;
+const  login_time: string = user.userinfo.login_time;
 const options = {
 	type: 'bar',
 	title: {

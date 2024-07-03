@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { allsilences_policy } from '@/http/alert/api'
+import { allsilences_policy } from '@/http/alert/alert'
 import { ref} from 'vue'
 export const usesilences_policyStore = defineStore('silences_policy', () => {
   // 定义数据state

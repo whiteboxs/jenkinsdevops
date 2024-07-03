@@ -42,9 +42,9 @@
   
   // TODO: 编辑
   import type { FormInstance, FormRules } from 'element-plus'
-  import { ref,defineEmits } from 'vue';
+  import { ref,defineEmits,onMounted } from 'vue';
   import { ElMessage, ElMessageBox,ElDrawer } from 'element-plus';
-  import { updatealerr_webhook } from '@/http/alert/api';
+  import { updatealerr_webhook } from '@/http/alert/alert';
   import { monitor_group } from '@/http/api'
 
 
@@ -55,6 +55,12 @@
   const drawer = ref(false)
 
   
+onMounted(() => {
+  monitor_grouplist()
+})
+
+
+
   // 定义一个ref对象绑定表单，这个ref用于检查表单是否符合要求
   const ruleFormRef = ref<FormInstance>()
   const  editForm = ref({
@@ -92,14 +98,14 @@ const closeDr=() =>{
 const monitorgroups = ref([])
 const monitor_grouplist = async () => {
   const res = await monitor_group()
-  const mapgrouops = res.data.monitor_group.map((i:any) => {
-  return { value: i, label: i };
+  const mapgrouops = res.data.monitor_group.map((
+  item:any) => {
+  return { value: item, label: item };
   });
   monitorgroups.value = mapgrouops
 }
 
 
-monitor_grouplist()
 
 //验证
 //验证添加的账号字段

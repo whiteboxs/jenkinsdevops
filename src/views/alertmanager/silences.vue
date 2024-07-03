@@ -2,13 +2,22 @@
 	<div>
 		<div class="container">
             <el-form :model="query" ref="queryRef" :inline="true" label-width="auto" status-icon v-show="showSearch">
+            <el-form-item label="关键字段" >
+            <el-input
+            v-model="query.keyword"
+            placeholder="类型,主题,详情里的关键字"
+            clearable
+            style="width: 200px;"
+            @keyup.enter="handleSearch"
+            />
+            </el-form-item>
             <el-form-item label="告警状态" >
                 <el-select
               @keyup.enter="handleSearch"
                v-model="query.status"
                placeholder="请选择告警状态"
                clearable
-               style="width: 150px"
+               style="width: 200px"
                 >
                 <el-option key="1" label="firing" value="firing" ></el-option>
                 <el-option key="2" label="resolved" value="resolved" ></el-option>
@@ -20,7 +29,7 @@
                v-model="query.serverity"
                placeholder="请选择告警级别"
                clearable
-               style="width: 150px"
+               style="width: 200px"
                 >
                 <el-option key="1" label="critical" value="critical" ></el-option>
                 <el-option key="2" label="warning" value="warning" ></el-option>
@@ -31,22 +40,22 @@
                 v-model="query.instance"
                 placeholder="请输入告警地址"
                 clearable
-                style="width: 150px;"
+                style="width: 200px;"
                 @keyup.enter="handleSearch"
                 />
             </el-form-item>
-            <el-form-item label="告警组" >
+            <el-form-item label="告警分组" >
             <el-input
                v-model="query.group"
-               placeholder="请输入告警组"
+               placeholder="请输入告警分组"
                clearable
-               style="width: 150px;"
+               style="width: 200px;"
                @keyup.enter="handleSearch"
                 />
              </el-form-item>
-             <el-form-item label="创建时间" style="width: 308px">
+             <el-form-item label="告警时间" style="width: 308px">
               <el-date-picker
-                v-model="query.create_time"
+                v-model="query.alert_time"
                 type="daterange"
                 range-separator="-"
                 start-placeholder="开始时间"
@@ -63,13 +72,13 @@
         <el-row :gutter="10" class="mb8"> 
          <el-col :span="1.5">
             <el-button
-               type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete" >删除</el-button>
+               type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete" v-permiss="69" >删除</el-button>
          </el-col>
          <el-col :span="1.5">
-            <el-button type="danger" plain icon="Delete" @click="handleClean" >清空</el-button>
+            <el-button type="danger" plain icon="Delete" @click="handleClean" v-permiss="70" >清空</el-button>
          </el-col>
          <el-col :span="1.5">
-            <el-button type="success" plain icon="Download" @click="handleExport" >导出</el-button>
+            <el-button type="success" plain icon="Download" @click="handleExport" v-permiss="71" >导出</el-button>
          </el-col>
          <el-col :span="2">
             <el-tooltip content="刷新" placement="top">
@@ -89,7 +98,7 @@
             <el-table-column prop="serverity" label="告警级别" width="90" align="center"  ></el-table-column>
             <el-table-column prop="alertname" label="告警类型"  align="center"></el-table-column>
             <el-table-column prop="group" label="告警分组" width="120" align="center"></el-table-column>
-            <el-table-column prop="instance" label="告警主机" width="140" align="center"></el-table-column>
+            <el-table-column prop="instance" label="告警地址" width="140" align="center"></el-table-column>
             <el-table-column prop="summary" label="告警主题" width="200" align="center"></el-table-column>
             <el-table-column prop="description" label="告警详情" width="200" align="center"></el-table-column>
             <el-table-column prop="silences_policy_name" label="匹配策略名称" width="120" align="center">
@@ -121,7 +130,7 @@ import { useallsilencesstore } from '@/store/alert/silences';
 import { Refresh } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import * as XLSX from 'xlsx';
-import {delsilences} from '@/http/alert/api'
+import {delsilences} from '@/http/alert/alert'
 
 const silences = useallsilencesstore();
 
@@ -135,7 +144,8 @@ const query = ref<any>({
     instance:'',
     serverity:'',
     group:'',
-    create_time:'',
+    alert_time:'',
+    keyword:'',
     pagenum: 1,
     pagesize: 10
 });
@@ -156,7 +166,8 @@ const handleReset = () => {
     group:'',
     instance:'',
     serverity:'',
-    create_time:'',
+    alert_time:'',
+    keyword:'',
     pagenum: 1,
     pagesize: 10
     };

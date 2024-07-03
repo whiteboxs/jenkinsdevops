@@ -30,9 +30,10 @@
 							</el-form-item>							
                 <el-form-item label="菜单类型" prop="menu_type">
                     <el-radio-group v-model="menuForm.menu_type">
-                        <el-radio label="directory"></el-radio>
-                        <el-radio label="menu"></el-radio>
-                        <el-radio label="button"></el-radio>
+                        <el-radio label="directory">目录</el-radio>
+                        <el-radio label="menu">导航菜单</el-radio>
+                        <el-radio label="button">菜单按钮</el-radio>
+                        <el-radio label="in_menu">嵌入菜单</el-radio>
                 </el-radio-group>
               </el-form-item>
               <el-form-item label="菜单图标" prop="icon">
@@ -42,11 +43,14 @@
                   <el-input v-model="menuForm.menu_order" autocomplete="off" />
               </el-form-item>
               <el-form-item label="父菜单名称" prop="parentname">
-								<el-input v-model="menuForm.parentname" autocomplete="off" />
+								<el-select v-model="menuForm.parentname" placeholder="请选择父菜单" @change="handleParentChange">
+                 <el-option :label="item.title" :value="item.title" v-for="item in directoryMenuItems"
+                 :key="item.id" />
+                </el-select>
 							</el-form-item>	
               <el-form-item label="父菜单id" prop="parentid">
-								<el-input v-model="menuForm.parentid" autocomplete="off" />
-							</el-form-item>	
+                <el-input v-model="menuForm.parentid" autocomplete="off" disabled/>
+              </el-form-item>	
               <el-form-item label="路由名称" prop="route_name">
 								<el-input v-model="menuForm.route_name" autocomplete="off" />
 							</el-form-item>	
@@ -72,6 +76,7 @@
             :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
             :cell-style="cellStyle"
             fit
+            height="650"
             >
                 <el-table-column prop="id" label="ID/权限" width="80" align="center" type=""></el-table-column>
                 <el-table-column  label="菜单名称" width="220" >
@@ -107,7 +112,7 @@
 </template>
 
 <script setup lang="ts" name="menumanage">
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted,computed } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
 import { addmenu,delmenu } from '@/http/api';
@@ -152,7 +157,7 @@ const menuForm = ref({
 	menu_path:'',
 	menu_type:'',
   icon:'',
-  parentname:null,
+  parentname:'',
   parentid:undefined,
   route_component:'',
   route_name:'',
@@ -198,21 +203,6 @@ const validmenu_order = (_: any, value: any, callback: any) => {
   }
 }
 
-// const validroute_name = (_: any, value: any, callback: any) => {
-//   if (value === '') {
-//     callback(new Error('路由名称名不能为空'))
-//   } else {
-//     callback()
-//   }
-// }
-
-// const validroute_component = (_: any, value: any, callback: any) => {
-//   if (value === '') {
-//     callback(new Error('路由组件路径名不能为空'))
-//   } else {
-//     callback()
-//   }
-// }
 
 
 const rules = ref<FormRules>({
@@ -226,12 +216,33 @@ const rules = ref<FormRules>({
 })
 
 
+
+// 提取menu_type字段值为'directory'的信息
+const directoryMenuItems = computed(() => {
+  // 过滤出menu_type字段值为'directory'的信息
+  return allmenuStore.allmenuinfo
+    .filter((item: { menu_type: string }) => item.menu_type === 'directory');
+});
+
+// 监听 el-select 的 change 事件，更新 parentID
+const handleParentChange = (value:any) => {
+  const selectedItem = directoryMenuItems.value.find((item: { title: string }) => item.title === value);
+  if (selectedItem) {
+    menuForm.value.parentid = selectedItem.id
+  }
+};
+
+
+
+
+
 //提交
 const submitForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
-  if (menuForm.value.parentid === undefined) {
-        delete menuForm.value.parentid;
-    }
+  // if (menuForm.value.parentid === undefined) {
+  //       delete menuForm.value.parentid;
+  //   }
+  //console.log("创建menu",menuForm.value)
   formEl.validate(async (valid) => {
     if (valid) {
         //新增
@@ -257,7 +268,7 @@ const closeDr=() =>{
     menu_path:'',
     menu_type:'',
     icon:'',
-    parentname:null,
+    parentname:'',
     parentid:undefined,
     route_component:'',
     route_name:'',

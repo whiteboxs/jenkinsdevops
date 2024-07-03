@@ -33,7 +33,7 @@
   // TODO: 编辑
   import type { FormInstance, FormRules } from 'element-plus'
   import { hostnamectl } from '@/http/api';
-  import { ref,defineEmits } from 'vue';
+  import { ref } from 'vue';
   import { ElMessage, ElMessageBox,ElDrawer } from 'element-plus';
 
 
@@ -47,6 +47,7 @@
   interface ecshostForm {  
     aliname: string;
     hostname: string;
+    ip:string
 
   }  
   
@@ -55,6 +56,7 @@
   const ecshostnameForm = ref<ecshostForm>({
     aliname: '',
     hostname:'', 
+    ip:''
   })
   
   //  取消
@@ -93,6 +95,7 @@
   const openhostname = (row:any) => {
     ecshostnameForm.value.hostname = row.InstanceName
     ecshostnameForm.value.aliname = row.InstanceName
+    ecshostnameForm.value.ip = row.inip
     drawer.value = true
     console.log('传入子主件', ecshostnameForm.value)
   }

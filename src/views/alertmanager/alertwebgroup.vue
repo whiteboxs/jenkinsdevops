@@ -11,10 +11,10 @@
                 @keyup.enter="handleSearch"
                 />
             </el-form-item>
-            <el-form-item label="告警组" >
+            <el-form-item label="告警分组" >
                 <el-input
                 v-model="query.group"
-                placeholder="请输入告警组"
+                placeholder="请输入告警分组"
                 clearable
                 style="width: 150px;"
                 @keyup.enter="handleSearch"
@@ -29,14 +29,14 @@
         <el-row :gutter="10" class="mb8">
             <el-col :span="1.5">
             <el-button
-              type="primary" plain icon="Plus"  @click="handleAdd" >新增</el-button>
+              type="primary" plain icon="Plus"  @click="handleAdd" v-permiss="76">新增</el-button>
          </el-col>
          <el-col :span="1.5">
             <el-button
-               type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete" >删除</el-button>
+               type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete" v-permiss="77">删除</el-button>
          </el-col>
          <el-col :span="1.5">
-            <el-button type="success" plain icon="Download" @click="handleExport" >导出</el-button>
+            <el-button type="success" plain icon="Download" @click="handleExport" v-permiss="78" >导出</el-button>
          </el-col>
          <el-col :span="2">
             <el-tooltip content="刷新" placement="top">
@@ -52,14 +52,14 @@
         :cell-style="cellStyle">
             <el-table-column type="selection" width="55" align="center" />
             <el-table-column prop="id" label="ID" width="90" align="center" />
-            <el-table-column prop="name" label="名称" align="center"></el-table-column>
-            <el-table-column prop="group" label="告警组" align="center">
+            <el-table-column prop="name" label="名称" width="150" align="center"></el-table-column>
+            <el-table-column prop="group" label="告警分组" align="center">
                 <template #default="scope">
                     <el-tag v-for="item in scope.row.group">{{ item }}</el-tag>
                 </template>
             </el-table-column>
             <el-table-column prop="url" label="发送地址" align="center"></el-table-column>
-            <el-table-column prop="create_time" label="创建时间" align="center"></el-table-column>
+            <el-table-column prop="create_time" label="创建时间" width="170" align="center"></el-table-column>
             <el-table-column label="操作" width="100" align="center">
                 <template #default="scope">
                   <div class="mb-4">
@@ -121,7 +121,7 @@
 <script setup lang="ts" name="alertwebgroup">
 import { ref,onMounted } from 'vue';
 import { usealertwebgroupStore } from '@/store/alert/alertwebgroup';
-import {  add_alert_webhook ,delalert_webhook }  from '@/http/alert/api';
+import {  add_alert_webhook ,delalert_webhook }  from '@/http/alert/alert';
 import { Refresh } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import * as XLSX from 'xlsx';

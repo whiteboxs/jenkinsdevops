@@ -1,6 +1,6 @@
 
 import { defineStore } from "pinia";
-import { allsilences } from '@/http/alert/api'
+import { allsilences } from '@/http/alert/alert'
 import { ref } from "vue";
 
 export const useallsilencesstore = defineStore('allsilences', () => {

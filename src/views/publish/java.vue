@@ -22,8 +22,11 @@
 							<el-form-item label="项目名"  prop="job_name">
 								<el-input v-model="jobForm.job_name" autocomplete="off" placeholder="jenkins项目名称" />
               </el-form-item>
+              <el-form-item label="灰度ip" placeholder="灰度ip" prop="gray_ip">
+								<el-input v-model="jobForm.gray_ip" autocomplete="off" />
+							</el-form-item>
               <el-form-item label="git地址" placeholder="git地址" prop="git_address">
-								<el-input v-model="jobForm.git_address" autocomplete="off" />
+								<el-input v-model="jobForm.git_address" autocomplete="off" :rows="2" type="textarea"/>
 							</el-form-item>
 							<el-form-item>
 								<el-button type="primary" @click="submitForm(ruleFormRef)">提交</el-button>
@@ -79,7 +82,7 @@
 					v-model:current-page=pageIndex
 					class="mt-4"
 				/>
-			<k8s_jobEdit ref="editref" @onupdate="k8sjobStore.getallk8sjob" />
+			<java_jobEdit ref="editref" @onupdate="k8sjobStore.getallk8sjob" />
       <pushlist_branch :branches=branches ref="pushlist_branchref" @onupdatebranch="k8sjobStore.getallk8sjob" />
       <worknode ref="worknoderef" />
 			</div>
@@ -88,19 +91,19 @@
 
 </template>
 
-<script setup lang="ts" name="k8s_job">
+<script setup lang="ts" name="java_job">
 import { ref, reactive, onMounted, computed  } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { ArrowRight, Delete, Edit, Search, Plus, View,ArrowLeftBold} from '@element-plus/icons-vue';
 import { useallk8sjobStore } from '@/store/k8s_job';
 import { addk8sjob, deljob,branch } from '@/http/api';
 import type { FormInstance, FormRules } from 'element-plus'
-import worknode from '@/components/worknode.vue';
+import worknode from '@/components/pushlist/worknode.vue';
 import { service_status} from '@/http/api'
 //导入构建模块
-import pushlist_branch from '@/components/pushlist_branch.vue';
+import pushlist_branch from '@/components/pushlist/pushlist_branch.vue';
   //测试灰度发布编辑
-import k8s_jobEdit from '@/components/k8s_jobEdit.vue';
+import java_jobEdit from '@/components/pushlist/java_jobEdit.vue';
 //k8s_jobstore
 const  k8sjobStore = useallk8sjobStore()
 
@@ -147,7 +150,6 @@ const jobForm = ref({
     job_name:'',
     job_build_id:'',
     gray_ip:'',
-    prod_ip:'',
     git_address:'',
     lastgray_build_id: '',
     lastprod_build_id:'',
@@ -231,10 +233,10 @@ const validgit_address = (_: any, value: any, callback: any) => {
 
 
 const rules = ref<FormRules>({
-    job_name: [{ validator: validjob_name, trigger: 'blur' }],
+    job_name: [{ validator: validjob_name, required: true,trigger: 'blur' }],
     // test_ip: [{ validator: validtest_id, trigger: 'blur' }],
-    // dev_ip: [{ validator: validdev_id, trigger: 'blur' }],
-	  git_address: [{ validator: validgit_address, trigger: 'blur' }],
+    // gray_ip: [{ validator: validdev_id, trigger: 'blur' }],
+	  git_address: [{ validator: validgit_address, required: true,trigger: 'blur' }],
 
 })
 
@@ -275,7 +277,6 @@ const closeDr=() =>{
     job_name:'',
     job_build_id:'',
     gray_ip:'',
-    prod_ip:'',
     git_address:'',
     lastgray_build_id: '',
     lastprod_build_id:'',

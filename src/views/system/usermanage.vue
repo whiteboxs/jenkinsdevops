@@ -19,13 +19,17 @@
 							class="demo-ruleForm"
 							>
 							<el-form-item label="账号" prop="username">
-								<el-input v-model="userForm.username" autocomplete="off" />
+								<el-input  clearable v-model="userForm.username" autocomplete="off" />
 							</el-form-item>
 							<el-form-item label="密码" prop="password">
-								<el-input v-model="userForm.password" autocomplete="off" />
+								<el-input  clearable type="password" v-model="userForm.password" autocomplete="off" />
 							</el-form-item>
 							<el-form-item label="部门" prop="department">
-								<el-input v-model="userForm.department" autocomplete="off" />
+								<el-select 
+								   v-model="userForm.department" 
+								   placeholder="请选择部门">
+                                  <el-option :label="item.name" :value="item.name" v-for="item in department" :key="item.id" />
+                                  </el-select>
 							</el-form-item>
 							<el-form-item label="角色" prop="role_id">
                                 <el-select 
@@ -43,7 +47,9 @@
 			</div>
 			<el-table :data="showUsers" border class="table" ref="multipleTable" header-cell-class-name="table-header">
 				<el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
-				<el-table-column prop="username" label="用户名"></el-table-column>
+				<el-table-column prop="username" label="用户名" align="center">
+               
+           		</el-table-column>
 				<el-table-column prop="userPic" label="头像" align="center">
 						<template #default="scope">
 						<el-image v-if="scope.row.userPic"
@@ -69,7 +75,11 @@
 						/>
 					</template>
 					</el-table-column>
-				<el-table-column prop="role_name" label="角色"></el-table-column>
+				<el-table-column prop="role_name" label="角色">
+					<template #default="scope">
+                    <el-tag >{{ scope.row.role_name }}</el-tag>
+                </template>
+				</el-table-column>
 				<el-table-column prop="create_time" label="创建时间"></el-table-column>
 				<el-table-column label="操作" width="220" align="center">
 					<template #default="scope">
@@ -128,7 +138,11 @@ onMounted(() => {
 })
 
 
-
+const department =ref ([
+	{id:1,name:'研发'},
+	{id:2,name:'运维'},
+	{id:3,name:'测试'},
+])
 
 
 const query = ref<{username: string;}>({
