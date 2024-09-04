@@ -77,7 +77,11 @@ export const login = (data:object) => {
 export const changepasswd = (data:object) => { 
   return http.post('/api/changepasswd', data);
 };
-  
+
+//重置密码
+export const resetpasswd = (data:object) => { 
+  return http.post('/api/resetpasswd', data);
+};
 
 //获取所有用户
 export const getallusers = (data:any) => {
@@ -313,13 +317,8 @@ export const save_build_id = (data:object) => {
 // };
 
 //查询jump对应的节点上的业务工作情况
-export const service_status = (hostname:string) => {
-  const JsonConfig = {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  };
-  return http.post(`/api/service_status/${hostname}`,JsonConfig);
+export const service_status = (data:object) => {
+  return http.get('/api/service_status', { params: data });
 };
 
 //重启节点noderestart
@@ -378,8 +377,10 @@ export const normal_ecs = (data:object) => {
 
 //获取所有ecs列表
 export const getall_ecs = (data:object) => {
-  return http.get('/api/aliyun/all_ecs',{ params: data });
+  const ifLoading = true;
+  return http.get('/api/aliyun/all_ecs',{ params: data, ifLoading });
 };
+
 //获取ecsdisk
 export const getecsdisk = (data:object) => {
   return http.get('/api/aliyun/ecsdisk',{ params: data });
@@ -462,4 +463,20 @@ export const monitor_instance = () => {
 //monitor_check
 export const monitor_check = (data:object) => {
   return http.get('/api/monitor_check',{params: data});
+};
+
+//阿里模块 jar获取构建号
+export const jar_build_ids = (data:object) => {
+  return http.get('/api/jar_build_ids',{params: data}); 
+};
+
+
+//阿里模块和发布模块使用的 jar下载
+export const jar_download = (data:object) => {
+  const JsonConfig = {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
+  return http.post('/api/jar_download',data,JsonConfig);
 };

@@ -3,14 +3,14 @@
       <el-drawer 
             v-model="drawer" 
             title="ecs_hostname修改" 
-  
+            size="20%"
             >
         <el-form
             ref="ruleFormRef"
             :model="ecshostnameForm"
             status-icon
             :rules="rules"
-            label-width="120px"
+            label-width="80px"
             class="demo-ruleForm"
             >
             <el-form-item label="实例名称" prop="aliname">
@@ -119,7 +119,6 @@
         type: 'warning',
         }).then(async () => {
           await hostnamectl(ecshostnameForm.value).then((res:any)=>{
-              //ElMessage.success('初始化supservisor成功')
               ElMessageBox.alert('主机名' + res.data.data.result[ecshostnameForm.value.aliname].stdout + '修改成功', '提示', {
                   confirmButtonText: '确定',
               }

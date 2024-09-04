@@ -53,9 +53,19 @@
             <el-table-column type="selection" width="55" align="center" />
             <el-table-column prop="id" label="ID" width="90" align="center" />
             <el-table-column prop="name" label="名称" width="150" align="center"></el-table-column>
-            <el-table-column prop="group" label="告警分组" align="center">
+            <el-table-column prop="group" label="告警分组" width="350" align="center">
                 <template #default="scope">
                     <el-tag v-for="item in scope.row.group">{{ item }}</el-tag>
+                </template>
+            </el-table-column>
+            <el-table-column prop="exclude_group" label="排除分组" width="150" align="center">
+                <template #default="scope">
+                    <el-tag v-for="item in scope.row.exclude_group">{{ item }}</el-tag>
+                </template>
+            </el-table-column>
+            <el-table-column prop="exclude_instance" label="排除地址" width="120" align="center">
+                <template #default="scope">
+                    <el-tag v-for="item in scope.row.exclude_instance">{{ item }}</el-tag>
                 </template>
             </el-table-column>
             <el-table-column prop="url" label="发送地址" align="center"></el-table-column>
@@ -82,29 +92,50 @@
             <el-drawer v-model="drawer" 
 					         title="新增告警分组" 
 							 @close="closeDr(ruleFormRef)">
-							 
 						<el-form
 							ref="ruleFormRef"
 							:model="webhookForm"
 							status-icon
 							:rules="rules"
-							label-width="120px"
+							label-width="100px"
 							class="demo-ruleForm"
 							>
               <el-form-item label="告警群名称" prop="name">
 								<el-input v-model="webhookForm.name" autocomplete="off" style="width: 240px" />
 							</el-form-item>
 							<el-form-item label="告警组" prop="group">
-                                <el-select-v2
-                                    clearable
-                                    filterable
-                                    v-model="webhookForm.group"
-                                    :options="monitorgroups"
-                                    placeholder="请选择(可多选,搜索)"
-                                    style="width: 240px"
-                                    multiple
-                                />
+                    <el-select-v2
+                        clearable
+                        filterable
+                        v-model="webhookForm.group"
+                        :options="monitorgroups"
+                        placeholder="请选择(可多选,搜索)"
+                        style="width: 240px"
+                        multiple
+                    />
 							</el-form-item>
+            <el-form-item label="排除组" prop="exclude_group">
+              <el-select-v2
+                  clearable
+                  filterable
+                  v-model="webhookForm.exclude_group"
+                  :options="monitorgroups"
+                  placeholder="请选择(可多选,搜索)"
+                  style="width: 240px"
+                  multiple
+              />
+            </el-form-item>
+            <el-form-item label="排除主机" prop="exclude_instance">
+                <el-select-v2
+                    clearable
+                    filterable
+                    v-model="webhookForm.exclude_instance"
+                    :options="monitorinstances"
+                    placeholder="请选择(可多选,搜索)"
+                    style="width: 240px"
+                    multiple
+                />
+            </el-form-item>
               <el-form-item label="URL" prop="url">
 								<el-input v-model="webhookForm.url" autocomplete="off" :rows="2" type="textarea"/>
 							</el-form-item>
@@ -126,7 +157,7 @@ import { Refresh } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import * as XLSX from 'xlsx';
 import type { FormInstance, FormRules } from 'element-plus'
-import { monitor_group} from '@/http/api';
+import { monitor_group,monitor_instance } from '@/http/api';
 //导入编辑模块
 import edit_alertwebgroup from '@/components/alertmanager/edit_alertwebgroup.vue';
 
@@ -149,6 +180,8 @@ onMounted(() => {
 // 搜索
 const handleSearch = () => {
     console.log(query.value)
+    query.value.pagenum = 1
+    query.value.pagesize = 10
     alertwebgroup.getalertwebgroup(query.value)
 };
 
@@ -190,6 +223,8 @@ const ruleFormRef = ref<FormInstance>()
 const webhookForm = ref({
         name: '',
         group:[],
+        exclude_group:[],
+        exclude_instance:[],
         url:'',
         pagenum: 1,
         pagesize: 10
@@ -199,6 +234,7 @@ const webhookForm = ref({
 const handleAdd = () => {
     drawer.value=true
     monitor_grouplist()
+    monitor_instancelist()
 }
 
 
@@ -213,7 +249,15 @@ const monitor_grouplist = async () => {
   monitorgroups.value = mapgrouops
 }
 
-
+// 获取监控主机
+const monitorinstances = ref([])
+const monitor_instancelist = async () => {
+  const res = await monitor_instance()
+  const mapinstances = res.data.data.map((i:any) => {
+  return { value: i, label: i };
+  });
+  monitorinstances.value = mapinstances
+}
 
 //验证
 //验证添加的账号字段
@@ -259,6 +303,8 @@ const closeDr=(formEl: FormInstance | undefined) =>{
   webhookForm.value={
     name: '',
     group:[],
+    exclude_group:[],
+    exclude_instance:[],
     url:'',
     pagenum: 1,
     pagesize: 10

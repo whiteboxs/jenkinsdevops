@@ -9,9 +9,9 @@ declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     Cropper: typeof import('./src/components/cropper.vue')['default']
     Ecs_hostname: typeof import('./src/components/ecs/ecs_hostname.vue')['default']
+    Ecs_jardownload: typeof import('./src/components/ecs/ecs_jardownload.vue')['default']
     Ecs_monitor: typeof import('./src/components/ecs/ecs_monitor.vue')['default']
     Ecs_super: typeof import('./src/components/ecs/ecs_super.vue')['default']
-    Ecs_uploadpack: typeof import('./src/components/ecs/ecs_uploadpack.vue')['default']
     Edit_alertwebgroup: typeof import('./src/components/alertmanager/edit_alertwebgroup.vue')['default']
     Edit_silences_policy: typeof import('./src/components/alertmanager/edit_silences_policy.vue')['default']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
@@ -38,7 +38,6 @@ declare module '@vue/runtime-core' {
     ElMenuItem: typeof import('element-plus/es')['ElMenuItem']
     ElOption: typeof import('element-plus/es')['ElOption']
     ElPagination: typeof import('element-plus/es')['ElPagination']
-    ElProgress: typeof import('element-plus/es')['ElProgress']
     ElRadio: typeof import('element-plus/es')['ElRadio']
     ElRadioGroup: typeof import('element-plus/es')['ElRadioGroup']
     ElRow: typeof import('element-plus/es')['ElRow']
@@ -61,6 +60,7 @@ declare module '@vue/runtime-core' {
     Java_jobEdit: typeof import('./src/components/pushlist/java_jobEdit.vue')['default']
     K8s_jobEdit: typeof import('./src/components/pushlist/k8s_jobEdit.vue')['default']
     MenuEdit: typeof import('./src/components/system/menuEdit.vue')['default']
+    PassReset: typeof import('./src/components/system/passReset.vue')['default']
     Pushlist_branch: typeof import('./src/components/pushlist/pushlist_branch.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
@@ -70,8 +70,5 @@ declare module '@vue/runtime-core' {
     TicketEdit: typeof import('./src/components/ticketEdit.vue')['default']
     UserEdit: typeof import('./src/components/system/userEdit.vue')['default']
     Worknode: typeof import('./src/components/pushlist/worknode.vue')['default']
-  }
-  export interface ComponentCustomProperties {
-    vLoading: typeof import('element-plus/es')['ElLoadingDirective']
   }
 }

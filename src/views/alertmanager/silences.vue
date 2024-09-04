@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div class="container">
-            <el-form :model="query" ref="queryRef" :inline="true" label-width="auto" status-icon v-show="showSearch">
+            <el-form :model="query" ref="queryRef" :inline="true" label-width="auto" status-icon>
             <el-form-item label="关键字段" >
             <el-input
             v-model="query.keyword"
@@ -78,7 +78,17 @@
             <el-button type="danger" plain icon="Delete" @click="handleClean" v-permiss="70" >清空</el-button>
          </el-col>
          <el-col :span="1.5">
-            <el-button type="success" plain icon="Download" @click="handleExport" v-permiss="71" >导出</el-button>
+            <el-dropdown style="margin-right: 10px;">
+                <el-button type="success" icon="Download" plain v-permiss="71">
+                    导出<el-icon class="el-icon--right"><arrow-down /></el-icon>
+                </el-button>
+                <template #dropdown>
+                    <el-dropdown-menu>
+                    <el-dropdown-item @click="Exportall">全部导出</el-dropdown-item>
+                    <el-dropdown-item @click="assignExport">批量导出</el-dropdown-item>
+                    </el-dropdown-menu>
+                </template>
+            </el-dropdown>
          </el-col>
          <el-col :span="2">
             <el-tooltip content="刷新" placement="top">
@@ -91,7 +101,9 @@
         @selection-change="handleSelectionChange" 
         border class="table"  
         header-cell-class-name="table-header"  
-        :cell-style="cellStyle">
+        :cell-style="cellStyle"
+        ref="multipleTableRef"
+        >
             <el-table-column type="selection" width="55" align="center" />
             <el-table-column prop="id" label="ID" width="80" align="center" />
             <el-table-column prop="status" label="告警状态" width="90" align="center"></el-table-column>
@@ -106,7 +118,7 @@
                     <el-tag >{{ scope.row.silences_policy_name }}</el-tag>
                 </template>
             </el-table-column>
-            <el-table-column prop="startsAt" label="故障时间" width="120" align="center"></el-table-column>
+            <el-table-column prop="startsAt" label="告警时间" width="120" align="center"></el-table-column>
             <el-table-column prop="endsAt" label="恢复时间" width="120" align="center"></el-table-column>
             <el-table-column prop="create_time" label="创建时间" width="120" align="center" ></el-table-column>
         </el-table>
@@ -128,9 +140,10 @@
 import { ref,onMounted } from 'vue';
 import { useallsilencesstore } from '@/store/alert/silences';
 import { Refresh } from '@element-plus/icons-vue';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ElMessage, ElMessageBox, ElButton, ElLoading } from 'element-plus'
 import * as XLSX from 'xlsx';
-import {delsilences} from '@/http/alert/alert'
+import {delsilences, allsilences} from '@/http/alert/alert'
+import { ElTable } from 'element-plus'
 
 const silences = useallsilencesstore();
 
@@ -244,19 +257,81 @@ const handleClean = async () => {
 }).catch(() => {});
 }
 
-//导出操作日志
-const handleExport = async () => {
+
+
+const multipleTableRef = ref<InstanceType<typeof ElTable>>()
+//批量导出
+const assignExport = async () => {
+// getSelectionRows  Element Plus table表格组件方法，获取当前选中的数据
+  let selectedRows = multipleTableRef.value?.getSelectionRows()
+  if (!selectedRows.length) {
+      return ElMessage({
+      message: '请选择需要导出的数据',
+      type: 'warning',
+      })
+  }
+  ElMessageBox.close() // 关闭弹出框
+  const loading = ElLoading.service({ // 打开遮罩层
+      lock: true,
+      text: '请稍等...',
+      background: 'rgba(255, 255, 255, 0.5)',
+  })
+
+   // 创建工作表
+  const headers = ['序号', '告警状态', '告警级别', '告警类型', '故障主机', '告警组', '告警主题', '告警详情', '故障时间', '恢复时间', '创建时间','匹配策略名称'];
+  const worksheetData = [  
+  headers,  
+  ...selectedRows.map((row: any) => {
+    return [  
+    row.id,
+    row.status,
+    row.serverity,
+    row.alertname,
+    row.instance,
+    row.group,
+    row.summary,
+    row.description,
+    row.startsAt,
+    row.endsAt,
+    row.create_time,
+    row.silences_policy_name
+    ]
+})  
+]; 
+
+    // 创建工作表  
+  const WorkSheet = XLSX.utils.aoa_to_sheet(worksheetData); 
+  // 创建新的工作簿，并将工作表添加到其中  
+  const new_workbook = XLSX.utils.book_new();  
+  XLSX.utils.book_append_sheet(new_workbook, WorkSheet, '静默数据列表');  
+
+  // 将新的工作簿保存为 Excel 文件  
+  XLSX.writeFile(new_workbook, `静默数据列表.xlsx`);  
+  loading.close() // 关闭遮罩层
+};
+
+
+
+
+//导出全部
+const Exportall = async () => {
+    const loading = ElLoading.service({ // 打开遮罩层
+        lock: true,
+        text: '请稍等...',
+        background: 'rgba(255, 255, 255, 0.5)',
+    })
     let list: any = []; // 用于存储所有操作日志数据
      // 获取第一页数据
     // 计算总页数
-    const totalPages = Math.ceil(silences.count/10) 
+    const totalPages = Math.ceil(silences.count/30) 
     console.log(totalPages)
     for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
         query.value.pagenum = pageNum
-        await silences.getsilenceslist(query.value)
-        silences.silenceslist.map((item: any, i: number) => {
+        query.value.pagesize = 30
+        const res = await allsilences(query.value)
+        res.data.data.map((item: any) => {
             const rowData = [
-                i + 1,
+                item.id,
                 item.status,
                 item.serverity,
                 item.alertname,
@@ -284,10 +359,10 @@ const handleExport = async () => {
 
     // 将新的工作簿保存为 Excel 文件
     XLSX.writeFile(new_workbook, `静默数据列表.xlsx`);
+    loading.close() // 关闭遮罩层
 };
 
-//隐藏搜索
-const showSearch = ref(true);
+
 //刷新
 const handleRefresh = () => {
     silences.getsilenceslist(query.value)

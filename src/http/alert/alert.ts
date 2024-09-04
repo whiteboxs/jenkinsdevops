@@ -4,7 +4,7 @@ import http from '../index';
 import qs from 'qs'
 
 
-// 查询所有操作日志
+// 查询所有静默策略
 export const allsilences_policy = (data:object) => {
     return http.get('/api/all/silences_policy', {
       params: data,
@@ -92,7 +92,7 @@ export const delalert = (id:number) => {
   return http.delete(`/api/alert/${id}`);
 };
 
-// 查询所有alert信息
+// 查询所有静默信息
 export const allsilences = (data:object) => {
   return http.get('/api/all/silences',  {
     params: data,

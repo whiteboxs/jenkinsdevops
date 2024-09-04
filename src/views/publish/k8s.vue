@@ -14,7 +14,7 @@
 							:model="jobForm"
 							status-icon
 							:rules="rules"
-							label-width="120px"
+							label-width="60px"
 							class="demo-ruleForm"
 							>
 							<el-form-item label="项目名" placeholder="jenkins项目名称" prop="job_name">
@@ -24,7 +24,7 @@
 								<el-input v-model="jobForm.gray_ip" autocomplete="off" />
 							</el-form-item>
               <el-form-item label="git地址" placeholder="git地址" prop="git_address">
-								<el-input v-model="jobForm.git_address" autocomplete="off" />
+								<el-input v-model="jobForm.git_address" autocomplete="off" :rows="2" type="textarea"/>
 							</el-form-item>
 							<el-form-item>
 								<el-button type="primary" @click="submitForm(ruleFormRef)">提交</el-button>
@@ -72,7 +72,7 @@
 					class="mt-4"
 				/>
 			<k8s_jobEdit ref="editref" @onupdate="k8sjobStore.getallk8sjob" />
-      <pushlist_branch :branches=branches ref="pushlist_branchref" @onupdatebranch="k8sjobStore.getallk8sjob" />
+      <!-- <pushlist_branch :branches=branches ref="pushlist_branchref" @onupdatebranch="k8sjobStore.getallk8sjob" /> -->
 			</div>
 		</div>
 	</div>

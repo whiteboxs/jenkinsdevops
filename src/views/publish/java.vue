@@ -3,8 +3,25 @@
 		<div class="container">
 			<div class="handle-box">
 				<el-input v-model="query.name" placeholder="项目名" class="handle-input mr10"></el-input>
-				<el-button type="primary" :icon="Search" @click="handleSearch" v-permiss="47" >搜索</el-button>
-				<el-button type="primary" :icon="Plus" @click="drawer = true" v-permiss="48" >新增JOB</el-button>
+				<el-button type="primary" icon="Search" @click="handleSearch" v-permiss="47" >搜索</el-button>
+        <el-button icon="Refresh" @click="handleReset">重置</el-button>
+        <el-row :gutter="10" class="mb8">
+         <el-col :span="1.5">
+            <el-button
+               type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete" >删除</el-button>
+         </el-col>
+         <el-col :span="1.5">
+            <el-button type="danger" plain icon="Delete" @click="handleClean" >清空</el-button>
+         </el-col>
+         <el-col :span="1.5">
+            <el-button type="primary" plain icon="Plus" @click="drawer = true" v-permiss="48">新增JOB</el-button>
+         </el-col>
+         <el-col :span="2">
+            <el-tooltip content="刷新" placement="top">
+                <el-button icon="Refresh" circle size="small"  @click="handleRefresh"/>
+            </el-tooltip>     
+        </el-col>
+          </el-row>
 					<el-drawer v-model="drawer" 
 					      title="I am the title" 
 							 :with-header="false"
@@ -14,10 +31,8 @@
 							:model="jobForm"
 							status-icon
 							:rules="rules"
-							label-width="120px"
+							label-width="70px"
 							class="demo-ruleForm"
-              v-loading="loading"
-              element-loading-text="Loading..."
 							>
 							<el-form-item label="项目名"  prop="job_name">
 								<el-input v-model="jobForm.job_name" autocomplete="off" placeholder="jenkins项目名称" />
@@ -35,14 +50,16 @@
 						</el-form>
 					</el-drawer>
 			</div>
-			<el-table :data="showjobs" border class="table" ref="multipleTable" header-cell-class-name="table-header">
+			<el-table :data="showjobs" @selection-change="handleSelectionChange" 
+        border class="table"  header-cell-class-name="table-header" ref="multipleTable">
+        <el-table-column type="selection" width="55" align="center" />
         <el-table-column width="45" size="small" prop="id" label="ID"></el-table-column>
 				<el-table-column width="180" size="small" prop="job_name" label="项目名"></el-table-column>
         <el-table-column width="110" size="small" prop="gray_ip" label="灰度ip"></el-table-column>
         <el-table-column width="85" size="small" prop="lastgray_build_id" label="当前灰度构建号"></el-table-column>
         <el-table-column width="120" size="small" prop="lastgray_build_time" label="构建日期"></el-table-column>
         <el-table-column width="85" size="small" prop="lastprod_build_id" label="当前生产构建号"></el-table-column>
-        <el-table-column width="120" size="small" prop="lastprod_build_time" label="构建日期"></el-table-column>
+        <el-table-column width="125" size="small" prop="lastprod_build_time" label="构建日期"></el-table-column>
         <el-table-column width="160" size="small" prop="job_build_ids" label="构建号" header-align="center">
             <template   #default="scope">
                 <el-select v-model="scope.row.job_build_ids.job_build_id" placeholder="请选择构建号">
@@ -50,25 +67,22 @@
                 </el-select>
             </template>
         </el-table-column>
-				<el-table-column label="操作" width="650" align="center">
+				<el-table-column label="操作" width="600" align="center">
 					<template #default="scope">
-            <el-button text :icon="ArrowRight" type="warning" @click="handlepushlistgray(scope.row)" v-permiss="49" >
+            <el-button text icon="ArrowRight" type="warning" @click="handlepushlistgray(scope.row)" v-permiss="49" >
 							灰度构建
 						</el-button>
-            <el-button text :icon="ArrowRight" type="warning" @click="handlepushlistprod(scope.row.job_name)" v-permiss="50">
+            <el-button text icon="ArrowRight" type="warning" @click="handlepushlistprod(scope.row)" v-permiss="50">
 							生产构建
 						</el-button>
-            <el-button text :icon="ArrowLeftBold" type="danger" @click="rollback(scope.row)" v-permiss="51">
+            <el-button text icon="ArrowLeftBold" type="danger" @click="rollback(scope.row)" v-permiss="51">
 							回滚
 						</el-button>
-            <el-button text :icon="View" type="success" @click="opennode(scope.row)"  v-permiss="57">
+            <el-button text icon="View" type="success" @click="opennode(scope.row)"  v-permiss="57">
 							节点管理
 						</el-button>
-						<el-button text :icon="Edit" type="primary"  @click="handleEdit(scope.row)" v-permiss="55">
+						<el-button text icon="Edit" type="primary"  @click="handleEdit(scope.row)" v-permiss="55">
 							编辑
-						</el-button>
-						<el-button text :icon="Delete" type="danger" @click="handleDelete(scope.row.id)"  v-permiss="56">
-							删除
 						</el-button>
 					</template>
 				</el-table-column>
@@ -83,7 +97,7 @@
 					class="mt-4"
 				/>
 			<java_jobEdit ref="editref" @onupdate="k8sjobStore.getallk8sjob" />
-      <pushlist_branch :branches=branches ref="pushlist_branchref" @onupdatebranch="k8sjobStore.getallk8sjob" />
+      <pushlist_branch :pushlist_env=pushlist_env :branches=branches ref="pushlist_branchref" @onupdatebranch="k8sjobStore.getallk8sjob" />
       <worknode ref="worknoderef" />
 			</div>
 		</div>
@@ -92,11 +106,10 @@
 </template>
 
 <script setup lang="ts" name="java_job">
-import { ref, reactive, onMounted, computed  } from 'vue';
+import { ref, onMounted, computed  } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { ArrowRight, Delete, Edit, Search, Plus, View,ArrowLeftBold} from '@element-plus/icons-vue';
 import { useallk8sjobStore } from '@/store/k8s_job';
-import { addk8sjob, deljob,branch } from '@/http/api';
+import { addk8sjob, deljob,branch,jar_build_ids } from '@/http/api';
 import type { FormInstance, FormRules } from 'element-plus'
 import worknode from '@/components/pushlist/worknode.vue';
 import { service_status} from '@/http/api'
@@ -109,35 +122,37 @@ const  k8sjobStore = useallk8sjobStore()
 
 onMounted(() => {
     k8sjobStore.getallk8sjob()
-      .then(() => {
-            // 加载完成后关闭加载动画
-            loading.value = false;
-      })
-      .catch(error => {
-        // 处理加载失败的情况
-        console.error('Failed to load form:', error);
-    });
 })
 
 
 
-const query = reactive({
+const query = ref({
 	department: '',
 	name: '',
 	pageIndex: 1,
 	pageSize: 10
 });
 
-//table表单加载动画
-const loading = ref(true)
+
 
 
 
 // 查询操作
 const handleSearch = () => {
+  query.value.pageIndex = 1
+    query.value.pageSize = 10
 	//alluserStore.alluserinfo();
 };
 
+const handleReset = () => {
+    query.value = {
+      department: '',
+      name: '',
+      pageIndex: 1,
+      pageSize: 10
+    };
+    k8sjobStore.getallk8sjob()
+};
 
 
 
@@ -155,18 +170,20 @@ const jobForm = ref({
     lastprod_build_id:'',
 })
 
-
-
+//构建环境
+const pushlist_env = ref('')
 
 // 发布灰度
 const pushlist_branchref = ref<{ query_branch: (row: any) => void } | null>(null)
 const handlepushlistgray = async (row:any) => {
+  pushlist_env.value = 'gray'
   await brancheslist(row.id);
   pushlist_branchref.value?.query_branch(row)
 }
 
 //发布生产
 const handlepushlistprod = async (row:any) => {
+  pushlist_env.value = 'prod'
   await brancheslist(row.id);
   pushlist_branchref.value?.query_branch(row)
 }
@@ -180,12 +197,13 @@ const rollback = async (row:any) => {
 
 
 
-  //  分支
-  const branches = ref([])
-  const brancheslist = async (id:any) => {
-    const res = await branch(id)
-    branches.value = res.data.data
-  }
+//  分支
+const branches = ref([])
+const brancheslist = async (id:any) => {
+  const res = await branch(id)
+  branches.value = res.data.data
+}
+
 
 
 
@@ -287,41 +305,85 @@ const closeDr=() =>{
 
 
 
-// 删除操作
-const handleDelete=async (id:any)=>{
+// // 删除操作
+// const handleDelete=async (id:any)=>{
   
-  ElMessageBox.confirm(
-    '确定要删除吗?',
-    '提示',
-    {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning',
-    }).then(async () => {
-      await deljob(id).then(()=>{
-        ElMessage.success('删除成功')
-		//刷新页面
-        k8sjobStore.getallk8sjob()
-      })
-    })
-    .catch(() => {
-      ElMessage({
-        type: 'info',
-        message: '取消成功',
-      })
-    }
-  )
+//   ElMessageBox.confirm(
+//     '确定要删除吗?',
+//     '提示',
+//     {
+//       confirmButtonText: '确定',
+//       cancelButtonText: '取消',
+//       type: 'warning',
+//     }).then(async () => {
+//       await deljob(id).then(()=>{
+//         ElMessage.success('删除成功')
+// 		//刷新页面
+//         k8sjobStore.getallk8sjob()
+//       })
+//     })
+//     .catch(() => {
+//       ElMessage({
+//         type: 'info',
+//         message: '取消成功',
+//       })
+//     }
+//   )
+// }
+
+
+//删除多选模块
+const multiple = ref(true);
+const ids = ref([]);
+/** 多选框选中数据 */
+const handleSelectionChange = (selection:any) => {
+    ids.value = selection.map((item: { id: number; }) => item.id);
+    multiple.value = !selection.length;
+    console.log(ids.value)
+}
+/** 删除按钮操作 */
+const handleDelete = async (row: any) => {
+  const jobIds = ids.value;
+  console.log(11,row.id,22,ids.value)
+        ElMessageBox.confirm(
+        '是否确认删除日志编号为"' + jobIds + '"的数据项?',
+        '提示',
+        { 
+        cancelButtonText: '取消',
+        confirmButtonText: '确定',
+       
+        type: 'warning',
+        }).then(async () => {
+            for (const id of jobIds) {
+                // 在这里执行实际的删除操作
+                const res = await deljob(id);
+                ElMessage.success('操作完成');
+             }
+    k8sjobStore.getallk8sjob()
+}).catch(() => {});
+}
+
+/** 清空按钮操作 */
+const handleClean = async () => {
+    ElMessageBox.confirm(
+        '是否确认清空所有操作日志数据项?',
+        '提示',
+        { 
+        cancelButtonText: '取消',
+        confirmButtonText: '确定',
+       
+        type: 'warning',
+        }).then(async () => {
+            ElMessage.success('暂未开发');
+            k8sjobStore.getallk8sjob()
+}).catch(() => {});
 }
 
 
-
-
-
-
-
-
-
-
+//刷新
+const handleRefresh = () => {
+  k8sjobStore.getallk8sjob()
+}
 
 
 //前端分页
@@ -348,7 +410,7 @@ const handleEdit = (row:any) => {
 const worknoderef = ref<{ disnode: (hosts:any,row: any) => void } | null>(null)
 const hosts = ref([])
 const opennode = async(row:any) => {
-  const res = await  service_status(row.job_name)
+  const res = await  service_status(row)
   hosts.value = res.data.data
   console.log(hosts.value)
   worknoderef.value?.disnode(hosts,row)
@@ -363,6 +425,9 @@ const opennode = async(row:any) => {
 </script>
 
 <style scoped>
+.mb8 {
+  margin-top: 20px;
+}
 .handle-box {
 	margin-bottom: 20px;
 }

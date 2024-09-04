@@ -1,4 +1,6 @@
 import http from '../index';
+//qs
+import qs from 'qs'
 
 // 统计静默策略匹配的告警数
 export const search_policy_alert_count = (data:object) => {
@@ -13,11 +15,20 @@ export const search_webhook_alert_count = (data:object) => {
 
 // 统计告警类型
 export const search_alert_type_count = (data:object) => {
-  return http.get('/api/search/atc',{params: data});
+  return http.get('/api/search/atc', {
+    params: data,
+    paramsSerializer: function(params) {
+      return qs.stringify(params, { arrayFormat: 'repeat' });
+    }
+  });
 };
-
 
 // 统计告警ip
 export const search_alert_ip_count = (data:object) => {
-  return http.get('/api/search/aic',{params: data});
+  return http.get('/api/search/aic', {
+    params: data,
+    paramsSerializer: function(params) {
+      return qs.stringify(params, { arrayFormat: 'repeat' });
+    }
+  });
 };

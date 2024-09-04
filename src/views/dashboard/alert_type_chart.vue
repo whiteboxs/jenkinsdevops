@@ -1,62 +1,40 @@
 <template>
-  <el-form :model="query" style="display: flex; justify-content: flex-end;">
-    <el-form-item label="统计范围" >
-        <el-select clearable v-model="query.days" size="small" @change="handledaysChange" >
-            <el-option v-for="option in days_list" :key="option.value" :label="option.label" :value="option.value"></el-option>
-        </el-select>
-    </el-form-item>
-  </el-form>
-    <div>  
-        <v-chart :autoresize="true" :option="state.option" style="height: 400px"></v-chart>
-    </div>
-</template>
-
-<script setup lang="ts" >
-import { onMounted, ref,reactive } from 'vue'
-import{ search_alert_type_count } from '@/http/alert/alert_analysis'
-
-
-
-// 获取表格数据,点击菜单后才加载
-onMounted(() => {
-    //折线图
-    init_par_Chart()
+      <div>  
+          <v-chart :autoresize="true" :option="state.option" style="height: 400px"></v-chart>
+      </div>
+  </template>
   
-})
+  <script setup lang="ts" >
+  import { onMounted, ref,reactive } from 'vue'
+  import{ search_alert_type_count } from '@/http/alert/alert_analysis'
+  
+  
+  
+  // 获取表格数据,点击菜单后才加载
+  onMounted(() => {
+      //折线图
+      init_alert_type_Chart()
+    
+  })
+  
+  
+  const query = ref<any>({
+     days: 7,
+     query_time:'',
+  });
+  
+  const state = reactive({
+    option: {},
+  
+  })
+  
+  
 
-
-const query = ref<any>({
-   days: 3
-});
-
-
-const state = reactive({
-  option: {},
-
-})
-
-
-const days_list = ref([
-    { label: '3天', value: '3' },
-    { label: '7天', value: '7' },
-    { label: '14天', value: '14' }
-])
-
-
-// 监听 el-select 的 change 事件，更新 days
-const handledaysChange = (value:any) => {
-    query.value.days = value
-    //disposeChart()
-    init_par_Chart()
-};
-
-
-
-
-
-const init_par_Chart = async () => {
+  
+  
+  const init_alert_type_Chart = async () => {
       // 如果有之前的 ECharts 实例，先销毁它  
-    try {
+      try {
         const res = await search_alert_type_count(query.value);
          //去重筛选组名称
         const alertname = Array.from(new Set(res.data.data.map((item: { alertname: string }) => item.alertname)));
@@ -74,7 +52,7 @@ const init_par_Chart = async () => {
                 name: name,
                 type: 'bar',
                 label: {
-                show: true,
+                // show: true,
                 formatter: function(params:any) {
                     // 当数据为 0 时不显示标签
                     return params.value === 0 ? '' : params.value;
@@ -106,7 +84,7 @@ const init_par_Chart = async () => {
 const getparChart = (alertname:any,seriesData:any,time:any) => {  
     state.option =   {
         title: {
-            text: '告警类型统计',
+            text: '一周告警类型统计',
         },
         tooltip: {
             trigger: 'axis',
@@ -117,25 +95,22 @@ const getparChart = (alertname:any,seriesData:any,time:any) => {
         legend: {
             data: alertname,
             left: '20%'
- 
+        },
+        grid: {
+            left: '2%',
+            right: '5%',
+            bottom: '3%',
+            containLabel: true
         },
         toolbox: {
             show: true,
             orient: 'vertical',
             left: 'right',
             top: 'center',
-            feature: {
-            mark: { show: true },
-            dataView: { show: true, readOnly: false },
-            magicType: { show: true, type: ['line', 'bar', 'stack'] },
-            restore: { show: true },
-            saveAsImage: { show: true }
-            }
         },
         xAxis: [
             {
             type: 'category',
-            axisTick: { show: false },
             data: time
             }
         ],
@@ -147,16 +122,14 @@ const getparChart = (alertname:any,seriesData:any,time:any) => {
         series: seriesData
 }
 };
-
   
-
-
-</script>
-
-
-
-<style scoped>
-
-
-</style>
+    
   
+  </script>
+  
+  
+  
+  <style scoped>
+  
+  </style>
+    

@@ -96,6 +96,8 @@ onMounted(() => {
 // 搜索
 const handleSearch = () => {
     console.log(query.value)
+    query.value.pagenum = 1
+    query.value.pagesize = 10
     loginlog.getloginlog(query.value)
 };
 

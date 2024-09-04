@@ -1,6 +1,6 @@
 <template> 
     <el-form :model="query" style="display: flex; justify-content: flex-end;">
-    <el-form-item label="统计范围" >
+    <el-form-item label="统计天数" >
         <el-select clearable v-model="query.days" size="small" @change="handledaysChange" >
             <el-option v-for="option in days_list" :key="option.value" :label="option.label" :value="option.value"></el-option>
         </el-select>

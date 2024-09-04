@@ -1,15 +1,13 @@
 <template>
   <div>
-    <el-card class="manage">
-      <el-row :gutter="20" class="header">
-        <el-col :span="7">
-          <el-input placeholder="请输入" v-model="queryform.keyword"></el-input>
-        </el-col>
+    <div class="container">
+      <div class="handle-box">
+        <el-input placeholder="请输入" v-model="queryform.keyword" class="handle-input mr10" ></el-input>
         <el-button type="primary" icon="Search" @click="onSearch">Search</el-button>
         <el-button type="primary" @click="centerDialogVisible = true">
           +新增工单
         </el-button>
-      </el-row>
+      </div>
       <el-dialog v-model="centerDialogVisible" title="创建工单" width="50%"  :before-close="handleClose">
         <el-form :model="form" label-width="80px" :rules="rules" ref="addRuleForm">
           <el-form-item label="标题" prop="title"><el-input v-model="form.title" />
@@ -72,10 +70,14 @@
       <el-dialog :visible.sync="dialogVisible" width="80%">
         <img :src="dialogImageUrl" width="100%" />
       </el-dialog>
-      <el-pagination v-model:current-page="queryform.pagenum" :page-size="queryform.pagesize" :page-sizes="[10, 20, 30, 40]"
-        background layout="total, sizes, prev, pager, next, jumper" :total="myticketstore.count"
-        @size-change="handleSizeChange" @current-change="handleCurrentChange" />
-    </el-card>
+
+      <el-pagination 
+      v-model:current-page="queryform.pagenum" 
+      :page-size="queryform.pagesize" :page-sizes="[10, 20, 30, 40]"
+      background layout="total, sizes, prev, pager, next, jumper" :total="myticketstore.count"
+      @size-change="handleSizeChange" @current-change="handleCurrentChange" 
+      />
+    </div>
     <ticketEdit ref="editref" @onupdate="myticketstore.getmytickets" />
   </div>
 </template>
@@ -261,6 +263,7 @@
   const showDialog = (url:any) => {
     dialogVisible.value = true;
     dialogImageUrl.value = url;
+    console.log('图片', dialogImageUrl.value)
     window.open(url, 'ImageWindow', 'width=1024,height=768');
   }
   
@@ -317,6 +320,19 @@
   .dialog-footer button:first-child {
     margin-right: 10px;
   }
+
+  .handle-box {
+	margin-bottom: 20px;
+}
+
+.handle-input {
+	width: 300px;
+}
+.mr10 {
+	margin-right: 10px;
+}
+
+
   
   .header {
     padding-bottom: 16px;
@@ -327,17 +343,17 @@
     height: 100%;
   }
   
-  .el-pagination {
-    justify-content: center;
-    position: relative;
-    bottom: -10px;
-  }
   
   
   a{
       color: blue;
   }
   
+  .el-pagination {
+  justify-content: left;
+  position:relative;
+  bottom:-10px;
+}
   
   // :deep .el-table__fixed{
   //      height: auto !important; // 让固定列的高自适应

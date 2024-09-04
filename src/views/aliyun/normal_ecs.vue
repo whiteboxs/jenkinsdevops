@@ -122,8 +122,8 @@ const vswith_list = ref([
     'env':'prod'
     },
     {
-    'name': '生产/172.21.6.0/24',
-    'id':'vsw-uf601vi12vj7mwuv0f1v1',
+    'name': '生产/172.21.2.0/24',
+    'id':'vsw-uf6uzlzcnx45vpg93k5uj',
     'env':'prod'
     },
     {
@@ -131,14 +131,14 @@ const vswith_list = ref([
     'id':'vsw-uf6xpfna5y10mj7514f28',
     'env':'prod'
     },
+    // {
+    // 'name': 'DB/172.22.4.0/24',
+    // 'id':'vsw-uf686iq9e8d4ps8xkxsoa',
+    // 'env':'prod'
+    // },
     {
-    'name': 'DB/172.22.4.0/24',
-    'id':'vsw-uf686iq9e8d4ps8xkxsoa',
-    'env':'prod'
-    },
-    {
-    'name': '行情准生产/172.23.1.0/24',
-    'id':'vsw-uf66g5mplx73r778vc5x1',
+    'name': '行情准生产/172.23.2.0/24',
+    'id':'vsw-uf6x77foy18mvbvejok2b',
     'env':'prod'
     },
     {
@@ -192,6 +192,11 @@ const securitygroup = ref([
     'id':'sg-uf6hj58zvml3c6ey0sdb',
     'env':'gray'
     },
+    {
+    'name': 'GMS网段默认安全组',
+    'id':"sg-uf6i8bwb2qyzrhvm0sdh",
+    'env':'prod'
+    }
 
 ])
 

@@ -1,9 +1,24 @@
 <template>
       <el-form :model="query" style="display: flex; justify-content: flex-end;">
-    <el-form-item label="统计范围" >
+        <el-form-item label="时间范围" style="width: 308px" >
+            <el-date-picker
+            @change="handletimesChange"
+            v-model="query.query_time"
+            type="daterange"
+            range-separator="-"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间"
+            value-format="YYYY-MM-DD"
+            size=small
+            />
+    </el-form-item>
+    <el-form-item label="统计天数" >
         <el-select clearable v-model="query.days" size="small" @change="handledaysChange" >
             <el-option v-for="option in days_list" :key="option.value" :label="option.label" :value="option.value"></el-option>
         </el-select>
+    </el-form-item>
+    <el-form-item>
+                <el-button size=small icon="Refresh" @click="handleReset">重置</el-button>
     </el-form-item>
     </el-form>
      <div >
@@ -15,7 +30,7 @@
   <script setup lang="ts" >
   import { onMounted, ref,reactive} from 'vue'
   import{search_alert_ip_count} from '@/http/alert/alert_analysis'
-import { number } from 'echarts';
+
   
   
 
@@ -27,7 +42,7 @@ import { number } from 'echarts';
   })
   const query = ref<any>({
      days:3,
-     query_time:[]
+     query_time:'',
   });
   const days_list = ref([
     { label: '3天', value: '3' },
@@ -43,7 +58,20 @@ const handledaysChange = (value:any) => {
     init_bar_Chart()
 };
 
+const handletimesChange = (value:any) => {
+    query.value.query_time = value
+    //disposeChart()
+    init_bar_Chart()
+};
 
+// 重置
+const handleReset = () => {
+    query.value = {
+     days: 3,
+     query_time:'',
+    };
+    init_bar_Chart()
+};
 
   const state = reactive({
   option: {},
@@ -147,6 +175,9 @@ const getPieChart = (seriesData:any,time:any) => {
   
   <style scoped>
   
-  
+  .el-form-item {
+    padding-right: 20px;  /* 调整水平内间距 */
+    /*margin-bottom: 20px;   调整垂直间距 */
+}
   </style>
   

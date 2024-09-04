@@ -16,14 +16,14 @@ const routes: Array<RouteRecordRaw> = [
         name: 'Home',
         component: Home,
         children: [
-           {
-                path: '/usercenter',
-                name: 'usercenter',
-                meta: {
-                    title: '个人中心',
-                },
-                component: () => import(/* webpackChunkName: "usercenter" */ '../views/usercenter.vue'),
-            },
+        //    {
+        //         path: '/usercenter',
+        //         name: 'usercenter',
+        //         meta: {
+        //             title: '个人中心',
+        //         },
+        //         component: () => import(/* webpackChunkName: "usercenter" */ '../views/usercenter.vue'),
+        //     },
         ],
     },
     {
@@ -136,7 +136,7 @@ function addDynamicRoute(dynamicRoutes:any){
     const homeRoute = routes.filter(v=>v.name==='Home')[0];
     //homeRoute.children = [];
     dynamicRoutes.forEach((item: { path: any; title: any; permiss: any; route_name: any; route_component: any; menu_type:any}) => {
-        if (item.menu_type === 'menu') {
+        if (item.menu_type === 'menu' || item.menu_type === 'in_menu') {
             homeRoute.children?.push({
                 path: item.path,
                 meta: { title: item.title, 

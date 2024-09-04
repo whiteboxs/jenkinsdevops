@@ -198,7 +198,7 @@
 <script setup lang="ts" name="silences_policy">
 import { ref,onMounted } from 'vue';
 import { usesilences_policyStore } from '@/store/alert/silences_policy';
-import { add_silences_policy, delsilences_policy }  from '@/http/alert/alert';
+import { add_silences_policy, delsilences_policy,allsilences_policy as expallsilences_policy }  from '@/http/alert/alert';
 import { Refresh } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import * as XLSX from 'xlsx';
@@ -231,6 +231,8 @@ onMounted(() => {
 // 搜索
 const handleSearch = () => {
     console.log(query.value)
+    query.value.pagenum = 1
+    query.value.pagesize = 10
     silences_policy.getsilences_policy(query.value)
 };
 
@@ -465,7 +467,7 @@ const handleClean = async () => {
 }).catch(() => {});
 }
 
-//导出操作日志
+//导出全部
 const handleExport = async () => {
     let list: any = []; // 用于存储所有操作日志数据
      // 获取第一页数据
@@ -474,10 +476,10 @@ const handleExport = async () => {
     console.log(totalPages)
     for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
         query.value.pagenum = pageNum
-        await silences_policy.getsilences_policy(query.value)
-        silences_policy.silences_policyinfo.data.map((item: any, i: number) => {
+        const res  = await expallsilences_policy(query.value)
+        res.data.data.map((item: any) => {
             const rowData = [
-                i + 1,
+                item.id,
                 item.name,
                 item.instance,
                 item.group,

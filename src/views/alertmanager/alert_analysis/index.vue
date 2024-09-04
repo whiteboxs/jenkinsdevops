@@ -1,14 +1,28 @@
 <template>
     <div>
+        <el-dialog v-model="dialogTableVisible" title="当前告警" width="60%" 
+            @close="closeDr()">
+        <el-table :data="now_alert.now_alert_info" border class="table" ref="multipleTable" header-cell-class-name="table-header"
+         :cell-style="cellStyle" width="auto">
+            <el-table-column prop="serverity" label="告警级别" align="center"  ></el-table-column>
+            <el-table-column prop="alertname" label="告警类型" align="center"></el-table-column>
+            <el-table-column prop="instance" label="告警地址"  align="center"></el-table-column>
+            <el-table-column prop="summary" label="告警主题"  align="center"></el-table-column>
+            <el-table-column prop="description" label="告警详情"  align="center"></el-table-column>
+      </el-table>
+      <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="handleClose">关闭</el-button>
+      </span>
+      </template>
+    </el-dialog>
     <el-row :gutter="20" class="mgb20">
     <el-col :span="4">
             <el-card shadow="hover" :body-style="{ padding: '0px' }">
                 <div class="grid-content grid-con-1">
                     <el-icon class="grid-con-icon"><WarningFilled /></el-icon>
                     <div class="grid-cont-right">
-                        <el-link type="primary" href="http://139.196.146.17/#/alerts">
-                        <div class="grid-num">{{ now_alert_list.count }}</div>
-                        </el-link>
+                        <div class="grid-num" @click="goTonowalert" >{{ now_alert.count }}</div>
                         <div>当前告警数</div>
                     </div>
                 </div>
@@ -19,7 +33,7 @@
                 <div class="grid-content grid-con-1">
                     <el-icon class="grid-con-icon"><Warning /></el-icon>
                     <div class="grid-cont-right">
-                        <div class="grid-num">{{allalert.count}}</div>
+                        <div class="grid-num"  @click="goToalertlist" >{{allalert.count}}</div>
                         <div>告警总数量(历史)</div>
                     </div>
                 </div>
@@ -30,7 +44,7 @@
                 <div class="grid-content grid-con-2">
                     <el-icon class="grid-con-icon"><MuteNotification /></el-icon>
                     <div class="grid-cont-right">
-                        <div class="grid-num">{{silences.count}}</div>
+                        <div class="grid-num" @click="goTosilences">{{silences.count}}</div>
                         <div>静默消息数量</div>
                     </div>
                 </div>
@@ -41,7 +55,7 @@
                         <div class="grid-content grid-con-3">
                             <el-icon class="grid-con-icon"><Timer /></el-icon>
                             <div class="grid-cont-right">
-                                <div class="grid-num">{{silences_policy.count}}</div>
+                                <div class="grid-num" @click="goTosilences_policy">{{silences_policy.count}}</div>
                                 <div>静默策略数量</div>
                             </div>
                         </div>
@@ -50,9 +64,9 @@
             <el-col :span="5">
                 <el-card shadow="hover" :body-style="{ padding: '0px' }">
                     <div class="grid-content grid-con-4">
-                        <el-icon class="grid-con-icon"><Share /></el-icon>
+                        <el-icon class="grid-con-icon"><Link /></el-icon>
                         <div class="grid-cont-right">
-                            <div class="grid-num">{{ alertwebgroup.count }}</div>
+                            <div class="grid-num" @click="goToalertgroup">{{ alertwebgroup.count }}</div>
                             <div>告警群组数量</div>
                         </div>
                     </div>
@@ -62,24 +76,24 @@
       <el-row :gutter="20" class="mgb20">
         <el-col :span="12">
             <el-card shadow="hover">
-                <line_chart />
+                <alert_type_chart /> 
                </el-card>
         </el-col>
         <el-col :span="12">
             <el-card shadow="hover">
-                <pie_chart />  
+                <bar_chart />  
                 </el-card>
         </el-col>
     </el-row>
     <el-row :gutter="20" class="mgb20">
         <el-col :span="12">
             <el-card shadow="hover">
-                <par_chart />  
+                <line_chart /> 
                 </el-card>
         </el-col>
         <el-col :span="12">
             <el-card shadow="hover">
-                <bar_chart />  
+                <pie_chart />  
                 </el-card>
         </el-col>
     </el-row>
@@ -90,23 +104,23 @@
 
 <script setup lang="ts" >
 import { useRouter } from 'vue-router';
-import { onMounted, ref, computed} from 'vue'
+import { onMounted, ref} from 'vue'
 import { useallalertstore } from '@/store/alert/alertlist';
 import { usealertwebgroupStore } from '@/store/alert/alertwebgroup';
 import { usesilences_policyStore } from '@/store/alert/silences_policy';
 import { useallsilencesstore } from '@/store/alert/silences';
-import {now_alert} from '@/http/alert/alert'
+import { usenow_alertStore } from '@/store/alert/now_alert';
 import pie_chart from './pie_chart.vue'
 import line_chart from './line_chart.vue'
-import par_chart from './par_chart.vue'
+import alert_type_chart from './alert_type_chart.vue'
 import bar_chart from './bar_chart.vue'
 
-
+const router = useRouter();
 const alertwebgroup = usealertwebgroupStore();
 const allalert = useallalertstore();
 const silences_policy = usesilences_policyStore();
 const silences = useallsilencesstore();
-
+const now_alert = usenow_alertStore()
 
 // 获取表格数据,点击菜单后才加载
 onMounted(() => {
@@ -114,21 +128,77 @@ onMounted(() => {
     silences_policy.getsilences_policy(query.value)
     alertwebgroup.getalertwebgroup(query.value)
     silences.getsilenceslist(query.value)
-    get_now_alert()
+    now_alert.get_now_alert()
+   
 })
-const now_alert_list = ref<any>([])
-const get_now_alert = async () => {
-    // 如果有之前的 ECharts 实例，先销毁它  
-    const res = await now_alert();
-    now_alert_list.value = res.data
-    console.log(now_alert_list.value)
 
-}
 const query = ref<any>({
     pagenum: 1,
     pagesize: 10
 });
 
+
+
+const goToalertlist = () => {
+    router.push('/alertlist')
+}
+
+const goTosilences_policy = () => {
+    router.push('/silences_policy')
+}
+
+const goTosilences = () => {
+    router.push('/silences')
+}
+const goToalertgroup =()=>{
+    router.push('/alertwebgroup')
+}
+
+
+
+const dialogTableVisible = ref(false)
+//当前告警菜单按钮功能
+const closeDr=() =>{
+    dialogTableVisible.value=false
+}
+// 当前告警菜单按钮关闭
+const handleClose = () => {
+    // 关闭对话框
+    dialogTableVisible.value = false;
+}
+
+const goTonowalert = () => {
+    // 打开会话框
+    dialogTableVisible.value = true
+}
+
+
+
+const cellStyle = ({ row, column, rowIndex, columnIndex }: { row: any, column: any, rowIndex: number, columnIndex: number }) => {
+    if (columnIndex === 0 ) {
+        if(row.serverity == 'critical'){
+            return {
+            color: "#F56C6C", 
+            fontWeight: 'bold'
+            };
+            }else
+            return {
+            color: "#E6A23C", 
+            fontWeight: 'bold'
+            };
+        }
+        if (columnIndex === 1) {
+            return {
+            color: "#189EFF", 
+            };
+        }
+        if (columnIndex === 4) {
+            return {
+            color: "#189EFF", 
+            fontWeight: 'bold'
+            };
+        }
+}
 
 
 </script >
@@ -159,6 +229,7 @@ const query = ref<any>({
 .grid-num {
 	font-size: 18px;
 	font-weight: bold;
+    cursor: pointer;  /* 悬停手指样式 */
 }
 
 .grid-con-icon {
@@ -170,9 +241,13 @@ const query = ref<any>({
 	color: #fff;
 }
 
+
+
+
 .grid-con-1 .grid-con-icon {
 	background: rgb(242, 94, 67);
 }
+
 
 .grid-con-1 .grid-num {
 	color:  rgb(242, 94, 67);

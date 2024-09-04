@@ -35,13 +35,34 @@
 						>
 						<el-form-item label="用户名："> {{ user.userinfo.username }} </el-form-item>
 						<el-form-item label="旧密码：" prop="old_password">
-							<el-input type="password" v-model="changepasswdform.old_password" autocomplete="off"></el-input>
+							<el-input :type="oldPassFlag ? 'text' : 'password'" v-model="changepasswdform.old_password" autocomplete="off" style="width: 240px">
+								<template #suffix>
+								<span @click="oldPassFlag = !oldPassFlag">
+								<el-icon v-if="oldPassFlag"><View /></el-icon>
+								<el-icon v-else><Hide /></el-icon>
+									</span>
+								</template>
+							</el-input>
 						</el-form-item>
 						<el-form-item label="新密码：" prop="new_password" >
-							<el-input type="password" v-model="changepasswdform.new_password" autocomplete="off" ></el-input>
+							<el-input :type="newPassFlag ? 'text' : 'password'" v-model="changepasswdform.new_password" autocomplete="off" style="width: 240px" >
+								<template #suffix>
+								<span @click="newPassFlag = !newPassFlag">
+								<el-icon v-if="newPassFlag"><View /></el-icon>
+								<el-icon v-else><Hide /></el-icon>
+									</span>
+								</template>
+							</el-input>
 						</el-form-item>
 						<el-form-item label="确认新密码：" prop="confirmPassword" >
-							<el-input type="password" v-model="changepasswdform.confirmPassword" autocomplete="off" ></el-input>
+							<el-input :type="confirmPassFlag ? 'text' : 'password'" v-model="changepasswdform.confirmPassword" autocomplete="off"  style="width: 240px">
+								<template #suffix>
+								<span @click="confirmPassFlag = !confirmPassFlag">
+								<el-icon v-if="confirmPassFlag"><View /></el-icon>
+								<el-icon v-else><Hide /></el-icon>
+									</span>
+								</template>
+							</el-input>
 						</el-form-item>
 						<el-form-item>
 							<el-button type="primary" @click="onSubmit(ruleFormRef)">保存</el-button>
@@ -73,6 +94,11 @@ const changepasswdform = ref({
 	new_password: '',
 	confirmPassword: '',
 });
+
+const oldPassFlag=ref(false)//图标显示标识
+const newPassFlag=ref(false)//图标显示标识
+const confirmPassFlag=ref(false)//图标显示标识
+
 
 
 //字段验证

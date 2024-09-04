@@ -3,14 +3,15 @@
         <el-drawer v-model="drawer" 
 					         title="I am the title" 
 							 :with-header="false"
-							 @close="closeDr()">
+							 @close="closeDr()"
+               size="25%">
 							 
 						<el-form
 							ref="menuFormRef"
 							:model="menueditForm"
 							status-icon
 							:rules="rules"
-							label-width="120px"
+							label-width="100px"
 							class="demo-ruleForm"
 							>
 							<el-form-item label="菜单名称" prop="menu_name">
@@ -19,14 +20,15 @@
 							<el-form-item label="菜单路径" prop="menu_path">
 								<el-input v-model="menueditForm.menu_path" autocomplete="off" />
 							</el-form-item>							
-                  <el-form-item label="菜单类型" prop="menu_type">
-                      <el-radio-group v-model="menueditForm.menu_type">
-                          <el-radio label="directory"></el-radio>
-                          <el-radio label="menu"></el-radio>
-                          <el-radio label="button"></el-radio>
-                      </el-radio-group>
-                  </el-form-item>
-                  <el-form-item label="权限" prop="permiss">
+              <el-form-item label="菜单类型" prop="menu_type">
+                  <el-radio-group v-model="menueditForm.menu_type">
+                    <el-radio label="directory">目录</el-radio>
+                    <el-radio label="menu">导航菜单</el-radio>
+                    <el-radio label="button">菜单按钮</el-radio>
+                    <el-radio label="in_menu">嵌入菜单</el-radio>
+                  </el-radio-group>
+              </el-form-item>
+              <el-form-item label="权限" prop="permiss">
 								<el-input v-model="menueditForm.id" disabled />
 							</el-form-item>
               <el-form-item label="菜单图标" prop="icon">
@@ -62,7 +64,7 @@
   import type { FormInstance, FormRules } from 'element-plus'
   import { updatemenu } from '@/http/api';
 
-  import { ref, onMounted,defineEmits } from 'vue';
+  import { ref, defineEmits } from 'vue';
   import { ElMessage, ElMessageBox } from 'element-plus';
   
 
@@ -81,8 +83,8 @@ menu_path:'',
 menu_type:'',
 permiss:null,
 icon:'',
-parentname:null,
-parentid:undefined,
+parentname:'',
+parentid:0,
 route_component:'',
 route_name:'',
 menu_order:0
@@ -168,8 +170,8 @@ const rules = ref<FormRules>({
         menu_type:'',
         permiss:null,
         icon:'',
-        parentname:null,
-        parentid:undefined,
+        parentname:'',
+        parentid:0,
         route_component:'',
         route_name:'',
         menu_order:0,
@@ -212,7 +214,8 @@ const rules = ref<FormRules>({
   const onupdate = async (formEl: FormInstance | undefined) => {  
     if (!formEl) return;  
     if (menueditForm.value.parentid == undefined) {
-        delete menueditForm.value.parentid;
+        //delete menueditForm.value.parentid;
+        menueditForm.value.parentid = 0
     }
     formEl.validate(async (valid) => {  
       if (valid) {  

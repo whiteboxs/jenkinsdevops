@@ -1,12 +1,10 @@
 <template>
   <div>
-    <el-card class="manage">
-      <el-row :gutter="20" class="header">
-        <el-col :span="7">
-          <el-input placeholder="请输入" v-model="queryform.keyword"></el-input>
-        </el-col>
-        <el-button type="primary" icon="Search" @click="onSearch">Search</el-button>
-      </el-row>  
+    <div class="container">
+      <div class="handle-box">
+      <el-input placeholder="请输入" v-model="queryform.keyword" class="handle-input mr10" ></el-input>
+      <el-button type="primary" icon="Search" @click="onSearch">Search</el-button>
+      </div>
       <el-table :data="myticket_processing.myticket_processinglist" 
       flex="true"
       resizable="true"
@@ -43,7 +41,7 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
-    </el-card>
+    </div>
     <ticket_processingEdit ref="editref" @onupdate="myticket_processing.getmyticket_processing"/>
   </div>
   </template>
@@ -290,13 +288,24 @@ const showDialog = (url:any) => {
     padding-bottom: 16px;
     box-sizing: border-box;
   }
+
+.handle-box {
+margin-bottom: 20px;
+}
+
+.handle-input {
+	width: 300px;
+}
+.mr10 {
+	margin-right: 10px;
+}
   
-  
-    .el-pagination {
-      justify-content: center;
-      position:relative;
-      bottom:-10px;
-    }
+
+.el-pagination {
+  justify-content: left;
+  position:relative;
+  bottom:-10px;
+}
   
   // :deep .el-table__fixed{
   //      height: auto !important; // 让固定列的高自适应

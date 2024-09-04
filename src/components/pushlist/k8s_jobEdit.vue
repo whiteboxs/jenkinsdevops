@@ -9,7 +9,7 @@
                               :model="jobeditForm"
                               status-icon
                               :rules="rules"
-                              label-width="120px"
+                              label-width="70px"
                               class="demo-ruleForm"
                               >
                               <el-form-item label="项目名" prop="job_name">

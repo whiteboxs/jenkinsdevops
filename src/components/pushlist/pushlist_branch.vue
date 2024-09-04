@@ -4,16 +4,18 @@
      title="项目发布" 
      width="30%" 
      >
-      <el-form :model="form" 
+      <el-form :model="from" 
       label-width="80px"
       ref="ruleFormRef"
       :rules="rules"
       >
-        <el-form-item label="项目名" prop="job_name" ><el-input v-model="form.job_name" disabled/>
+        <el-form-item label="项目名" prop="job_name" ><el-input v-model="from.job_name" disabled/>
+        </el-form-item>
+        <el-form-item label="环境" prop="env" ><el-input v-model="from.env" disabled/>
         </el-form-item>
         <el-form-item label="分支" prop="parameters">
-          <el-select v-model="form.BRANCH" placeholder="请选择分支" >
-            <el-option :label="item.BRANCH" :value="item.BRANCH" v-for="item in branches" :key="item.BRANCH" />
+          <el-select v-model="from.BRANCH" placeholder="请选择分支" >
+            <el-option :label="item.BRANCH" :value="item.BRANCH" v-for="item in props.branches" :key="item.BRANCH" />
           </el-select>
         </el-form-item>
       </el-form>
@@ -32,8 +34,10 @@
   // TODO: 编辑
   import type { FormInstance, FormRules } from 'element-plus'
   import { build,buildstatus,save_build_id } from '@/http/api'
-  import { ref} from 'vue'
+  import { ref,onMounted,watch} from 'vue'
   import { ElMessage,ElMessageBox } from 'element-plus';
+  import { service_status, jar_download, noderestart } from '@/http/api';
+
   //import { useallbransh } from '../store/branch.ts'
   
 
@@ -43,6 +47,8 @@
 // onMounted(() => {
 //     branchStore.getbranch(form.value.id)	
 // })
+
+
 
 
 
@@ -62,39 +68,98 @@
       
   })
 
-    // 使用 TypeScript 类型注解  
-    interface branchForm {  
-    job_name: string;  
-    parameters: Array<{ BRANCH: string }>;  
-    BRANCH: string;
-    }
+  // 使用 TypeScript 类型注解  
+  interface branchForm {  
+  job_name: string;  
+  parameters: Array<{ BRANCH: string }>;  
+  BRANCH: string;
+  env: string;
+  supervisorinfo:Array<{ ip: string,program:string }>;
+  id:number,
+  jar_name: string,
+  ip:Array<string>,
+  build_id:number
+  }
 
 
   //弹窗里获取父表单里对应列的数据
    // 定义一个ref对象绑定表单
 const ruleFormRef = ref<FormInstance>()
-  const form= ref<branchForm>({
-    job_name: '',
-    parameters: [],
-    BRANCH: '',
-  })
+const from= ref<branchForm>({
+  job_name: '',
+  parameters: [],
+  BRANCH: '',
+  id:0,
+  env: '',
+  supervisorinfo:[],
+  jar_name: '',
+  ip:[],
+  build_id:0
+})
 
 
+
+
+//生产所有节点
+const getservicenodes = async (data:any) => {
+    const res = await service_status(data)
+    //ip
+    from.value.ip = res.data.data.map((item:{ip:string}) => (item.ip));
+    // 构建后重启的服务获取
+    from.value.supervisorinfo = res.data.data.map((item:{ip:string,program:string}) => (
+    {
+      ip:item.ip,
+      program:item.program
+    }));
+
+}
   
- 
-  
+//重启构建后的节点服务
+const restartNodes = async (data:any) => {  
+    for (const node of data) {  
+        try {  
+          console.log('重启数据',node)
+          await noderestart(node);  
+        } catch (error) {  
+            console.error(error);  
+        }  
+    }  
+}
+
+
 //父传子 将branches传入到子组件里
 const props = defineProps({
+    pushlist_env:{
+      type: String,
+      required: true
+     },
      branches: {
       type: Array<{ BRANCH: string }>,
       required: true
      }
 })
-  
+
+// onMounted(() => {
+// //   watch(() => [props.pushlist_env], ([newEnv]) => {
+// //   jarForm.value.env = newEnv
+// // }, { immediate: true });
+// console.log('props',props.pushlist_env)
+// })
+
+
+
+
+
+//点击构建
   const query_branch = (row:any) => {
-    form.value.job_name = row.job_name
-    form.value.parameters = props.branches
-    console.log('form.value.parameters',form.value.parameters)
+    from.value.job_name = row.job_name
+    from.value.parameters = props.branches
+    from.value.env = props.pushlist_env
+    from.value.jar_name = row.job_name
+    from.value.ip = row.gray_ip
+    from.value.id = row.id
+    console.log('jarForm',from.value.env, 'props',props.pushlist_env)
+
     dialogVisible.value = true
 
   }
@@ -108,10 +173,10 @@ const props = defineProps({
   const emit = defineEmits(['onupdatebranch'])
 
   
-  
   const onupdatebranch = async () => {  
         // 编辑操作   如果要打印出来返回的数据要赋值下给res
-        const building = await build(form.value);  
+        const building = await build(from.value);  
+        from.value.build_id = building.data.now_build_id
         // 提示成功
         ElMessage.success(building.data.msg);
         // 关闭弹窗
@@ -123,23 +188,56 @@ const props = defineProps({
         let firstWait = true; // 标记是否第一次等待
         while (currentWaitTime < maxWaitTime) {
           // 根据是否是第一次等待来决定等待时间
-          const waitTime = firstWait ? 4000 : 1000;
+          const waitTime = firstWait ? 2000 : 1000;
           firstWait = false; // 将第一次等待标记为 false
           console.log(waitTime)
           // 等待2秒
           await new Promise(resolve => setTimeout(resolve, waitTime));
 
           // 获取构建状态
-          const buildResult = await buildstatus(form.value);  // 自定义获取构建状态的函数，根据实际情况实现
+          const buildResult = await buildstatus(from.value);  // 自定义获取构建状态的函数，根据实际情况实现
              console.log('buildResult',buildResult)
           // 判定构建状态
-          if (buildResult.data.status === 'SUCCESS' || buildResult.data.status === 'FAILURE'|| buildResult.data.status === 'ABORTED') {
+          if (buildResult.data.status === 'SUCCESS') {
+            //每次循环前关闭上一次的提示
+            ElMessageBox.close();
+            ElMessageBox.alert(`构建结束！状态为：${buildResult.data.status},请等待后续执行..`)
+            ElMessage.success(buildResult.data.msg);
+            //保存构建id到数据库
+            await save_build_id(from.value); 
+            if (from.value.env == 'gray') {
+              await getservicenodes(from.value)
+              console.log('jar',from.value)
+              const res_download = await jar_download(from.value);
+              ElMessage.success(res_download.data.msg)
+              await restartNodes(from.value.supervisorinfo)
+              ElMessageBox.close();
+              ElMessageBox.alert(
+                `服务地址：${from.value.ip}\n包名称: ${from.value.jar_name}.jar\n执行重启操作完成！`,
+                {
+                  dangerouslyUseHTMLString: true,
+                });
+            } else if (from.value.env == 'prod'){
+              await getservicenodes(from.value)
+              const res_download = await jar_download(from.value);
+              ElMessage.success(res_download.data.msg)
+              await restartNodes(from.value.supervisorinfo)
+              ElMessageBox.close();
+              ElMessageBox.alert(`
+              服务地址：${from.value.ip}\n 包名称：${from.value.jar_name}.jar\n执行重启操作完成`,
+              {
+                dangerouslyUseHTMLString: true,
+              })
+            }
+            emit('onupdatebranch');
+            return;            
+          } else if (buildResult.data.status === 'FAILURE'|| buildResult.data.status === 'ABORTED') {
             //每次循环前关闭上一次的提示
             ElMessageBox.close();
             ElMessageBox.alert(`构建结束！状态为：${buildResult.data.status}`)
             ElMessage.success(buildResult.data.msg);
             //保存构建id到数据库
-            await save_build_id(form.value); 
+            //await save_build_id(form.value); 
             emit('onupdatebranch');
             return;
           } else {

@@ -2,8 +2,8 @@
     <div>
       <el-drawer v-model="drawer" 
 					         title="编辑静默策略" 
-							 @close="closeDr()">
-							 
+							 @close="closeDr()"
+               size="20%"> 
 						<el-form
 							ref="ruleFormRef"
 							:model="editForm"
@@ -15,38 +15,38 @@
               <el-form-item label="策略名称" prop="name">
                     <el-input v-model="editForm.name" autocomplete="off" style="width: 240px"/>
               </el-form-item>
-                  <el-form-item label="告警组" prop="group">
-                          <el-select-v2
-                              clearable
-                              filterable
-                              v-model="editForm.group"
-                              :options="monitorgroups"
-                              placeholder="请选择(可多选,搜索)"
-                              style="width: 240px"
-                              multiple
-                          />
+                <el-form-item label="告警组" prop="group">
+                  <el-select-v2
+                      clearable
+                      filterable
+                      v-model="editForm.group"
+                      :options="monitorgroups"
+                      placeholder="请选择(可多选,搜索)"
+                      style="width: 240px"
+                      multiple
+                  />
               </el-form-item>
               <el-form-item label="告警地址" prop="instance">
                   <el-select-v2
-                                      clearable
-                                      filterable
-                                      v-model="editForm.instance"
-                                      :options="monitorinstances"
-                                      placeholder="请选择(可多选,搜索)"
-                                      style="width: 240px"
-                                      multiple
-                                  />
+                      clearable
+                      filterable
+                      v-model="editForm.instance"
+                      :options="monitorinstances"
+                      placeholder="请选择(可多选,搜索)"
+                      style="width: 240px"
+                      multiple
+                  />
               </el-form-item>
               <el-form-item label="告警级别" prop="serverity">
-                          <el-select-v2
-                              clearable
-                              filterable
-                              v-model="editForm.serverity"
-                              :options="alert_serverity"
-                              placeholder="请选择(可多选,搜索)"
-                              style="width: 240px"
-                              multiple
-                          />
+                  <el-select-v2
+                      clearable
+                      filterable
+                      v-model="editForm.serverity"
+                      :options="alert_serverity"
+                      placeholder="请选择(可多选,搜索)"
+                      style="width: 240px"
+                      multiple
+                  />
               </el-form-item>
               <el-form-item label="静默开始时间" prop="starttime">
                   <div class="example-basic">
@@ -71,7 +71,7 @@
   
   // TODO: 编辑
   import type { FormInstance, FormRules } from 'element-plus'
-  import { ref,defineEmits,computed,defineProps,onMounted} from 'vue';
+  import { ref,defineEmits } from 'vue';
   import { ElMessage, ElMessageBox,ElDrawer } from 'element-plus';
   import { update_silences_policy } from '@/http/alert/alert';
   import { monitor_group,monitor_instance } from '@/http/api'
@@ -82,12 +82,6 @@
 
   // 开关
   const drawer = ref(false)
-
-  onMounted(() => {
-    monitor_instancelist()
-    monitor_grouplist()
-})
-
 
   
   // 定义一个ref对象绑定表单，这个ref用于检查表单是否符合要求
@@ -220,7 +214,9 @@ const rules = ref<FormRules>({
      editForm.value.starttime=row.starttime,
      editForm.value.endtime=row.endtime,
      drawer.value = true
-     console.log('传入子主件', editForm.value)
+     monitor_instancelist()
+     monitor_grouplist()
+     console.log('策略修改传入子主件', editForm.value)
   }
   defineExpose({
     open

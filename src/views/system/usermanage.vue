@@ -8,21 +8,28 @@
 					<el-drawer v-model="drawer" 
 					         title="I am the title" 
 							 :with-header="false"
-							 @close="closeDr(ruleFormRef)">
-							 
+							 @close="closeDr(ruleFormRef)"
+							 size="20%">
 						<el-form
 							ref="ruleFormRef"
 							:model="userForm"
 							status-icon
 							:rules="rules"
-							label-width="120px"
+							label-width="50px"
 							class="demo-ruleForm"
 							>
 							<el-form-item label="账号" prop="username">
 								<el-input  clearable v-model="userForm.username" autocomplete="off" />
 							</el-form-item>
 							<el-form-item label="密码" prop="password">
-								<el-input  clearable type="password" v-model="userForm.password" autocomplete="off" />
+								<el-input  clearable  :type="newPassFlag ? 'text' : 'password'" v-model="userForm.password" autocomplete="off" >
+								<template #suffix>
+								<span @click="newPassFlag = !newPassFlag">
+								<el-icon v-if="newPassFlag"><View /></el-icon>
+								<el-icon v-else><Hide /></el-icon>
+									</span>
+								</template>
+								</el-input>
 							</el-form-item>
 							<el-form-item label="部门" prop="department">
 								<el-select 
@@ -32,11 +39,11 @@
                                   </el-select>
 							</el-form-item>
 							<el-form-item label="角色" prop="role_id">
-                                <el-select 
-								   v-model="userForm.role_id" 
-								   placeholder="请选择角色">
-                                  <el-option :label="item.role_name" :value="item.id" v-for="item in allrole.allroleinfo" :key="item.id" />
-                                  </el-select>
+								<el-select 
+									v-model="userForm.role_id" 
+									placeholder="请选择角色">
+									<el-option :label="item.role_name" :value="item.id" v-for="item in allrole.allroleinfo" :key="item.id" />
+								</el-select>
                             </el-form-item>
 							<el-form-item>
 								<el-button type="primary" @click="submitForm(ruleFormRef)">提交</el-button>
@@ -45,8 +52,8 @@
 						</el-form>
 					</el-drawer>
 			</div>
-			<el-table :data="showUsers" border class="table" ref="multipleTable" header-cell-class-name="table-header">
-				<el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
+			<el-table :data="showUsers" border  class="table" ref="multipleTable" header-cell-class-name="table-header">
+				<el-table-column prop="id" label="ID"  align="center" width="55"></el-table-column>
 				<el-table-column prop="username" label="用户名" align="center">
                
            		</el-table-column>
@@ -64,7 +71,7 @@
 						</el-image>
 						</template>
 				</el-table-column>
-				<el-table-column prop="department" label="部门"></el-table-column>
+				<el-table-column prop="department" label="部门" align="center"></el-table-column>
 				<el-table-column  prop="status" label="状态" align="center" >
 					<template #default="scope">
 						<el-switch
@@ -75,14 +82,17 @@
 						/>
 					</template>
 					</el-table-column>
-				<el-table-column prop="role_name" label="角色">
+				<el-table-column prop="role_name" label="角色" align="center">
 					<template #default="scope">
                     <el-tag >{{ scope.row.role_name }}</el-tag>
-                </template>
+                   </template>
 				</el-table-column>
-				<el-table-column prop="create_time" label="创建时间"></el-table-column>
-				<el-table-column label="操作" width="220" align="center">
+				<el-table-column prop="create_time" label="创建时间" align="center"></el-table-column>
+				<el-table-column label="操作" align="center" width="320">
 					<template #default="scope">
+						<el-button text type="primary" :icon="Edit" @click="handleresetpaasswd(scope.row)">
+							重置密码
+						</el-button>
 						<el-button text type="primary" :icon="Edit" @click="handleEdit(scope.row)">
 							编辑
 						</el-button>
@@ -102,6 +112,7 @@
 					class="mt-4"
 				/>
 			<userEdit ref="editref" @onupdate="alluser.getalluser" />
+			<passReset ref="resetref" />
 			</div>
 		</div>
 	</div>
@@ -115,10 +126,12 @@ import { usealluserStore } from '@/store/user';
 import { adduser,deluser ,updateuserstatus } from '@/http/api';
 import type { FormInstance, FormRules } from 'element-plus'
 import { useallroleStore } from '@/store/role'
-import {useAuthStore} from '@/store/login'
 
-//工单编辑
+
+//用户编辑
 import userEdit from '@/components/system/userEdit.vue';
+//修改密码
+import passReset from '@/components/system/passReset.vue';
 
 const baseURL = import.meta.env.VITE_APP_BASE_API
 
@@ -128,8 +141,6 @@ const allrole = useallroleStore()
 //用户store
 const  alluser = usealluserStore()
 
-//登录store
-const usestore =useAuthStore()
 onMounted(() => {
     alluser.getalluser(query.value)
 	allrole.getallrole()
@@ -156,7 +167,7 @@ const handleSearch = () => {
 };
 
 
-
+const newPassFlag=ref(false)//图标显示标识
 // 新增用户  
 const drawer = ref(false)
 // 定义一个ref对象绑定表单
@@ -293,12 +304,16 @@ const  showUsers = computed(()=>{
 })	
 
 
-
-// 修改
+// 修改用户
 const editref = ref<{ open: (row: any) => void } | null>(null)
 const handleEdit = (row:any) => {
     editref.value?.open(row)
-	console.log(editref.value)
+  }
+
+// 重置密码
+const resetref = ref<{ openresetpasswd: (row: any) => void } | null>(null)
+const handleresetpaasswd = (row:any) => {
+    resetref.value?.openresetpasswd(row)
   }
 </script>
 
@@ -307,9 +322,11 @@ const handleEdit = (row:any) => {
 	margin-bottom: 20px;
 }
 
-.handle-select {
-	width: 120px;
-}
+
+
+.el-form-item {
+    width: 320px
+  }
 
 .handle-input {
 	width: 300px;

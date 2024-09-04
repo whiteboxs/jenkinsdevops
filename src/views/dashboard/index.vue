@@ -11,28 +11,24 @@
 						</div>
 					</div>
 					<div class="user-info-list">
-						上次登录时间：
+						登录时间：
 						<span>{{login_time}}</span>
 					</div>
 					<div class="user-info-list">
-						上次登录地点：
+						登录地点：
 						<span>中国</span>
 					</div>
 				</el-card>
-				<el-card shadow="hover" style="height: 252px">
-					<template #header>
-						<div class="clearfix">
-							<span>语言详情</span>
-						</div>
-					</template>
-					Vue
-					<el-progress :percentage="79.4" color="#42b983"></el-progress>
-					TypeScript
-					<el-progress :percentage="14" color="#f1e05a"></el-progress>
-					CSS
-					<el-progress :percentage="5.6"></el-progress>
-					HTML
-					<el-progress :percentage="1" color="#f56c6c"></el-progress>
+				<el-card shadow="hover" style="height: 260px">
+					<span class="alert-title">实时告警数量 {{ now_alert.count }}</span>
+					<el-table :data="now_alert.now_alert_info" border class="table" ref="multipleTable" header-cell-class-name="table-header"
+						 width="auto" height="200" :cell-style="cellStyle" >
+							<el-table-column size="small" prop="serverity" label="告警级别" align="center" width="90"></el-table-column>
+							<el-table-column size="small" prop="alertname" label="告警类型" align="center" width="100"></el-table-column>
+							<el-table-column size="small" prop="instance" label="告警地址"  align="center" width="120"></el-table-column>
+							<el-table-column size="small" prop="nodename" label="主机名称"  align="center" width="178"></el-table-column>
+							<!-- <el-table-column prop="description" label="告警详情"  align="center"></el-table-column> -->
+					</el-table>
 				</el-card>
 			</el-col>
 			<el-col :span="16">
@@ -42,8 +38,8 @@
 							<div class="grid-content grid-con-1">
 								<el-icon class="grid-con-icon"><User /></el-icon>
 								<div class="grid-cont-right">
-									<div class="grid-num">1234</div>
-									<div>用户访问量</div>
+									<div class="grid-num">12</div>
+									<div>在线用户数量</div>
 								</div>
 							</div>
 						</el-card>
@@ -51,10 +47,10 @@
 					<el-col :span="8">
 						<el-card shadow="hover" :body-style="{ padding: '0px' }">
 							<div class="grid-content grid-con-2">
-								<el-icon class="grid-con-icon"><ChatDotRound /></el-icon>
+								<el-icon class="grid-con-icon"><RefreshRight /></el-icon>
 								<div class="grid-cont-right">
 									<div class="grid-num">321</div>
-									<div>系统消息</div>
+									<div>构建数量</div>
 								</div>
 							</div>
 						</el-card>
@@ -62,7 +58,7 @@
 					<el-col :span="8">
 						<el-card shadow="hover" :body-style="{ padding: '0px' }">
 							<div class="grid-content grid-con-3">
-								<el-icon class="grid-con-icon"><Goods /></el-icon>
+								<el-icon class="grid-con-icon"><Box /></el-icon>
 								<div class="grid-cont-right">
 									<div class="grid-num">5000</div>
 									<div>项目数量</div>
@@ -71,33 +67,8 @@
 						</el-card>
 					</el-col>
 				</el-row>
-				<el-card shadow="hover" style="height: 403px">
-					<template #header>
-						<div class="clearfix">
-							<span>待办事项</span>
-							<el-button style="float: right; padding: 3px 0" text>添加</el-button>
-						</div>
-					</template>
-
-					<el-table :show-header="false" :data="todoList" style="width: 100%">
-						<el-table-column width="40">
-							<template #default="scope">
-								<el-checkbox v-model="scope.row.status"></el-checkbox>
-							</template>
-						</el-table-column>
-						<el-table-column>
-							<template #default="scope">
-								<div
-									class="todo-item"
-									:class="{
-										'todo-item-del': scope.row.status
-									}"
-								>
-									{{ scope.row.title }}
-								</div>
-							</template>
-						</el-table-column>
-					</el-table>
+				<el-card shadow="hover" style="height: 411px">
+					<alert_type_chart />  
 				</el-card>
 			</el-col>
 		</el-row>
@@ -118,15 +89,46 @@
 
 <script setup lang="ts" name="dashboard">
 import Schart from 'vue-schart';
-import { reactive } from 'vue';
+import { reactive,onMounted } from 'vue';
 import { useAuthStore } from '@/store/login';
+import { usenow_alertStore } from '@/store/alert/now_alert';
+import alert_type_chart from './alert_type_chart.vue'
+
+
 const baseURL = import.meta.env.VITE_APP_BASE_API
 
 const user =useAuthStore();
+const now_alert = usenow_alertStore()
 
 const name = user.userinfo.username;
 const role: string = user.userinfo.role_name;
 const  login_time: string = user.userinfo.login_time;
+
+
+onMounted(() => {
+now_alert.get_now_alert()
+})
+
+const cellStyle = ({ row, column, rowIndex, columnIndex }: { row: any, column: any, rowIndex: number, columnIndex: number }) => {
+    if (columnIndex === 0 ) {
+        if(row.serverity == 'critical'){
+            return {
+            color: "#F56C6C", 
+            fontWeight: 'bold'
+            };
+            }else
+            return {
+            color: "#E6A23C", 
+            fontWeight: 'bold'
+            };
+        }
+        if (columnIndex === 1) {
+            return {
+            color: "#189EFF", 
+            };
+        }
+}
+
 const options = {
 	type: 'bar',
 	title: {
@@ -170,32 +172,7 @@ const options2 = {
 		}
 	]
 };
-const todoList = reactive([
-	{
-		title: '今天要修复100个bug',
-		status: false
-	},
-	{
-		title: '今天要修复100个bug',
-		status: false
-	},
-	{
-		title: '今天要写100行代码加几个bug吧',
-		status: false
-	},
-	{
-		title: '今天要修复100个bug',
-		status: false
-	},
-	{
-		title: '今天要修复100个bug',
-		status: true
-	},
-	{
-		title: '今天要写100行代码加几个bug吧',
-		status: true
-	}
-]);
+
 </script>
 
 <style scoped>
@@ -288,8 +265,8 @@ const todoList = reactive([
 	margin-bottom: 20px;
 }
 
-.todo-item {
-	font-size: 14px;
+.table  {
+  font-size: 11px; /* 设置表格单元格的字体大小 */
 }
 
 .todo-item-del {
@@ -301,4 +278,17 @@ const todoList = reactive([
 	width: 100%;
 	height: 300px;
 }
+
+
+.alert-title {
+    font-weight: bold;
+    margin-bottom: 5px; /* 或使用 padding-bottom: 5px; */
+    position: relative;
+    font-size: 16px;
+    color: #333;
+    padding-left: 10px;
+    top: -7px;
+}
+
+
 </style>

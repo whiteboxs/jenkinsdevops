@@ -13,8 +13,6 @@
             ref="multipleTable" 
             header-cell-class-name="table-header"
             :cell-style="cellStyle"
-            v-loading="loading"
-            element-loading-text="Loading..."
             >
         <el-table-column prop="InstanceId" label="实例ID" width="120" align="center" ></el-table-column>
 				<el-table-column  prop="InstanceName" label="实例名称" width="210" align="center" ></el-table-column>
@@ -58,7 +56,7 @@
                         <span>{{ row.createtime }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column label="操作" width="380" align="center">
+                <el-table-column label="操作" width="365" align="center">
                 <template #default="scope">
                   <el-tooltip content="修改主机名" placement="top">
                         <el-button plain  type="success" :icon="Edit" @click="handlehostname(scope.row)">
@@ -67,8 +65,8 @@
                     <el-tooltip content="配置supervisor" placement="top">
                         <el-button plain type="warning" :icon="Finished" @click="handlsupervisor(scope.row)"></el-button>
                     </el-tooltip>
-                    <el-tooltip content="jar包上传" placement="top">
-                         <el-button plain  type="primary" :icon="Upload" @click="handlejarupload(scope.row)"></el-button>
+                    <el-tooltip content="jar包下载" placement="top">
+                         <el-button plain  type="primary" :icon="Upload" @click="handlejardownload(scope.row)"></el-button>
                     </el-tooltip>
                     <el-tooltip content="监控管理" placement="top">
                         <el-button plain  color="#626aef" :icon="VideoCamera" @click="handlemonitor(scope.row)"></el-button>
@@ -85,20 +83,21 @@
                 </template>
               </el-table-column>
 			</el-table>
+    </div>
 			<div class="pagination">
-                <el-pagination 
-                v-model:current-page="queryform.PageNumber" 
-                :page-size="queryform.PageSize" 
-                :page-sizes="[10, 20, 30, 40]"
-                background layout="total, sizes, prev, pager, next, jumper" 
-                :total="ecsstore.count"
-                @size-change="handleSizeChange" 
-                @current-change="handleCurrentChange" />
+        <el-pagination 
+        v-model:current-page="queryform.PageNumber" 
+        :page-size="queryform.PageSize" 
+        :page-sizes="[10, 20, 30, 40]"
+        background layout="total, sizes, prev, pager, next, jumper" 
+        :total="ecsstore.count"
+        @size-change="handleSizeChange" 
+        @current-change="handleCurrentChange" />
 			</div>
-		</div>
     <ecs_super ref="ecssuperref"/>
-    <ecs_hostname ref="ecshostnameref"/>
-    <ecs_monitor :monitorgroups=monitorgroups ref="ecs_monitorref" @onmonitor="ecsstore.getecs(queryform)"/>
+    <ecs_hostname ref="ecshostnameref"/>  
+    <ecs_jardownload ref="ecs_jarref"/>
+    <ecs_monitor ref="ecs_monitorref" @onmonitor="ecsstore.getecs(queryform)"/>
 	</div>
 </template>
 
@@ -110,7 +109,8 @@ import { Search,Finished,Upload,SwitchButton,Close,VideoCamera,Edit} from '@elem
 import ecs_super from '@/components/ecs/ecs_super.vue';
 import ecs_hostname from '@/components/ecs/ecs_hostname.vue';
 import ecs_monitor from '@/components/ecs/ecs_monitor.vue';
-import { monitor_group } from '@/http/api';
+import ecs_jardownload from '@/components/ecs/ecs_jardownload.vue';
+
 
 const ecsstore = useecsstore();
 
@@ -129,18 +129,10 @@ const handleReset = () => {
 
 onMounted(() => {
   ecsstore.getecs(queryform.value)
-        .then(() => {
-          // 加载完成后关闭加载动画
-          loading.value = false;
-        })
-        .catch(error => {
-          // 处理加载失败的情况
-          console.error('Failed to load form:', error);
-        });
   })
 
 //table表单加载动画
-  const loading = ref(true)
+//const loading = ref(true)
 
 
 
@@ -153,11 +145,6 @@ const queryform = ref({
     PageSize: 10
   }); // 当前页数
   
-
-
-  
-  
-  
   const handleSizeChange = (PageSize:any) => {
     queryform.value.PageNumber = 1
     queryform.value.PageSize = PageSize
@@ -168,7 +155,6 @@ const queryform = ref({
   const handleCurrentChange = (PageNumber:any) => {
     // console.log('Change', pageNum
     queryform.value.PageNumber = PageNumber;
-    console.log('上传的参数', queryform.value)
     ecsstore.getecs(queryform.value);
   };
 
@@ -206,17 +192,6 @@ const cellStyle = ({ row, column, rowIndex, columnIndex }: { row: any, column: a
   }
 }
 
-//时间转换
-// function formatTime(isoTime:any) {
-//       const date = new Date(isoTime);
-//       const year = date.getFullYear();
-//       const month = String(date.getMonth() + 1).padStart(2, '0');
-//       const day = String(date.getDate()).padStart(2, '0');
-//       const hours = String(date.getHours()).padStart(2, '0');
-//       const minutes = String(date.getMinutes()).padStart(2, '0');
-//       const seconds = String(date.getSeconds()).padStart(2, '0');
-//       return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-// }
 
 
 // ecs初始化 主要是配置配置super打开子组件 
@@ -232,26 +207,18 @@ const handlehostname = (row:any) => {
 }
 
 
-// 获取监控组
-const monitorgroups = ref([])
-const monitor_list = async () => {
-  const res = await monitor_group()
-  monitorgroups.value = res.data.monitor_group
-  console.log('监控组',monitorgroups.value)
-}
-
-
 //监控管理 组件
 const ecs_monitorref = ref<{ openmonitor: (row: any) => void } | null>(null)
 const handlemonitor = async (row:any) => {
-  await monitor_list()
   ecs_monitorref.value?.openmonitor(row)
 }
 
 //当前项目的jar包上传到主机/home/js目录
-const handlejarupload = (row:any) => {
-      console.log('row',row)
+const ecs_jarref = ref<{ openjardownload: (row: any) => void } | null>(null)
+const handlejardownload = (row:any) => {
+      ecs_jarref.value?.openjardownload(row)
 }
+
 //开机
 const handlestart = (row:any) => {
       console.log('row',row)
@@ -260,10 +227,7 @@ const handlestart = (row:any) => {
 const handlestop = (row:any) => {
       console.log('row',row)
 }
-//告警按钮
-const handleprometheus = (row:any) => {
-      console.log('row',row)
-}
+
 
 </script>
 

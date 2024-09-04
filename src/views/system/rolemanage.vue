@@ -2,24 +2,21 @@
 	<div>
 	<div class="container">
 		<div class="handle-box">
-				<!-- <el-select v-model="query.address" placeholder="地址" class="handle-select mr10">
-					<el-option key="1" label="广东省" value="广东省"></el-option>
-					<el-option key="2" label="湖南省" value="湖南省"></el-option>
-				</el-select> -->
 				<el-input v-model="query.role_name" placeholder="角色名称" class="handle-input mr10"></el-input>
 				<el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
 				<el-button type="primary" :icon="Plus" @click="drawer = true" >新增</el-button>
 				<el-drawer v-model="drawer" 
 					         title="I am the title" 
 							 :with-header="false"
-							 @close="closeDr(ruleFormRef)">
+							 @close="closeDr(ruleFormRef)"
+							 size="20%">
 							 
 						<el-form
 							ref="ruleFormRef"
 							:model="roleForm"
 							status-icon
 							:rules="rules"
-							label-width="120px"
+							label-width="60px"
 							class="demo-ruleForm"
 							>
 							<el-form-item label="角色名" prop="role_name">
@@ -43,10 +40,10 @@
 				<el-table-column prop="create_time" label="创建时间" align="center"></el-table-column>
 				<el-table-column label="操作" align="center">
 					<template #default="scope">
-						<el-button type="primary" text :icon="Edit" @click="handleEdit(scope.row)" >
+						<el-button type="primary" text :icon="Edit" @click="handleEdit(scope.row)">
 							分配权限
 						</el-button>
-						<el-button type="danger" text :icon="Delete" @click="handleDelete(scope.row.id)" >
+						<el-button type="danger" text :icon="Delete" @click="handleDelete(scope.row.id)">
 							删除
 						</el-button>
 					</template>
@@ -57,7 +54,7 @@
 				<el-dialog
 				:title="'权限分配'"
 				v-model="dialogVisible"
-				width="500px"
+				width="450px"
     			>
 				<el-scrollbar max-height="600px" >
 					<el-tree
@@ -89,7 +86,7 @@ import { ref,onMounted,nextTick,reactive} from 'vue';
 import { useallroleStore } from '@/store/role'
 import { usePermissStore } from '@/store/permiss';
 import { ElTree } from 'element-plus';
-import { updaterolemenupermiss,addrole,delrole, getallmenus} from '@/http/api'
+import { updaterolemenupermiss,addrole,delrole } from '@/http/api'
 import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage,ElMessageBox } from 'element-plus';
@@ -297,7 +294,9 @@ const onSubmit = async () => {
 
 </script>
 <style scoped lang="less">
-
+.el-form-item {
+    width: 320px
+  }
 .tree-wrapper {
 	max-width: 500px;
 }

@@ -37,20 +37,20 @@
                         multiple
                     />
             </el-form-item>
-            <el-form-item label="监控组名"  prop="monitor_group">
+            <el-form-item label="监控组名"  prop="group">
                 <el-select 
-                    v-model="monitorForm.monitor_group" placeholder="请选择监控组"
+                    v-model="monitorForm.group" placeholder="请选择监控组"
                     filterable
                     clearable
                     >
-                    <el-option :label="item" :value="item" v-for="item in monitorForm.groups" :key="item" />
+                    <el-option :label="item" :value="item" v-for="item in monitorgroups" :key="item" />
                     <template #footer>
                       <el-button v-if="!isAdding" text bg  @click="addgroup">
                           添加新监控组
                         </el-button>
                         <template v-else>
                           <el-input
-                            v-model="monitorForm.monitor_group"
+                            v-model="monitorForm.group"
                             class="option-input"
                             placeholder="输入新的监控组名"
                           />
@@ -78,7 +78,7 @@
   import { monitor,monitor_check } from '@/http/api';
   import { ref,defineEmits,computed,defineProps} from 'vue';
   import { ElMessage, ElMessageBox,ElDrawer } from 'element-plus';
-
+  import { monitor_group } from '@/http/api';
 
 
  
@@ -92,10 +92,9 @@
   interface monitorFormint {  
     aliname: string;  
     ip: string;  
-    monitor_group: string;  
+    group: string;  
     monitor_hand: string;  
     monitor_type: Array<string>;  
-    groups:Array<string>;
     // 定义其他属性...
     }
   
@@ -104,21 +103,19 @@
   const monitorForm = ref<monitorFormint>({
     aliname:'',
     ip: '',  
-    monitor_group:'',
+    group:'',
     monitor_hand:'add',
     monitor_type:[],
-    groups:[],
   })
-  
+
   //  取消
   const resetForm = () => {
      drawer.value=false
      monitorForm.value.aliname=''
      monitorForm.value.ip=''
-     monitorForm.value.monitor_group='',
+     monitorForm.value.group='',
      monitorForm.value.monitor_hand='',
      monitorForm.value.monitor_type=[],
-     monitorForm.value.groups=[],
      // 重置表单
      ruleFormRef.value?.resetFields();
   }
@@ -131,10 +128,9 @@ const closeDr=() =>{
     monitorForm.value={
     aliname:'',
     ip: '',  
-    monitor_group:'',
+    group:'',
     monitor_hand:'add',
     monitor_type:[],
-    groups:[],
   }
 }
 
@@ -148,7 +144,7 @@ const closeDr=() =>{
     }
   }
 
-  const monitor_group = (_: any, value: any, callback: any) => {
+  const group = (_: any, value: any, callback: any) => {
     if (value === '') {
       callback(new Error('请选择监控组'))
     } else {
@@ -173,7 +169,7 @@ const closeDr=() =>{
   
   const rules = ref<FormRules>({
       env: [{ required: true,validator: env, trigger: 'blur' }],
-      monitor_group: [{ required: true,validator: monitor_group, trigger: 'blur' }],
+      group: [{ required: true,validator: group, trigger: 'blur' }],
       monitor_hand: [{ required: true,validator: monitor_hand, trigger: 'blur' }],
       monitor_type: [{ required: true,validator: monitor_type, trigger: 'blur' }],
   })
@@ -197,35 +193,35 @@ const monitor_options = ref([
   'port': 9256,
   },
 ])
+
+
+// 获取监控组
+const monitorgroups = ref<string[]>([])
+const monitor_grouplist = async () => {
+  const res = await monitor_group()
+  monitorgroups.value = res.data.monitor_group
+}
+
+
+
   
 const isAdding = ref(false)  
 const addgroup = () => {
   isAdding.value = true
 }
 const onConfirm = () => {
-  if (monitorForm.value.monitor_group) {
-      monitorForm.value.groups.push(
-      monitorForm.value.monitor_group
-      )
+  if (monitorForm.value.group) {
+    monitorgroups.value.push(monitorForm.value.group);  
     clear()
   }
 }
 const clear = () => {
-  monitorForm.value.monitor_group = ''
+  monitorForm.value.group = ''
   isAdding.value = false
 }
 
 
   
-  
-  
-  //父传子 将branches传入到子组件里
-const props = defineProps({
-      monitorgroups: {
-      type: Array<string>,
-      required: true
-     }
-})
 
 
   
@@ -233,7 +229,7 @@ const props = defineProps({
   const openmonitor = (row:any) => {
     monitorForm.value.aliname = row.InstanceName
     monitorForm.value.ip = row.inip
-    monitorForm.value.groups = props.monitorgroups
+    monitor_grouplist()
     drawer.value = true
     console.log('传入子主件', monitorForm.value)
   }
@@ -258,6 +254,7 @@ const props = defineProps({
        
         type: 'warning',
         }).then(async () => {
+
           const res = await monitor(monitorForm.value)
           // 提示成功
           ElMessage.success(res.data.msg);
@@ -287,7 +284,7 @@ const props = defineProps({
               emit('onmonitor');
               // 清除表单数据和验证信息
               monitorForm.value.monitor_type = [];
-              monitorForm.value.monitor_group = '';
+              monitorForm.value.group = '';
               monitorForm.value.monitor_hand = '';
               monitorForm.value.aliname = '';
               monitorForm.value.ip = '';
@@ -304,7 +301,7 @@ const props = defineProps({
               emit('onmonitor');
               // 清除表单数据和验证信息
               monitorForm.value.monitor_type = [];
-              monitorForm.value.monitor_group = '';
+              monitorForm.value.group = '';
               monitorForm.value.monitor_hand = '';
               monitorForm.value.aliname = '';
               monitorForm.value.ip = '';

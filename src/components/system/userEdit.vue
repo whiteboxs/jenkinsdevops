@@ -3,13 +3,14 @@
 	<el-drawer v-model="drawer" 
 					    title="I am the title" 
 							:with-header="false"
-							@close="closeDr()">
+							@close="closeDr()"
+              size="20%">
 						<el-form
 							ref="ruleFormRef"
 							:model="usereditForm"
 							status-icon
 							:rules="rules"
-							label-width="120px"
+							label-width="50px"
 							class="demo-ruleForm"
 							>
 							<el-form-item label="账号" prop="username">
@@ -36,11 +37,11 @@
 								<el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
 								</el-upload>
 							</el-form-item>
-							<el-form-item label="角色" prop="role_id">
+							<el-form-item label="角色" prop="role_name">
                                 <el-select 
-								   v-model="usereditForm.role_id" 
+								   v-model="usereditForm.role_name" 
 								   placeholder="请选择角色">
-                                  <el-option :label="item.role_name" :value="item.id" v-for="item in allroleStore.allroleinfo" :key="item.id" />
+                                  <el-option :label="item.role_name" :value="item.role_name" v-for="item in allroleStore.allroleinfo" :key="item.role_id" />
                                   </el-select>
                             </el-form-item>
 							<el-form-item>
@@ -63,14 +64,15 @@ import { usealluserStore } from '@/store/user';
 import { ref, onMounted,defineEmits } from 'vue';
 import type { UploadProps } from 'element-plus'
 import { ElMessage, ElMessageBox } from 'element-plus';
+import { time } from 'echarts';
 const baseURL = import.meta.env.VITE_APP_BASE_API
 //角色store
 const allroleStore = useallroleStore()
 
 //登录store
 const usestore =useAuthStore()
-onMounted(() => {
 
+onMounted(() => {
 	  allroleStore.getallrole()
 })
 // 编辑用户  
@@ -82,7 +84,8 @@ interface UserForm {
   username: string;  
   department: string;  
   role_id: number;  
-  userPic: string;  
+  userPic: string;
+  role_name:string 
 }  
 
 // 定义一个ref对象绑定表单
@@ -92,7 +95,8 @@ const usereditForm = ref<UserForm>({
   username:'',
 	department:'',
   role_id:0,
-	userPic:"",
+	userPic:'',
+  role_name:''
 })
 
 //  取消
@@ -126,7 +130,7 @@ const validRoleId = (_: any, value: any, callback: any) => {
 
 const rules = ref<FormRules>({
     username: [{ required: true,validator: validRoleUserName, trigger: 'blur' }],
-    role_id: [{ required: true, validator: validRoleId, trigger: 'change' }],
+    role_id: [{ required: true, validator: validRoleId, trigger: 'blur' }],
     department: [{ required: true,validator: validDepartment, trigger: 'blur' }],
 })
 
@@ -138,11 +142,12 @@ const closeDr=() =>{
   drawer.value=false
     ruleFormRef.value?.resetFields();
     usereditForm.value={
-    user_id:0,
+    user_id:1,
 		username:'',
 		department:'',
 		role_id:0,
 		userPic:'',
+    role_name:''
     }
 }
 
@@ -178,11 +183,10 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
 
 
 const open = (row:any) => {
-  console.log('当前编辑行', row)
   usereditForm.value.user_id = row.id
   usereditForm.value.username = row.username
   usereditForm.value.department = row.department
-  usereditForm.value.role_id = row.role_id
+  usereditForm.value.role_name = row.role_name
   usereditForm.value.userPic = row.userPic !== null ? baseURL+'/my/view/'+row.userPic : baseURL+"/my/view/default.png"
   drawer.value = true
   console.log('没提交前的', usereditForm.value)
@@ -201,12 +205,14 @@ const onupdate = async (formEl: FormInstance | undefined) => {
   formEl.validate(async (valid) => {  
     if (valid) {  
       // 编辑操作  
-      await updateuserinfo(usereditForm.value.user_id, usereditForm.value);  
-      console.log('编辑提交', usereditForm.value);  
-      ElMessage.success('编辑成功');  
-      drawer.value = false;  
-        
-      // 通知父组件更新操作  
+    usereditForm.value.role_id = allroleStore.allroleinfo.find((role:{role_name:string}) => role.role_name === usereditForm.value.role_name).id
+    console.log('当前编辑行角色id', usereditForm.value.role_id)
+    await updateuserinfo(usereditForm.value.user_id, usereditForm.value);  
+    console.log('编辑提交', usereditForm.value);  
+    ElMessage.success('编辑成功');  
+    drawer.value = false;  
+      
+    // 通知父组件更新操作  
       emit('onupdate');  
     } else {  
       // 处理表单验证失败的情况...  
@@ -273,6 +279,9 @@ const department =ref ([
   width: 290px;
 }
 
+.el-form-item {
+    width: 290px
+  }
 
 .table-td-thumb {
 	display: block;

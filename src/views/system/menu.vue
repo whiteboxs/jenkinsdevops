@@ -12,14 +12,15 @@
 					<el-drawer v-model="drawer" 
 					         title="I am the title" 
 							 :with-header="false"
-							 @close="closeDr()">
+							 @close="closeDr()"
+               size="25%">
 							 
 						<el-form
 							ref="menuFormRef"
 							:model="menuForm"
 							status-icon
 							:rules="rules"
-							label-width="120px"
+							label-width="100px"
 							class="demo-ruleForm"
 							>
 							<el-form-item label="菜单名称" prop="menu_name">
@@ -352,6 +353,10 @@ const handleEdit = (row:any) => {
 </script>
 
 <style scoped>
+.el-form-item {
+    width: 420px
+  }
+
 .handle-box {
 	margin-bottom: 20px;
 }

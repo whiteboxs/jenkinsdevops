@@ -36,7 +36,7 @@ const cleanoneroleinfo  = () => {
 const generateMenuTree = (menus:any, parentId = null) => {
   const result:any = [];
   menus
-  .filter((menu: { parentid: any; id: any; children: any; menu_type:any }) => menu.parentid === parentId && menu.menu_type !== 'button')  
+  .filter((menu: { parentid: any; id: any; children: any; menu_type:any }) => menu.parentid === parentId && menu.menu_type !== 'button' && menu.menu_type !== 'in_menu')  
   .sort((a: { menu_order: number; }, b: { menu_order: number; }) => a.menu_order - b.menu_order) // 根据 menu_order 字段进行升序排序
   .forEach((menu: { parentid: any; id: any; children: any;path: string}) => {
           const children = generateMenuTree(menus, menu.id);

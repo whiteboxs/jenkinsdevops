@@ -3,7 +3,7 @@
       <el-drawer 
             v-model="drawer" 
             title="ecs_supervisor初始化" 
-  
+            size="25%"
             >
         <el-form
             ref="ruleFormRef"
@@ -175,7 +175,7 @@ function formatDataToHTMLString(data:any) {
         }).then(async () => {
           await init_supervisor(ecsinitForm.value).then((res:any)=>{
               //ElMessage.success('初始化supservisor成功')
-              ElMessageBox.alert(res.data.result[ecsinitForm.value.hostname].stdout);      
+              ElMessageBox.alert(res.data.msg);      
           })
         })
         .catch(() => {

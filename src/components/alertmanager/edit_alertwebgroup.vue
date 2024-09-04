@@ -2,8 +2,7 @@
   <div>
     <el-drawer 
     v-model="drawer" 
-    title="编辑静默策略" 
-    @close="closeDr()">          
+    title="编辑静默策略" >          
     <el-form
         ref="ruleFormRef"
         :model="editForm"
@@ -21,6 +20,28 @@
                 filterable
                 v-model="editForm.group"
                 :options="monitorgroups"
+                placeholder="请选择(可多选,搜索)"
+                style="width: 240px"
+                multiple
+            />
+        </el-form-item>
+        <el-form-item label="排除组" prop="exclude_group">
+            <el-select-v2
+                clearable
+                filterable
+                v-model="editForm.exclude_group"
+                :options="monitorgroups"
+                placeholder="请选择(可多选,搜索)"
+                style="width: 240px"
+                multiple
+            />
+        </el-form-item>
+        <el-form-item label="排除主机" prop="exclude_instance">
+            <el-select-v2
+                clearable
+                filterable
+                v-model="editForm.exclude_instance"
+                :options="monitorinstances"
                 placeholder="请选择(可多选,搜索)"
                 style="width: 240px"
                 multiple
@@ -45,7 +66,7 @@
   import { ref,defineEmits,onMounted } from 'vue';
   import { ElMessage, ElMessageBox,ElDrawer } from 'element-plus';
   import { updatealerr_webhook } from '@/http/alert/alert';
-  import { monitor_group } from '@/http/api'
+  import { monitor_group,monitor_instance } from '@/http/api';
 
 
  
@@ -55,9 +76,9 @@
   const drawer = ref(false)
 
   
-onMounted(() => {
-  monitor_grouplist()
-})
+// onMounted(() => {
+//   monitor_grouplist()
+// })
 
 
 
@@ -68,6 +89,8 @@ onMounted(() => {
       name: '',
       url:'',
       group:[],
+      exclude_group:[],
+      exclude_instance:[],
   })
   
   //  取消
@@ -75,6 +98,8 @@ onMounted(() => {
      drawer.value=false
      editForm.value.name=''
      editForm.value.group=[],
+     editForm.value.exclude_group=[],
+     editForm.value.exclude_instance=[],
      editForm.value.url=''
 
   }
@@ -89,6 +114,8 @@ const closeDr=() =>{
     id:0,
     name: '',
     group:[],
+    exclude_group:[],
+    exclude_instance:[],
     url: '',
   }
 }
@@ -105,6 +132,16 @@ const monitor_grouplist = async () => {
   monitorgroups.value = mapgrouops
 }
 
+
+// 获取监控主机
+const monitorinstances = ref([])
+const monitor_instancelist = async () => {
+  const res = await monitor_instance()
+  const mapinstances = res.data.data.map((i:any) => {
+  return { value: i, label: i };
+  });
+  monitorinstances.value = mapinstances
+}
 
 
 //验证
@@ -150,7 +187,11 @@ const rules = ref<FormRules>({
      editForm.value.name=row.name,
      editForm.value.url=row.url,
      editForm.value.group=row.group,
+     editForm.value.exclude_group=row.exclude_group,
+     editForm.value.exclude_instance=row.exclude_instance,
      drawer.value = true
+     monitor_grouplist()
+     monitor_instancelist()
      console.log('传入子主件', editForm.value)
   }
   defineExpose({

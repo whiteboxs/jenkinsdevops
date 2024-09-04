@@ -2,7 +2,7 @@
  <div>
     <el-dialog v-model="dialogTableVisible" title="节点管理" width="60%" 
     @close="closeDr()">
-        <el-table :data="form.hosts" border class="table" ref="multipleTable" header-cell-class-name="table-header" :cell-style="cellStyle">
+        <el-table :data="nodes.hosts" border class="table" ref="multipleTable" header-cell-class-name="table-header" :cell-style="cellStyle">
         <el-table-column width="160" prop="hostname" label="主机名"  />
         <el-table-column width="120" prop="ip" label="ip" />
         <el-table-column width="100" prop="state" label="运行状态" />
@@ -46,27 +46,30 @@
 }
 
   interface TableData {
-  hosts: { ip: string; hostname: string; description: string;state: string;program:string }[];
   job_name: string;
+  id:string;
 }
 
 const form = ref<TableData>({ 
-  hosts: [],
   job_name:'',
+  id:''
  });
-  
+const nodes = ref({ 
+  hosts: [],
+ });
 
 // 定义定时器变量
  let refreshInterval: any;
 // 父组件调用的函数
   const disnode = (hosts:any,row:any) => {
-    form.value.hosts = hosts
+    nodes.value.hosts = hosts
     form.value.job_name = row.job_name
+    form.value.id = row.id
     dialogTableVisible.value = true
    // 启动定时器1秒刷新一次
     refreshInterval = setInterval(async () => {
-    const res_service = await service_status(form.value.job_name);
-    form.value.hosts = res_service.data.data;
+    const res_service = await service_status(form.value);
+    nodes.value.hosts = res_service.data.data;
   }, 1000); // 这里的 2000 表示刷新间隔，单位是毫秒
 }
 
@@ -116,8 +119,8 @@ const nodeform = ref<nodeData>({
     ElMessage.success(res.data.msg);
     // 刷新页面
     refreshInterval = setInterval(async () => {
-    const res_service = await service_status(form.value.job_name);
-    form.value.hosts = res_service.data.data;
+    const res_service = await service_status(form.value);
+    nodes.value.hosts = res_service.data.data;
   }, 1000); // 这里的 2000 表示刷新间隔，单位是毫秒
   } catch (error) {
       ElMessage({
@@ -125,8 +128,8 @@ const nodeform = ref<nodeData>({
           message: '取消成功',
       });
     refreshInterval = setInterval(async () => {
-      const res_service = await service_status(form.value.job_name);
-    form.value.hosts = res_service.data.data;
+    const res_service = await service_status(form.value);
+    nodes.value.hosts = res_service.data.data;
   }, 1000); // 这里的 2000 表示刷新间隔，单位是毫秒
   }
 }
@@ -151,8 +154,8 @@ const handlerrestart  = async (row:any) => {
     ElMessage.success(res.data.msg);
     // 刷新页面
     refreshInterval = setInterval(async () => {
-    const res_service = await service_status(form.value.job_name);
-    form.value.hosts = res_service.data.data;
+    const res_service = await service_status(form.value);
+    nodes.value.hosts = res_service.data.data;
   }, 1000); // 这里的 2000 表示刷新间隔，单位是毫秒
   } catch (error) {
       ElMessage({
@@ -160,8 +163,8 @@ const handlerrestart  = async (row:any) => {
           message: '取消成功',
       });
     refreshInterval = setInterval(async () => {
-      const res_service = await service_status(form.value.job_name);
-    form.value.hosts = res_service.data.data;
+    const res_service = await service_status(form.value);
+    nodes.value.hosts = res_service.data.data;
   }, 1000); // 这里的 2000 表示刷新间隔，单位是毫秒
   }
 }
@@ -184,8 +187,8 @@ const handlerstop = async (row:any) => {
     ElMessage.success(res.data.msg);
     // 刷新页面
     refreshInterval = setInterval(async () => {
-    const res_service = await service_status(form.value.job_name);
-    form.value.hosts = res_service.data.data;
+    const res_service = await service_status(form.value);
+    nodes.value.hosts = res_service.data.data;
   }, 1000); // 这里的 2000 表示刷新间隔，单位是毫秒
   } catch (error) {
       ElMessage({
@@ -194,8 +197,8 @@ const handlerstop = async (row:any) => {
       });
       // 刷新页面
       refreshInterval = setInterval(async () => {
-       const res_service = await service_status(form.value.job_name);
-      form.value.hosts = res_service.data.data;
+      const res_service = await service_status(form.value);
+      nodes.value.hosts = res_service.data.data;
   }, 1000); // 这里的 2000 表示刷新间隔，单位是毫秒
   }
 }
@@ -208,7 +211,7 @@ const handlerstop = async (row:any) => {
 // column 列
 const cellStyle = ({ row, column, rowIndex, columnIndex }: { row: any, column: any, rowIndex: number, columnIndex: number }) => {
   if (columnIndex === 2) {
-    if(row.Status == 'STOPPED'){
+    if(row.state == 'STOPPED'){
       return {
       color: "#F56C6C", 
       fontWeight: 'bold'

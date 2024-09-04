@@ -12,13 +12,19 @@
 				</el-form-item>
 				<el-form-item prop="password">
 					<el-input
-						type="password"
+					    :type="confirmPassFlag ? 'text' : 'password'"
 						placeholder="password"
 						v-model="logDate.password"
 						@keyup.enter="submitForm(login)"
 					>
 						<template #prepend>
 							<el-button :icon="Lock"></el-button>
+						</template>
+						<template #suffix>
+								<span @click="confirmPassFlag = !confirmPassFlag">
+								<el-icon v-if="confirmPassFlag"><View /></el-icon>
+								<el-icon v-else><Hide /></el-icon>
+									</span>
 						</template>
 					</el-input>
 				</el-form-item>
@@ -46,6 +52,7 @@ interface LoginInfo {
 	password: string;
 }
 
+const confirmPassFlag=ref(false)//图标显示标识
 const router = useRouter();
 const logDate = reactive<LoginInfo>({
 	username: '',

@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div class="container">
-        <el-form :model="query" ref="queryRef" :inline="true" label-width="68px" status-icon v-show="showSearch">
+        <el-form :model="query" ref="queryRef" :inline="true" label-width="68px" >
          <el-form-item label="登录地址" >
             <el-input
                v-model="query.ip"
@@ -75,7 +75,6 @@
             </el-tooltip>     
         </el-col>
           </el-row>
-
         <el-table :data="operlog.operloginfo.data" @selection-change="handleSelectionChange" 
         border class="table"  header-cell-class-name="table-header"  :cell-style="cellStyle">
             <el-table-column type="selection" width="55" align="center" />
@@ -87,10 +86,9 @@
             <el-table-column prop="method" label="请求方法" align="center"></el-table-column>
             <el-table-column prop="code" label="状态码" align="center"></el-table-column>
             <el-table-column prop="oper_time" label="操作时间"></el-table-column>
-            <el-table-column label="操作" width="100" align="center">
+            <el-table-column label="操作" width="120" align="center">
                 <template #default="scope">
-                    <el-button text type="primary" :icon="View" @click="handleView(scope.row)">详细
-                    </el-button>
+                    <el-button text type="primary" :icon="View" @click="handleView(scope.row)">详细</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -174,6 +172,8 @@ onMounted(() => {
 // 搜索
 const handleSearch = () => {
     console.log(query.value)
+    query.value.pagenum = 1
+    query.value.pagesize = 10
     operlog.getoperlog(query.value)
 };
 
@@ -314,8 +314,6 @@ const handleExport = async () => {
     XLSX.writeFile(new_workbook, `操作日志.xlsx`);
 };
 
-//隐藏搜索
-const showSearch = ref(true);
 //刷新
 const handleRefresh = () => {
     operlog.getoperlog(query.value)
