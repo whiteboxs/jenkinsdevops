@@ -2,13 +2,9 @@
 	<div>
 		<div class="container">
 			<div class="handle-box">
-				<!-- <el-select v-model="query.address" placeholder="地址" class="handle-select mr10">
-					<el-option key="1" label="广东省" value="广东省"></el-option>
-					<el-option key="2" label="湖南省" value="湖南省"></el-option>
-				</el-select> -->
 				<el-input v-model="query.menu_name" placeholder="菜单名" class="handle-input mr10"></el-input>
-				<el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
-				<el-button type="primary" :icon="Plus" @click="drawer = true" >新增</el-button>
+				<el-button type="primary" icon="Search" @click="handleSearch">搜索</el-button>
+				<el-button type="primary" icon="Plus" @click="drawer = true,getselectmenus()">新增</el-button>
 					<el-drawer v-model="drawer" 
 					         title="I am the title" 
 							 :with-header="false"
@@ -44,10 +40,14 @@
                   <el-input v-model="menuForm.menu_order" autocomplete="off" />
               </el-form-item>
               <el-form-item label="父菜单名称" prop="parentname">
-								<el-select v-model="menuForm.parentname" placeholder="请选择父菜单" @change="handleParentChange">
-                 <el-option :label="item.title" :value="item.title" v-for="item in directoryMenuItems"
-                 :key="item.id" />
-                </el-select>
+                <el-tree-select
+                    v-model="menuForm.parentid" 
+                    :data="selecttree"
+                    check-strictly
+                    :render-after-expand="false"
+                    style="width: 240px"
+                    @change="handleParentChange(menuForm.parentid)"
+                  />
 							</el-form-item>	
               <el-form-item label="父菜单id" prop="parentid">
                 <el-input v-model="menuForm.parentid" autocomplete="off" disabled/>
@@ -88,13 +88,13 @@
                     {{ scope.row.title }}
                      </template>
                 </el-table-column>
-                <el-table-column prop="path" label="菜单路径"></el-table-column>
-                <el-table-column prop="menu_type" label="菜单类型"></el-table-column>
-                <el-table-column prop="icon" label="菜单图标"></el-table-column>
-                <el-table-column prop="menu_order" label="显示顺序"></el-table-column>
-                <el-table-column prop="parentname" label="父菜单名称"></el-table-column>
-                <el-table-column prop="parentid" label="父菜单id"></el-table-column>
-                <el-table-column prop="route_name" label="路由名称"></el-table-column>
+                <el-table-column prop="path" label="菜单路径" width="150"></el-table-column>
+                <el-table-column prop="menu_type" label="菜单类型" width="120"></el-table-column>
+                <el-table-column prop="icon" label="菜单图标" width="120" ></el-table-column>
+                <el-table-column prop="menu_order" label="显示顺序"  width="80"></el-table-column>
+                <el-table-column prop="parentname" label="父菜单名称"  width="100"></el-table-column>
+                <el-table-column prop="parentid" label="父菜单id" width="80"></el-table-column>
+                <el-table-column prop="route_name" label="路由名称" width="150"></el-table-column>
                 <el-table-column prop="route_component" label="路由组件路径"></el-table-column>
                 <el-table-column label="操作" width="220" align="center">
                     <template #default="scope">
@@ -120,8 +120,10 @@ import { addmenu,delmenu } from '@/http/api';
 import type { FormInstance, FormRules } from 'element-plus'
 import { useallmenuStore } from '@/store/system/menu'
 import { useAuthStore } from '@/store/login';
+import { getallmenus } from '@/http/api'
 //工单编辑
 import menuEdit from '@/components/system/menuEdit.vue';
+import { fa } from 'element-plus/es/locale';
 //获取role_id
 const usestore =useAuthStore();
 //菜单store
@@ -216,20 +218,41 @@ const rules = ref<FormRules>({
 	
 })
 
+const selecttree = ref<any[]>([]);
+// 用于创建和修改菜单的关联
+const handle_selectTree = (menus:any, parentId = null) => {
+  const result1:any = [];
+  menus
+  .filter((menu: { parentid: any; id: any; children: any;menu_type:string }) => menu.parentid === parentId && menu.menu_type !== "in_menu" && menu.menu_type !== "button"  )
+  .sort((a: { menu_order: number; }, b: { menu_order: number; }) => a.menu_order - b.menu_order) // 根据 menu_order 字段进行升序排序
+  .forEach((menu: { parentid: any; id: any; value: any; label: any; children: any;title: any; }) => {
+          menu.value = menu.id; // 直接使用 id 作为 value  
+          menu.label = menu.title; // 使用 title 作为 label  
+          menu.children = []; // 初始化 children 数组  
+          const children = handle_selectTree(menus, menu.id);
+          if (children.length) {
+              menu.children = children;
+          }
+          result1.push(menu);
+   });
+   return result1;
+ }; 
 
 
-// 提取menu_type字段值为'directory'的信息
-const directoryMenuItems = computed(() => {
-  // 过滤出menu_type字段值为'directory'的信息
-  return allmenuStore.allmenuinfo
-    .filter((item: { menu_type: string }) => item.menu_type === 'directory');
-});
+  // 生成选择树新增编辑用
+  const getselectmenus = async () => {
+    const res = await getallmenus()
+    selecttree.value = handle_selectTree(res.data.data)
+    console.log('selecttree',selecttree.value)
+  }
 
-// 监听 el-select 的 change 事件，更新 parentID
-const handleParentChange = (value:any) => {
-  const selectedItem = directoryMenuItems.value.find((item: { title: string }) => item.title === value);
+
+
+const handleParentChange = (id:any) => {
+  console.log('value',id)
+  const selectedItem = selecttree.value.find((item: { id: string }) => item.id === id);
   if (selectedItem) {
-    menuForm.value.parentid = selectedItem.id
+    menuForm.value.parentname = selectedItem.title
   }
 };
 
@@ -240,15 +263,11 @@ const handleParentChange = (value:any) => {
 //提交
 const submitForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
-  // if (menuForm.value.parentid === undefined) {
-  //       delete menuForm.value.parentid;
-  //   }
-  //console.log("创建menu",menuForm.value)
   formEl.validate(async (valid) => {
     if (valid) {
         //新增
         await addmenu(menuForm.value).then((response:any)=>{
-          console.log('新建menu',menuForm.value)
+            console.log('新建menu',menuForm.value)
             ElMessage.success(response.data.msg || '新增成功')
 			      drawer.value=false
 			//刷新页面

@@ -7,6 +7,7 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    CrontabEdit: typeof import('./src/components/system/crontabEdit.vue')['default']
     Cropper: typeof import('./src/components/cropper.vue')['default']
     Ecs_hostname: typeof import('./src/components/ecs/ecs_hostname.vue')['default']
     Ecs_jardownload: typeof import('./src/components/ecs/ecs_jardownload.vue')['default']
@@ -53,8 +54,10 @@ declare module '@vue/runtime-core' {
     ElTabPane: typeof import('element-plus/es')['ElTabPane']
     ElTabs: typeof import('element-plus/es')['ElTabs']
     ElTag: typeof import('element-plus/es')['ElTag']
+    ElText: typeof import('element-plus/es')['ElText']
     ElTimePicker: typeof import('element-plus/es')['ElTimePicker']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
+    ElTreeSelect: typeof import('element-plus/es')['ElTreeSelect']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     Header: typeof import('./src/components/header.vue')['default']
     Java_jobEdit: typeof import('./src/components/pushlist/java_jobEdit.vue')['default']

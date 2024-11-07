@@ -21,6 +21,6 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts","src/**/*.vue", "src/utils/ruoyi.ts"],
+  "include": ["src/**/*.ts", "src/**/*.d.ts","src/**/*.vue", "src/utils/ruoyi.ts", "src/utils/htmlToPDF.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -45,16 +45,10 @@ const handledaysChange = (value:any) => {
     init_line_Chart()
 };
 
-
-
 const state = reactive({
   option: {},
 
 })
-
-
-
-
 
 const init_line_Chart = async () => {
       // 如果有之前的 ECharts 实例，先销毁它  

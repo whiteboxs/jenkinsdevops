@@ -191,7 +191,7 @@
                     </el-form-item>
                 </el-form>
             </el-drawer>
-     <edit_silences_policy ref="editref" @onupdate="silences_policy.getsilences_policy" />
+     <edit_silences_policy ref="editref" @onupdate="silences_policy.getsilences_policy(query)" />
     </div>
 </template>
 
@@ -371,7 +371,7 @@ const rules = ref<FormRules>({
 
 })
 //  抽屉关闭时的回调
-const closeDr=(formEl: FormInstance | undefined) =>{
+const closeDr = (formEl: FormInstance | undefined) =>{
     drawer.value=false
     if (!formEl) return;
     formEl.resetFields();
@@ -478,12 +478,15 @@ const handleExport = async () => {
         query.value.pagenum = pageNum
         const res  = await expallsilences_policy(query.value)
         res.data.data.map((item: any) => {
+            const groups = item.group.map((group:{group:string}) => group).join(', ');
+            const serveritys = item.serverity.map((serverity:{serverity:string}) => serverity).join(', ');
+            const instances = item.instance.map((instance:{instance:string}) => instance).join(', ');
             const rowData = [
                 item.id,
                 item.name,
-                item.instance,
-                item.group,
-                item.serverity,
+                instances,
+                groups,
+                serveritys,
                 item.starttime,
                 item.endtime,
                 item.create_time,

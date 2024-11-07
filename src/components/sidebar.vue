@@ -21,7 +21,12 @@
                         </template>
                         <template v-for="subItem in item.children">
                             <el-sub-menu v-if="subItem.children" :index="subItem.path" :key="subItem.path" >
-                                    <template #title>{{ subItem.title }}</template>
+                                    <template #title>
+                                        <el-icon>
+                                            <component :is="subItem.icon"></component>
+                                        </el-icon>
+                                        {{ subItem.title }}
+                                    </template>
                                 <el-menu-item v-for="(threeItem, subindex) in subItem.children" :key="subindex" :index="threeItem.path">
                                         <el-icon>
                                             <component :is="threeItem.icon"></component>

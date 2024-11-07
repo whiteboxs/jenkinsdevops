@@ -1,32 +1,27 @@
 <template>
 	<div>
 		<div class="container">
-        <el-form :model="query" ref="queryRef" :inline="true" label-width="auto" status-icon >
-            <el-form-item label="名称" >
-              <el-select
-               v-model="query.name"
-               placeholder="请选择名称"
-               clearable
-               filterable
-               style="width: 250px"
-               @keyup.enter="handleSearch"
-                >
-                <el-option :label="item.name" :value="item.name" v-for="item in ecsnameip" :key="item.name"  ></el-option>
-                </el-select>
-             </el-form-item>
-            <el-form-item label="IP地址" >
-              <el-select
-               v-model="query.ip"
-               placeholder="请选择IP地址"
-               clearable
-               filterable
-               style="width: 200px"
-               @keyup.enter="handleSearch"
-                >
-                <el-option :label="item.ip" :value="item.ip" v-for="item in ecsnameip" :key="item.ip"  ></el-option>
-                </el-select>
-             </el-form-item>
-             
+        <el-form :model="query" ref="queryFormRef" :rules="rules" :inline="true" label-width="auto" >
+          <el-form-item label="名称" >
+                <el-input
+                v-model="query.name"
+                placeholder="请输入访问名称"
+                clearable
+                style="width: 170px;"
+                @keyup.enter="handleSearch(queryFormRef)"
+                @blur="handleSearch(queryFormRef)"
+                />
+            </el-form-item>
+            <el-form-item label="IP地址" prop="ip">
+                <el-input
+                v-model="query.ip"
+                placeholder="请输入IP地址"
+                clearable
+                style="width: 170px;"
+                @keyup.enter="handleSearch(queryFormRef)"
+                @blur="handleSearch(queryFormRef)"
+                />
+            </el-form-item>
              <el-form-item label="创建时间" style="width: 308px">
               <el-date-picker
                 v-model="query.create_time"
@@ -38,8 +33,8 @@
                 />
                 </el-form-item>
             <el-form-item>
-                <el-button type="primary" icon="Search" @click="handleSearch">搜索</el-button>
-                <el-button icon="Refresh" @click="handleReset">重置</el-button>
+                <el-button type="primary" icon="Search" @click="handleSearch(queryFormRef)">搜索</el-button>
+                <el-button icon="Refresh" @click="handleReset(queryFormRef)">重置</el-button>
             </el-form-item>
         </el-form>
 
@@ -59,6 +54,9 @@
             <el-button type="warning" plain icon="WarningFilled" :disabled="multiple" @click="handleagent_check" >客户端组件检查</el-button>
          </el-col>
          <el-col :span="1.5">
+            <el-button type="warning" plain icon="WarningFilled" :disabled="multiple" @click="handleversion_check" >版本检查</el-button>
+         </el-col>
+         <el-col :span="1.5">
             <el-button  type="success" plain icon="Download" @click="handleExport" >导出</el-button>
          </el-col>
          <el-col :span="2">
@@ -72,25 +70,42 @@
         @selection-change="handleSelectionChange" 
         border class="table"  
         header-cell-class-name="table-header"  
-        :cell-style="cellStyle">
+        :cell-style="cellStyle" width="auto">
             <el-table-column type="selection" width="55" align="center" />
-            <el-table-column prop="id" label="ID" width="90" align="center" sortable/>
-            <el-table-column prop="name" label="名称" width="300" align="center"  >
+            <el-table-column prop="id" label="ID" width="70" align="center" sortable/>
+            <el-table-column prop="name" label="名称" align="center"  >
             </el-table-column>
-            <el-table-column prop="ip" label="地址" width="220" align="center">
+            <el-table-column prop="ip" label="地址" align="center">
             </el-table-column>
-            <el-table-column prop="service_path" label="服务路径" width="300" align="center"  >
+            <el-table-column prop="service_path" label="服务路径" width="250" align="center"  >
             </el-table-column>
-            <el-table-column prop="agent_check" label="客户端组件" align="center" width="150" >
+            <el-table-column prop="cpu" label="CPU" width="90" align="center">
+                <template #default="scope">
+                      <el-tag >{{ scope.row.cpu }}核</el-tag>
+                  </template>
+            </el-table-column>
+            <el-table-column prop="memory" label="内存" width="100" align="center">
+              <template #default="scope">
+                    <el-tag >{{ scope.row.memory }}MB</el-tag>
+                </template>
+            </el-table-column>
+            <el-table-column prop="disk" label="磁盘" width="150" align="center">
+              <template #default="scope">
+                    <el-tag v-for="item in scope.row.disk">{{ item }}GB</el-tag>
+                </template>
+            </el-table-column>
+            <el-table-column prop="version" label="版本" align="center">
+            </el-table-column>
+            <el-table-column prop="agent_check" label="客户端组件" align="center" width="100" >
                   <template #default="{ row }">
                     <div class="mb-4"> 
-                      <el-icon v-if="row.agent_check === 'True'" style="color: green;"><CircleCheckFilled /></el-icon>
+                      <el-icon v-if="row.agent_check" style="color: green;"><CircleCheckFilled /></el-icon>
                       <el-icon v-else style="color: red;"><CircleCloseFilled /></el-icon>
                     </div>
                   </template>
             </el-table-column>
             <el-table-column prop="create_time" label="创建时间" width="250" align="center"></el-table-column>
-            <el-table-column label="操作" width="200" align="center">
+            <el-table-column label="操作" width="110" align="center">
                 <template #default="scope">
                   <div class="mb-4">
                     <el-button text icon="Edit" type="primary" @click="handleEdit(scope.row)">编辑</el-button>
@@ -139,7 +154,7 @@
                         />
                       </el-select>
                     </el-form-item>
-                    <el-form-item label="ip地址" prop="ip">
+                    <el-form-item label="ip地址">
                       <template v-for="(ip, index) in nginxForm.ip" :key="index">  
                         <el-input v-model="nginxForm.ip[index]" autocomplete="off" style="width: 240px" disabled/>
                     </template>
@@ -153,14 +168,14 @@
                     </el-form-item>
                 </el-form>
             </el-drawer>
-     <edit_nginx_server :ecsnameip=ecsnameip ref="editref" @onupdate="nginx_server.getnginx_server" />
+     <edit_nginx_server :ecsnameip=ecsnameip ref="editref" @onupdate="nginx_server.getnginx_server(query)" />
     </div>
 </template>
 
 <script setup lang="ts" name="nginx_server">
 import { ref,onMounted } from 'vue';
 import { useallnginx_serverstore } from '@/store/ad_tracking/nginx_server';
-import { add_nginx_server,ecs_nameip,del_nginx_server,add_agent_env,agent_env_check } from '@/http/ad_tracking/nginx';
+import { add_nginx_server,ecs_nameip,del_nginx_server,add_agent_env,agent_env_check,check_nginx_version } from '@/http/ad_tracking/nginx';
 import { Refresh } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import * as XLSX from 'xlsx';
@@ -168,39 +183,64 @@ import type { FormInstance, FormRules } from 'element-plus'
 
 
 //导入编辑模块
-import edit_nginx_server from '@/views/ad_tracking/edit_nginx_server.vue';
+import edit_nginx_server from '@/views/ad_tracking/servers/edit_nginx_server.vue';
+// 获取表格数据,点击菜单后才加载
+onMounted(() => {
+    nginx_server.getnginx_server(query.value)
+   
+})
 
 const nginx_server = useallnginx_serverstore();
 
-
+const queryFormRef = ref<FormInstance>()
 const query = ref({
         name: '',
         ip: '',
-        service_path:'',
         create_time:'',
         pagenum: 1,
         pagesize: 10
 });
 
+const validip= (_: any, value: any, callback: any) => {
+    if (!value) {  
+        callback() 
+    }  else {  
+        // 简单的IPv4正则表达式  
+        const ipv4 = /^((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$/;  
+        if (ipv4.test(value)) {  
+            // 如果匹配IPv4或域名，则验证通过  
+            callback();  
+        } else {  
+            // 如果不匹配IPv4或域名，则验证失败  
+            callback(new Error('无效的IP'));  
+        }  
+    }
+}
 
-// 获取表格数据,点击菜单后才加载
-onMounted(() => {
-    nginx_server.getnginx_server(query.value)
-    ecs_nameip_list()
-})
+
+
 
 // 搜索
-const handleSearch = () => {
-    console.log(query.value)
-    nginx_server.getnginx_server(query.value)
+const handleSearch = (formEl: FormInstance | undefined) => {
+    if (!formEl) return
+    formEl.validate(async (valid) => {
+    if (valid) {
+      query.value.pagenum = 1
+      query.value.pagesize = 10
+      console.log(query.value)
+      nginx_server.getnginx_server(query.value)
+  } else {
+      return false
+    }
+  })
 };
 
 // 重置
-const handleReset = () => {
+const handleReset = (formEl: FormInstance | undefined) => {
+    if (!formEl) return
     query.value = {
         name: '',
         ip: '',
-        service_path:'',
         create_time:'',
         pagenum: 1,
         pagesize: 10
@@ -251,8 +291,9 @@ const nginxForm = ref<nginxForm>({
     });
 
 //新增策略
-const handleAdd = () => {
+const handleAdd = async () => {
     drawer.value=true
+    await  ecs_nameip_list()
 }
 
 //打开弹窗
@@ -315,6 +356,7 @@ const validservice_path= (_: any, value: any, callback: any) => {
 const rules = ref<FormRules>({
     name: [{ validator: validname, required: true, trigger: 'blur' }],
     service_path: [{ validator: validservice_path, required: true, trigger: 'blur' }],
+    ip: [{ validator: validip, trigger: 'blur' }],
 
 })
 //  抽屉关闭时的回调
@@ -359,8 +401,9 @@ const resetForm = () => {
 // row传入到详细按钮中  编辑
 // 修改
 const editref = ref<{ open: (row: any) => void } | null>(null)
-const handleEdit = (row:any) => {
-    editref.value?.open(row)
+const handleEdit = async (row:any) => {
+  await  ecs_nameip_list()
+  editref.value?.open(row)
 	console.log(editref.value)
 }
 
@@ -450,6 +493,30 @@ const handleagent_check = async () => {
 }).catch(() => {});
 }
 
+/** 版本检查 */
+const handleversion_check = async () => {
+  const nginxIps = ips.value;
+        ElMessageBox.confirm(
+        '是否确认检查' + nginxIps.ip + '上NGINX版本吗?',
+        '提示',
+        { 
+        cancelButtonText: '取消',
+        confirmButtonText: '确定',
+       
+        type: 'warning',
+        }).then(async () => {
+            const res = await check_nginx_version(nginxIps);
+            let check_result = '';
+            res.data.data.forEach((item:any) => {  
+            check_result += `NGINX_IP: ${item.ip} 版本: ${item.result}\n`;  
+            });  
+            ElMessageBox.alert(check_result, '提示', {
+                  confirmButtonText: '确定',
+              }
+              );
+    nginx_server.getnginx_server(query.value)
+}).catch(() => {});
+}
 
 /** 清空按钮操作 */
 const handleClean = async () => {
@@ -533,6 +600,12 @@ const cellStyle = ({ row, column, rowIndex, columnIndex }: { row: any, column: a
         color: "#189EFF", 
         };
     }
+    if (columnIndex === 8) {
+        return {
+        color: "#1CD66C", 
+        fontWeight: 'bold'
+        };
+    }  
 }
 
 

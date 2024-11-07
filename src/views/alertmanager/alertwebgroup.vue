@@ -100,7 +100,7 @@
 							label-width="100px"
 							class="demo-ruleForm"
 							>
-              <el-form-item label="告警群名称" prop="name">
+              <el-form-item label="名称" prop="name">
 								<el-input v-model="webhookForm.name" autocomplete="off" style="width: 240px" />
 							</el-form-item>
 							<el-form-item label="告警组" prop="group">
@@ -145,7 +145,7 @@
 							</el-form-item>
 						</el-form>
 					</el-drawer>
-     <edit_alertwebgroup ref="editref" @onupdate="alertwebgroup.getalertwebgroup" />
+     <edit_alertwebgroup ref="editref" @onupdate="alertwebgroup.getalertwebgroup(query)" />
     </div>
 </template>
 
@@ -390,7 +390,7 @@ const handleClean = async () => {
 }).catch(() => {});
 }
 
-//导出操作日志
+//导出全部策略
 const handleExport = async () => {
     let list: any = []; // 用于存储所有操作日志数据
      // 获取第一页数据
@@ -400,10 +400,16 @@ const handleExport = async () => {
     for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
         query.value.pagenum = pageNum
         await alertwebgroup.getalertwebgroup(query.value)
-        alertwebgroup.alertwebgroupinfo.data.map((item: any, i: number) => {
+        alertwebgroup.alertwebgroupinfo.data.map((item: any) => {
+          const groups = item.group.map((group:{group:string}) => group).join(', ');
+          const exclude_group = item.exclude_group.map((exclude_group:{exclude_group:string}) => exclude_group).join(', ');
+          const exclude_instance = item.exclude_instance.map((group:{exclude_instance:string}) => exclude_instance).join(', ');
             const rowData = [
-                i + 1,
+                item.id,
                 item.name,
+                groups,
+                exclude_group,
+                exclude_instance,
                 item.url,
                 item.create_time,
             ];
@@ -412,16 +418,16 @@ const handleExport = async () => {
     }
      // 创建工作表
      let WorkSheet = XLSX.utils.aoa_to_sheet([
-        ['序号', '策略群名称', 'URL', '创建时间'],
+        ['序号', '策略群名称', '告警分组',  '排除分组', '排除地址', 'URL', '创建时间'],
         ...list
     ]);
 
     // 创建新的工作簿，并将工作表添加到其中
     let new_workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(new_workbook, WorkSheet, '告警群');
+    XLSX.utils.book_append_sheet(new_workbook, WorkSheet, '告警群组信息列表');
 
     // 将新的工作簿保存为 Excel 文件
-    XLSX.writeFile(new_workbook, `告警群.xlsx`);
+    XLSX.writeFile(new_workbook, `告警群组信息列表.xlsx`);
 };
 
 //隐藏搜索

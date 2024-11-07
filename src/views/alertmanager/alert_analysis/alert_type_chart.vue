@@ -104,20 +104,17 @@ const init_par_Chart = async () => {
                 name: name,
                 type: 'bar',
                 label: {
-                // show: true,
+                show: true,
+                position: 'top',
                 formatter: function(params:any) {
                     // 当数据为 0 时不显示标签
                     return params.value === 0 ? '' : params.value;
                 },
-                fontSize: 16,
                 rich: {
                     name: {}
                 },
-                position:'insideBottom',
                 distance: 15,
-                align: 'left',
                 verticalAlign: 'middle',
-                rotate: 90,
             },
             emphasis: {
                 focus: 'series'

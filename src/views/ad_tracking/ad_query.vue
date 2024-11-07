@@ -7,8 +7,9 @@
                 v-model="query.ad_port"
                 placeholder="请输入: 域名/IP:端口(默认端口80)"
                 clearable
-                style="width: 300px;"
-                @keyup.enter="handleSearch(queryFormRef)"  
+                style="width: 350px;"
+                @keyup.enter="handleSearch(queryFormRef)"
+                @blur="handleSearch(queryFormRef)"  
                 />
             </el-form-item>
             <el-form-item label="监听地址"  prop="address">
@@ -18,6 +19,7 @@
                 clearable
                 style="width: 250px;"
                 @keyup.enter="handleSearch(queryFormRef)"
+                @blur="handleSearch(queryFormRef)"
                 />
             </el-form-item>
             <el-form-item label="名称" >
@@ -25,8 +27,9 @@
                 v-model="query.name"
                 placeholder="请输入访问名称"
                 clearable
-                style="width: 150px;"
+                style="width: 200px;"
                 @keyup.enter="handleSearch(queryFormRef)"
+                @blur="handleSearch(queryFormRef)"
                 />
             </el-form-item>
             <el-form-item label="转发服务器地址"  prop="serverip" label-width="110px">
@@ -34,8 +37,9 @@
                 v-model="query.serverip"
                 placeholder="请输入地址"
                 clearable
-                style="width: 150px;"
+                style="width: 200px;"
                 @keyup.enter="handleSearch(queryFormRef)"
+                @blur="handleSearch(queryFormRef)"
                 />
             </el-form-item>
             <el-form-item label="资源类型" >
@@ -44,10 +48,14 @@
                 placeholder="请选择资源类型"
                 clearable
                 style="width: 150px"
+                @keyup.enter="handleSearch(queryFormRef)"
+                @blur="handleSearch(queryFormRef)"
                 >
                 <el-option key="1" label="ecs" value="ecs" ></el-option>
                 <el-option key="2" label="alb" value="alb" ></el-option>
                 <el-option key="3" label="clb" value="clb" ></el-option>
+                <el-option key="3" label="rds" value="rds" ></el-option>
+                <el-option key="3" label="redis" value="redis" ></el-option>
                 </el-select>
          </el-form-item>
          <el-form-item>
@@ -55,11 +63,20 @@
             <el-button icon="Refresh" @click="handleReset(queryFormRef)">重置</el-button>
          </el-form-item>
         </el-form>
-
         <el-row :gutter="10" class="mb8">
-         <el-col :span="1.5">
-            <el-button type="success" plain icon="Download" @click="handleExport" >导出</el-button>
-         </el-col>
+            <el-col :span="1.5">
+                <el-dropdown style="margin-right: 10px;">
+                    <el-button type="success" icon="Download" plain>
+                        导出<el-icon class="el-icon--right"><arrow-down /></el-icon>
+                    </el-button>
+                    <template #dropdown>
+                        <el-dropdown-menu>
+                        <el-dropdown-item @click="Exportall">全部导出</el-dropdown-item>
+                        <el-dropdown-item @click="assignExport">批量导出</el-dropdown-item>
+                        </el-dropdown-menu>
+                    </template>
+                </el-dropdown>
+            </el-col>
          <el-col :span="2">
             <el-tooltip content="刷新" placement="top">
                 <el-button :icon="Refresh" circle size="small"  @click="handleRefresh"/>
@@ -67,11 +84,12 @@
         </el-col>
           </el-row>
         <el-table :data="ad_tracking.ad_trackinginfo.data" 
-        border class="table"  header-cell-class-name="table-header"  :cell-style="cellStyle" width="auto">
+        border class="table"  header-cell-class-name="table-header"  :cell-style="cellStyle" width="auto" ref="multipleTableRef">
+            <el-table-column type="selection" width="55" align="center" />
             <el-table-column prop="id" label="ID"  width="50" align="center" sortable/>
             <el-table-column prop="name" label="名称"  align="center" width="140"/>
             <el-table-column prop="type" label="类型" align="center" width="70"></el-table-column>
-            <el-table-column prop="address" label="监听地址" align="center">
+            <el-table-column prop="address" label="监听地址" width="140" align="center">
               <template #default="scope">
                     <el-tag v-for="item in scope.row.address">{{ item }}</el-tag>
                 </template>
@@ -124,27 +142,34 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
-                        <el-form-item label="实例ID: ">{{ onead_trackinginfo.instanceid }}</el-form-item>
+                        <el-form-item label="实例ID: ">
+                            <el-tag >{{ onead_trackinginfo.instanceid }}</el-tag>
+                        </el-form-item>
                     </el-col>
                     <el-col :span="12">
-                        <el-form-item label="类型：">{{ onead_trackinginfo.type }}</el-form-item>
+                        <el-form-item label="类型：">
+                            <el-tag >{{ onead_trackinginfo.type }}</el-tag>
+                        </el-form-item>
                     </el-col>
                     <el-col :span="12">
-                        <el-form-item label="协议：">{{ onead_trackinginfo.listenprotocol }}</el-form-item>
+                        <el-form-item label="协议：">
+                            <el-tag >{{ onead_trackinginfo.listenprotocol }}</el-tag>
+                        </el-form-item>
                     </el-col>
                     <el-col :span="12">
-                        <el-form-item label="状态：">{{ onead_trackinginfo.status }}</el-form-item>
+                        <el-form-item label="状态：">
+                            <el-tag >{{ onead_trackinginfo.status }}</el-tag>
+                        </el-form-item>
                     </el-col>
                     <el-col :span="24">
                         <el-form-item label="地址：">
                             <el-tag v-for="item in onead_trackinginfo.address">{{ item }}</el-tag>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="12">
-                        <el-form-item label="监听端口：">{{ onead_trackinginfo.listenport }}</el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                        <el-form-item label="转发组id：">{{ onead_trackinginfo.servergroupid }}</el-form-item>
+                    <el-col :span="24">
+                        <el-form-item label="监听端口：">
+                            <el-tag >{{ onead_trackinginfo.listenport }}</el-tag>
+                        </el-form-item>
                     </el-col>
                     <el-col :span="12">
                         <el-form-item label="转发服务器名称：">
@@ -152,8 +177,13 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="12">
+                        <el-form-item label="转发组id：">
+                            <el-tag > {{ onead_trackinginfo.servergroupid }}</el-tag>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
                         <el-form-item label="转发服务器id：">
-                            <el-tag v-for="item in onead_trackinginfo.servers">{{ item.serverid }}</el-tag>
+                            <el-tag  v-for="item in onead_trackinginfo.servers">{{ item.serverid }}</el-tag>
                         </el-form-item>
                     </el-col>
                     <el-col :span="24">
@@ -185,7 +215,7 @@
                    
                     <el-col :span="24">
                         <el-form-item label="后端所有代理信息：" >
-                            <span v-for="item in getUniqueBackendproxy_adports(onead_trackinginfo.servers)">{{ item}},</span>
+                            <el-tag v-for="item in getUniqueBackendproxy_adports(onead_trackinginfo.servers)">{{ item}}</el-tag>
                         </el-form-item>
                     </el-col>
                     <el-col :span="24">
@@ -205,12 +235,13 @@
 <script setup lang="ts" name="ad_tracking">
 import { ref,onMounted } from 'vue';
 import { usead_trackingstore } from '@/store/ad_tracking/ad_tracking';
-import { getad_tracking } from '@/http/ad_tracking/nginx'
+import { getad_tracking, all_ad_tracking as expallad_tracking} from '@/http/ad_tracking/nginx'
 import { View } from '@element-plus/icons-vue';
 import { Refresh} from '@element-plus/icons-vue';
 import type { FormInstance, FormRules } from 'element-plus'
 import * as XLSX from 'xlsx';
-import { ElMessage } from 'element-plus'
+import { ElTable } from 'element-plus'
+import { ElMessage, ElMessageBox, ElButton, ElLoading } from 'element-plus'
 
 
 const ad_tracking = usead_trackingstore();
@@ -347,23 +378,21 @@ const handleReset = (formEl: FormInstance | undefined) => {
 
 
 //后端分页
-const handleSizeChange = (pagesize:any) => {
+const handleSizeChange = async (pagesize:any) => {
     query.value.pagenum = 1
     query.value.pagesize = pagesize
-    ad_tracking.getall_ad_tracking(query.value)
+    await ad_tracking.getall_ad_tracking(query.value)
   }
   
   // 处理当前页码改变事件
-  const handleCurrentChange = (pagenum:any) => {
+  const handleCurrentChange = async (pagenum:any) => {
     // console.log('Change', pageNum
     query.value.pagenum = pagenum;
     console.log('上传的参数', query.value)
-    ad_tracking.getall_ad_tracking(query.value)
+    await ad_tracking.getall_ad_tracking(query.value)
   };
 
 
-
-// 详细按钮
 // 打开窗口  
 const DialogVisible = ref(false)
 
@@ -375,77 +404,158 @@ const handleView = async (row: any) => {
     DialogVisible.value = true
   }
 
+const multipleTableRef = ref<InstanceType<typeof ElTable>>()
+//批量导出
+const assignExport = async () => {
+// getSelectionRows  Element Plus table表格组件方法，获取当前选中的数据
+  let selectedRows = multipleTableRef.value?.getSelectionRows()
+  if (!selectedRows.length) {
+      return ElMessage({
+      message: '请选择需要导出的数据',
+      type: 'warning',
+      })
+  }
+  ElMessageBox.close() // 关闭弹出框
+  const loading = ElLoading.service({ // 打开遮罩层
+      lock: true,
+      text: '请稍等...',
+      background: 'rgba(255, 255, 255, 0.5)',
+  })
 
+   // 创建工作表
+   const headers =  ['序号', '名称', '实例id', '地址', '监听端口', '监听协议', '状态', '转发服务器组id', '类型', '转发服务名称', 
+   '转发服务id', '转发地址', '转发端口', '后端服务器类型', '后端服务名称', '后端服务器地址',  '后端服务器端口', '后端所有代理信息', '创建时间'];
+  const worksheetData = [  
+  headers,  
+  ...selectedRows.map((row: any) => {
+    const addresses = row.address.map((address:{address:string}) => address).join(', ');
+    const servers_server_name = row.servers.map((server:{servername:string}) => server.servername).join(', ');
+    const servers_server_id = row.servers.map((server:{serverid:string}) => server.serverid).join(', ');
+    const servers_server_ip = row.servers.map((server:{serverip:string}) => server.serverip).join(', ');
+    const servers_server_port = row.servers.map((server:{port:string}) => server.port).join(', ');
+    const backend_type = row.servers.map((server:{backend_type:string}) => server.backend_type).join(', ');
+    const backend_server_address = row.servers.map((server:{backend_server_address:string}) => server.backend_server_address).join(', ');
+    const backend_server_name = row.servers.map((server:{backend_server_name:string}) => server.backend_server_name).join(', ');
+    const backend_listen_port = row.servers.map((server:{backend_listen_port:string}) => server.backend_listen_port).join(', ');
+    const backend_proxy_ad_port =  row.servers.map((server:{backend_proxy_ad_port:string}) => server.backend_proxy_ad_port).join(', ');
+    return [  
+    row.id,
+    row.name,
+    row.instanceid,
+    addresses,
+    row.listenport,
+    row.listenprotocol,
+    row.status,
+    row.servergroupid,
+    row.type,
+    servers_server_name,
+    servers_server_id,
+    servers_server_ip,
+    servers_server_port,
+    backend_type,
+    backend_server_name,
+    backend_server_address,
+    backend_listen_port,
+    backend_proxy_ad_port,
+    row.create_time,
+    ]
+})  
+]
+    // 创建工作表  
+    const WorkSheet = XLSX.utils.aoa_to_sheet(worksheetData); 
+  // 创建新的工作簿，并将工作表添加到其中  
+  const new_workbook = XLSX.utils.book_new();  
+  XLSX.utils.book_append_sheet(new_workbook, WorkSheet, '服务链路详情列表');  
+
+  // 将新的工作簿保存为 Excel 文件  
+  XLSX.writeFile(new_workbook, `服务链路详情列表.xlsx`);  
+  loading.close() // 关闭遮罩层
+};
 
 //导出操作日志
-const handleExport = async () => {
+const Exportall = async () => {
     let list: any = []; // 用于存储所有操作日志数据
      // 获取第一页数据
     // 计算总页数
-    const totalPages = Math.ceil(ad_tracking.ad_trackinginfo.count/10) 
+    const totalPages = Math.ceil(ad_tracking.ad_trackinginfo.count/30) 
     console.log(totalPages)
     for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
         query.value.pagenum = pageNum
-        await ad_tracking.getall_ad_tracking(query.value)
-        ad_tracking.ad_trackinginfo.data.map((item: any, i: number) => {
+        query.value.pagesize = 30
+        const res = await expallad_tracking(query.value)
+        res.data.data.map((item: any) => {
+            const addresses = item.address.map((address:{address:string}) => address).join(', ');
+            const servers_server_name = item.servers.map((server:{servername:string}) => server.servername).join(', ');
+            const servers_server_id = item.servers.map((server:{serverid:string}) => server.serverid).join(', ');
+            const servers_server_ip = item.servers.map((server:{serverip:string}) => server.serverip).join(', ');
+            const servers_server_port = item.servers.map((server:{port:string}) => server.port).join(', ');
+            const backend_type = item.servers.map((server:{backend_type:string}) => server.backend_type).join(', ');
+            const backend_server_address = item.servers.map((server:{backend_server_address:string}) => server.backend_server_address).join(', ');
+            const backend_server_name = item.servers.map((server:{backend_server_name:string}) => server.backend_server_name).join(', ');
+            const backend_listen_port = item.servers.map((server:{backend_listen_port:string}) => server.backend_listen_port).join(', ');
+            const backend_proxy_ad_port = item.servers.map((server:{backend_proxy_ad_port:string}) => server.backend_proxy_ad_port).join(', ');  
             const rowData = [
-                i + 1,
+                item.id,
                 item.name,
                 item.instanceid,
-                item.addresstype,
+                addresses,
                 item.listenport,
                 item.listenprotocol,
                 item.status,
-                item.forwardport,
                 item.servergroupid,
                 item.type,
+                servers_server_name,
+                servers_server_id,
+                servers_server_ip,
+                servers_server_port,
+                backend_type,
+                backend_server_name,
+                backend_server_address,
+                backend_listen_port,
+                backend_proxy_ad_port,
                 item.create_time,
-                item.sync_time,
             ];
             list.push(rowData);
         });
     }
      // 创建工作表
-     let WorkSheet = XLSX.utils.aoa_to_sheet([
-        ['序号', '名称', '实例id', '地址类型', '监听端口', '监听协议', '状态', '转发端口', '后端服务器组id', '类型', '创建时间', '同步时间'],
+    let WorkSheet = XLSX.utils.aoa_to_sheet([
+    ['序号', '名称', '实例id', '地址', '监听端口', '监听协议', '状态', '转发服务器组id', '类型', '转发服务名称', 
+    '转发服务id', '转发地址', '转发端口', '后端服务器类型', '后端服务名称', '后端服务器地址',  '后端服务器端口', '后端所有代理信息', '创建时间'],
         ...list
     ]);
 
     // 创建新的工作簿，并将工作表添加到其中
     let new_workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(new_workbook, WorkSheet, 'SLB-ECS');
+    XLSX.utils.book_append_sheet(new_workbook, WorkSheet, '服务链路信息列表');
 
     // 将新的工作簿保存为 Excel 文件
-    XLSX.writeFile(new_workbook, `SLB-ECS.xlsx`);
+    XLSX.writeFile(new_workbook, `服务链路详情列表.xlsx`);
 };
 
 // 计算唯一的 backend_type  
-function getUniqueBackendTypes(servers:any) {  
+const getUniqueBackendTypes = (servers:any) => {  
   return [...new Set(servers.map((server: { backend_type: any; }) => server.backend_type))];  
 }  
   
 // 计算唯一的 backend_server_name
-function getUniqueBackendServerNames(servers:any) {  
+const getUniqueBackendServerNames = (servers:any) => {  
   return [...new Set(servers.flatMap((server: { backend_server_name: any; }) => server.backend_server_name))];  
 }  
 
 //计算唯一端口
-function getUniqueBackendPorts(servers:any) {  
+const getUniqueBackendPorts = (servers:any) => {  
   return [...new Set(servers.flatMap((server: { backend_listen_port: any; }) => server.backend_listen_port))];  
 }  
 
-//计算后端ip
-// function getUniqueBackendAddress(servers:any) {  
-//   return [...new Set(servers.map((server: { backend_server_address: any; }) => server.backend_server_address))];  
-// }  
 
 // 计算唯一的 backend_server_name  
-function getUniqueBackendproxy_adports(servers:any) {  
+const getUniqueBackendproxy_adports = (servers:any) => {  
   return [...new Set(servers.flatMap((server: { backend_proxy_ad_port: any; }) => server.backend_proxy_ad_port))];  
 }  
 
 // 计算唯一的 backend_server_address
-function getUniqueBackendServer_address(servers:any) {  
+const getUniqueBackendServer_address= (servers:any) => {  
   return [...new Set(servers.flatMap((server: { backend_server_address: any; }) => server.backend_server_address))];  
 } 
 

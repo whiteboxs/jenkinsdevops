@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div class="container">
-        <el-form :model="query" ref="queryRef" :inline="true" label-width="68px" >
+        <el-form :model="query" ref="queryRef" :inline="true" label-width="80px" >
           <el-form-item label="服务名称" >
             <el-input
                v-model="query.name"
@@ -75,7 +75,7 @@
                     <el-tag>{{ scope.row.proxy_port }}</el-tag>
                 </template>
             </el-table-column>
-            <el-table-column prop="proxy_server_name" label="转发端口"  align="center" width="350">
+            <el-table-column prop="proxy_server_name" label="转发地址"  align="center" width="350">
                 <template #default="scope">
                     <el-tag v-for="item in scope.row.proxy_server_name" >{{ item }}</el-tag>
                 </template>

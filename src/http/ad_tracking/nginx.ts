@@ -12,7 +12,7 @@ export const add_nginx_server = (data:object) => {
   return http.post('/api/add_nginx_server', data, formDataConfig);
 };
 
-  // 编辑单个id nginx
+  // 更新单个id nginx
 export const update_nginx_server = (id:number,data:object) => {
   const JsonConfig = {
     headers: {
@@ -48,6 +48,9 @@ export const ecs_nameip = () => {
   return http.get('/api/ecs_nameip');
 };
 
+export const mysql_work_group = () => {
+  return http.get('/api/mysql_work_group');
+};
 
 //查询所有nginx_config 列表
 export const all_nginx_config = (data:object) => {
@@ -94,11 +97,23 @@ export const agent_env_check = (data:object) => {
 };
 
 
+//数据库版本检查
+export const check_nginx_version = (data:object) => {
+  const formDataConfig = {
+      headers: {
+          'Content-Type': 'application/json',
+        },
+      };
+  return http.post('/api/check_nginx_version', data, formDataConfig);
+};
 
 //查询所有ad_tracking汇总表信息
 export const all_ad_tracking = (data:object) => {
-  return http.get('/api/all/ad_tracking',{params: data});
+  const ifLoading = true;
+  return http.get('/api/all/ad_tracking',{params: data, ifLoading});
 }
+
+
 
 // 查询单个ad_tracking
 export const getad_tracking = (id:number,data:object) => {
@@ -114,3 +129,61 @@ export const all_nacos = (data:object) => {
 export const all_waf = (data:object) => {
   return http.get('/api/all/waf',{params: data});
 }
+
+
+//查询rds
+export const all_rds = (data:object) => {
+  return http.get('/api/all/rds',{params: data});
+}
+
+//查询redis
+export const all_redis = (data:object) => {
+  return http.get('/api/all/redis',{params: data});
+}
+
+
+//创建ecs_mysql信息
+export const add_ecs_mysql = (data:object) => {
+  const formDataConfig = {
+      headers: {
+          'Content-Type': 'application/json',
+        },
+      };
+  return http.post('/api/add_ecs_mysql', data, formDataConfig);
+};
+
+
+// 查询所有ecs_mysql信息
+export const all_ecs_mysql = (data:object) =>  {
+  return http.get('/api/all/ecs_mysql', {
+  params: data,
+  paramsSerializer: function(params) {
+    return qs.stringify(params, { arrayFormat: 'repeat' });
+  }
+});
+};
+
+// 删除单个ecs_mysql服务器信息
+export const del_ecs_mysql = (id:number) => {
+  return http.delete(`/api/ecs_mysql/${id}`);
+  };
+
+// 编辑单个idd的mysql信息
+  export const update_ecs_mysql = (id:number,data:object) => {
+    const JsonConfig = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+    return http.put(`/api/ecs_mysql/${id}`,data,JsonConfig);
+  };
+
+//数据库版本检查
+export const check_mysql_version = (data:object) => {
+  const formDataConfig = {
+      headers: {
+          'Content-Type': 'application/json',
+        },
+      };
+  return http.post('/api/check_mysql_version', data, formDataConfig);
+};

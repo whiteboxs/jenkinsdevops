@@ -13,10 +13,11 @@
             ref="multipleTable" 
             header-cell-class-name="table-header"
             :cell-style="cellStyle"
+            width="auto"
             >
         <el-table-column prop="InstanceId" label="实例ID" width="120" align="center" ></el-table-column>
-				<el-table-column  prop="InstanceName" label="实例名称" width="210" align="center" ></el-table-column>
-				<el-table-column prop="inip" label="内网IP" width="110" align="center"></el-table-column>
+				<el-table-column  prop="InstanceName" label="实例名称" align="center" ></el-table-column>
+				<el-table-column prop="inip" label="IP地址" width="110" align="center"></el-table-column>
 				<el-table-column prop="publicip" label="公网IP" width="110" align="center"></el-table-column>
 				<el-table-column prop="Cpu" label="CPU" width="60" align="center" >
                 <template #default="scope">

@@ -353,6 +353,8 @@ const assignExport = async () => {
     const locations_root = row.locations.map((item:{root: string}) => item.root).join(', ');
     const upstream_name = row.upstream.map((item:{name: string}) => item.name).join(', ');
     const upstream_block = row.upstream.map((item:{block: string}) => item.block).join(', ');
+    const server_names = row.server_name.map((item:{item: string}) => item).join(', ');
+    const proxy_ad_ports =row.proxy_ad_port.map((item:{item: string}) => item).join(', ');
     return [  
         row.id,
         row.file,
@@ -360,7 +362,7 @@ const assignExport = async () => {
         row.ip,
         row.hostname,
         row.listen,
-        row.server_name,
+        server_names,
         upstream_name,
         upstream_block,
         row.server_set,
@@ -368,7 +370,7 @@ const assignExport = async () => {
         locations_path,
         locations_proxy_pass,
         locations_root,
-        row.proxy_ad_port,
+        proxy_ad_ports,
         row.access_log,
         row.error_log,
         row.create_time,
@@ -410,6 +412,8 @@ const Exportall = async () => {
             const locations_root = item.locations.map((item:{root: string}) => item.root).join(', ');
             const upstream_name = item.upstream.map((item:{name: string}) => item.name).join(', ');
             const upstream_block = item.upstream.map((item:{block: string}) => item.block).join(', ');
+            const server_names = item.server_name.map((item:{item: string}) => item).join(', ');
+            const proxy_ad_ports =item.proxy_ad_port.map((item:{item: string}) => item).join(', ');
             const rowData = [
                 item.id,
                 item.file,
@@ -417,7 +421,7 @@ const Exportall = async () => {
                 item.ip,
                 item.hostname,
                 item.listen,
-                item.server_name,
+                server_names,
                 upstream_name,
                 upstream_block,
                 item.server_set,
@@ -425,7 +429,7 @@ const Exportall = async () => {
                 locations_path,
                 locations_proxy_pass,
                 locations_root,
-                item.proxy_ad_port,
+                proxy_ad_ports,
                 item.access_log,
                 item.error_log,
                 item.create_time,

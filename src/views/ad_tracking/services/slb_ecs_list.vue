@@ -9,6 +9,7 @@
                 clearable
                 style="width: 250px;"
                 @keyup.enter="handleSearch(queryFormRef)"
+                @blur="handleSearch(queryFormRef)"  
                 />
             </el-form-item>
             <el-form-item label="监听地址"  prop="address">
@@ -18,6 +19,7 @@
                 clearable
                 style="width: 200px;"
                 @keyup.enter="handleSearch(queryFormRef)"
+                @blur="handleSearch(queryFormRef)"  
                 />
             </el-form-item>
             <el-form-item label="名称" >
@@ -27,6 +29,7 @@
                 clearable
                 style="width: 150px;"
                 @keyup.enter="handleSearch(queryFormRef)"
+                @blur="handleSearch(queryFormRef)"  
                 />
             </el-form-item>
             <el-form-item label="转发服务器地址"  prop="serverip" label-width="110px" >
@@ -36,14 +39,31 @@
                 clearable
                 style="width: 150px;"
                 @keyup.enter="handleSearch(queryFormRef)"
+                @blur="handleSearch(queryFormRef)"  
                 />
             </el-form-item>
+            <el-form-item label="工作状态" >
+                <el-select
+                v-model="query.status"
+                placeholder="请选择工作状态"
+                clearable
+                style="width: 150px"
+                @keyup.enter="handleSearch(queryFormRef)"
+                @blur="handleSearch(queryFormRef)"  
+                >
+                <el-option key="1" label="running" value="running" ></el-option>
+                <el-option key="2" label="stopped" value="stopped" ></el-option>
+                </el-select>
+         </el-form-item>
+
             <el-form-item label="资源类型" >
                 <el-select
                 v-model="query.type"
                 placeholder="请选择资源类型"
                 clearable
                 style="width: 150px"
+                @keyup.enter="handleSearch(queryFormRef)"
+                @blur="handleSearch(queryFormRef)"  
                 >
                 <el-option key="1" label="ecs" value="ecs" ></el-option>
                 <el-option key="2" label="alb" value="alb" ></el-option>
@@ -145,7 +165,7 @@
                             <el-tag > {{ oneslb_ecsinfo.listenport }}</el-tag>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="24">
+                    <el-col :span="12">
                         <el-form-item label="转发组id：">{{ oneslb_ecsinfo.servergroupid }}</el-form-item>
                     </el-col>
                     <el-col :span="12">
@@ -203,6 +223,7 @@ const query = ref({
     type:'',
     address:'',
     serverip: '',
+    status: '',
     pagenum: 1,
     pagesize: 10
 });
@@ -300,6 +321,7 @@ const handleReset = (formEl: FormInstance | undefined) => {
     type:'',
     address:'',
     serverip: '',
+    status:'',
     pagenum: 1,
     pagesize: 10
     };
@@ -362,7 +384,8 @@ const assignExport = async () => {
   })
 
    // 创建工作表
-   const headers =  ['序号', '名称', '实例id', '地址', '监听端口', '监听协议', '状态', '转发端口', '后端服务器组id', '类型', '后端服务名称', '后端服务id', '后端服务ip', '后端服务端口', '创建时间'];
+   const headers =  ['序号', '名称', '实例id', '地址', '监听端口', '监听协议', '状态', '转发服务器组id', '类型', '转发服务名称', 
+   '转发服务id', '转发地址', '转发端口', '创建时间'];
   const worksheetData = [  
   headers,  
   ...selectedRows.map((row: any) => {
@@ -379,7 +402,6 @@ const assignExport = async () => {
     row.listenport,
     row.listenprotocol,
     row.status,
-    row.forwardport,
     row.servergroupid,
     row.type,
     servers_server_name,
@@ -434,7 +456,6 @@ const Exportall = async () => {
                 item.listenport,
                 item.listenprotocol,
                 item.status,
-                item.forwardport,
                 item.servergroupid,
                 item.type,
                 servers_server_name,
@@ -447,8 +468,9 @@ const Exportall = async () => {
         });
     }
      // 创建工作表
-     let WorkSheet = XLSX.utils.aoa_to_sheet([
-    ['序号', '名称', '实例id', '地址', '监听端口', '监听协议', '状态', '转发端口', '后端服务器组id', '类型', '后端服务名称', '后端服务id', '后端服务ip', '后端服务端口', '创建时间'],
+    let WorkSheet = XLSX.utils.aoa_to_sheet([
+    ['序号', '名称', '实例id', '地址', '监听端口', '监听协议', '状态', '转发服务器组id', '类型', '转发服务名称', 
+    '转发服务id', '转发地址', '转发端口', '创建时间'],
     ...list
     ]);
 
@@ -481,8 +503,8 @@ const cellStyle = ({ row, column, rowIndex, columnIndex }: { row: any, column: a
         color: "#189EFF", 
         };
     }
-    if (columnIndex === 4) {
-    if(row.state == 'STOPPED'){
+    if (columnIndex === 5) {
+    if(row.status == 'stopped'){
       return {
       color: "#F56C6C", 
       fontWeight: 'bold'

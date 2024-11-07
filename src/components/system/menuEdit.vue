@@ -38,10 +38,17 @@
 								<el-input v-model="menueditForm.menu_order" autocomplete="off" />
 							</el-form-item>
               <el-form-item label="父菜单名称" prop="parentname">
-								<el-input v-model="menueditForm.parentname" autocomplete="off" />
+								<el-tree-select
+                    v-model="menueditForm.parentid" 
+                    :data="selecttree"
+                    check-strictly
+                    :render-after-expand="false"
+                    style="width: 240px"
+                    @change="handleParentChange(menueditForm.parentid)"
+                  />
 							</el-form-item>	
-              <el-form-item label="父菜单id" prop="parentid">
-								<el-input v-model="menueditForm.parentid" autocomplete="off" />
+              <el-form-item label="父菜单id" prop="parentid" >
+								<el-input v-model="menueditForm.parentid" autocomplete="off" disabled/>
 							</el-form-item>	
               <el-form-item label="路由名称" prop="route_name">
 								<el-input v-model="menueditForm.route_name" autocomplete="off" />
@@ -66,7 +73,7 @@
 
   import { ref, defineEmits } from 'vue';
   import { ElMessage, ElMessageBox } from 'element-plus';
-  
+  import { getallmenus } from '@/http/api'
 
   
 
@@ -128,21 +135,7 @@ const validmenu_permiss = (_: any, value: any, callback: any) => {
   }
 }
 
-// const validroute_name = (_: any, value: any, callback: any) => {
-//   if (value === '') {
-//     callback(new Error('路由名称名不能为空'))
-//   } else {
-//     callback()
-//   }
-// }
 
-// const validroute_component = (_: any, value: any, callback: any) => {
-//   if (value === '') {
-//     callback(new Error('路由组件路径名不能为空'))
-//   } else {
-//     callback()
-//   }
-// }
 
 
 
@@ -180,7 +173,46 @@ const rules = ref<FormRules>({
   
   
 
-  
+const selecttree = ref<any[]>([]);
+// 用于创建和修改菜单的关联
+const handle_selectTree = (menus:any, parentId = null) => {
+  const result1:any = [];
+  menus
+  .filter((menu: { parentid: any; id: any; children: any;menu_type:string }) => menu.parentid === parentId && menu.menu_type !== "in_menu" && menu.menu_type !== "button"  )
+  .sort((a: { menu_order: number; }, b: { menu_order: number; }) => a.menu_order - b.menu_order) // 根据 menu_order 字段进行升序排序
+  .forEach((menu: { parentid: any; id: any; value: any; label: any; children: any;title: any; }) => {
+          menu.value = menu.id; // 直接使用 id 作为 value  
+          menu.label = menu.title; // 使用 title 作为 label  
+          menu.children = []; // 初始化 children 数组  
+          const children = handle_selectTree(menus, menu.id);
+          if (children.length) {
+              menu.children = children;
+          }
+          result1.push(menu);
+   });
+   return result1;
+ }; 
+
+
+ const menu_data = ref<any[]>([]);
+  // 生成选择树新增编辑用
+  const getselectmenus = async () => {
+    const res = await getallmenus()
+    menu_data.value = res.data.data
+    selecttree.value = handle_selectTree(res.data.data)
+    console.log('selecttree',selecttree.value)
+  }
+
+
+
+const handleParentChange = (id:any) => {
+  console.log('id',id)
+  const selectinfo = menu_data.value.find((item: { id: number }) => item.id === id);
+  if (selectinfo) {
+    console.log(selectinfo.title)
+    menueditForm.value.parentname = selectinfo.title
+  }
+};
 
 
   
@@ -201,6 +233,7 @@ const rules = ref<FormRules>({
     menueditForm.value.route_component = row.route_component
     menueditForm.value.route_name = row.route_name
     drawer.value = true
+    getselectmenus()
     console	.log('没提交前的', menueditForm.value)
   }
   defineExpose({
@@ -220,8 +253,8 @@ const rules = ref<FormRules>({
     formEl.validate(async (valid) => {  
       if (valid) {  
         // 编辑操作  
-        await updatemenu(menueditForm.value.id,menueditForm.value);  
         console.log('编辑提交', menueditForm.value);  
+        await updatemenu(menueditForm.value.id,menueditForm.value);  
         ElMessage.success('编辑成功');  
         drawer.value = false;  
           

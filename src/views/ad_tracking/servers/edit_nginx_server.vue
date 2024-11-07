@@ -91,7 +91,7 @@
 
 const validname= (_: any, value: any, callback: any) => {
   if (value === '') {
-    callback(new Error('策略名称名不能为空'))
+    callback(new Error('名称名不能为空'))
   } else {
     callback()
   }
@@ -101,7 +101,7 @@ const validname= (_: any, value: any, callback: any) => {
 
 const validservice_path= (_: any, value: any, callback: any) => {
   if (value === '') {
-    callback(new Error('静默开始时间不能为空'))
+    callback(new Error('服务路径不能为空'))
   } else {
     callback()
   }
